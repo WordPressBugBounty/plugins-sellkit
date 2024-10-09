@@ -434,9 +434,16 @@ trait Sellkit_Elementor_Optin_CRM {
 	protected function add_tag_control( $widget ) {
 		$action = $this->get_name();
 
+		$label = esc_html__( 'Tags', 'sellkit' );
+
+		if ( 'mailchimp' === $action ) {
+			/* translators: %s: html tag */
+			$label = sprintf( esc_html__( 'Tags %s', 'sellkit' ), '<span style="color:#ff0000">*</span>' );
+		}
+
 		$widget->add_control( "{$action}_tags",
 			[
-				'label'       => esc_html__( 'Tags', 'sellkit' ),
+				'label'       => $label,
 				'type'        => 'select2',
 				'multiple'    => true,
 				'label_block' => true,

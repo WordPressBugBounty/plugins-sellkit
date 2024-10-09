@@ -4295,7 +4295,7 @@ form.sellkit-optin .sellkit-field-type-submit-button .sellkit-submit-button {
   background-color: #2ecc71;
   color: #fff;
   font-size: 0.9rem;
-  font-weight: bold;
+  font-weight: 700;
 }
 form.sellkit-optin .sellkit-field-type-submit-button .sellkit-submit-button:hover {
   border: none;
@@ -4364,7 +4364,7 @@ form.sellkit-optin .sellkit-field-type-submit-button .sellkit-submit-button div.
 }
 .sellkit-optin-admin-alert .title {
   display: block;
-  font-weight: bold;
+  font-weight: 700;
 }
 .sellkit-optin-admin-alert .description {
   font-size: 13px;

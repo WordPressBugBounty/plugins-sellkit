@@ -1,0 +1,28 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"name": "sellkit-blocks/checkout",
+	"title": "Checkout",
+	"category": "sellkit-blocks",
+	"textdomain": "sellkit",
+	"attributes": {
+		"customClassName": {
+		  "type": "string",
+		  "default": ""
+		},
+		"emptyCartMessage": {
+		  "type": "string",
+		  "default": "Your shopping cart is empty."
+		}
+	  },
+	"supports": {
+	  "inserter": true,
+	  "anchor": true,
+	  "align": [ "wide", "full" ],
+	  "alignWide": true,
+	  "html": false,
+	  "multiple": false,
+	  "reusable": false
+   },
+	"editorStyle": "file:../../../../assets/dist/blocks/checkout/editor.css",
+	"style": [ "wp-block-sellkit-checkout sellkit-checkout-widget", "file:../../../../assets/dist/blocks/checkout/frontend.css" ]
+  }

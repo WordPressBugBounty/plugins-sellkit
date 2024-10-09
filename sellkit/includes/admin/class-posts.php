@@ -447,6 +447,10 @@ class Sellkit_Admin_Posts {
 		$nodes    = (object) unserialize( $nodes ); // phpcs:ignore WordPress.PHP
 		$new_node = [];
 
+		if ( ! class_exists( 'WooCommerce' ) ) {
+			return $new_node;
+		}
+
 		foreach ( $nodes as $index => $node ) {
 			if ( ! empty( $node['page_id'] ) ) {
 				$node['link'] = get_the_permalink( $node['page_id'] );

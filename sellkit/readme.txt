@@ -3,8 +3,8 @@ Contributors: artbees
 Donate link: https://getsellkit.com/
 Tags: checkout optimizer, optimized checkout, sales funnel, smart coupon, checkout alert
 Requires at least: 5.6
-Tested up to: 6.5
-Stable tag: 2.0.5
+Tested up to: 6.6
+Stable tag: 2.3.0
 Requires PHP: 7.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -274,6 +274,14 @@ Main functionalities are only compatible with Elementor at the moment. Compatibi
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
+= 2.3.0 - 2024-10-07 =
+* Bug Fix: Fixed incompatibility between Google Analytics and Facebook Pixel on the Global Checkout.
+* Bug Fix: Fixed PHP warnings on the Global Checkout.
+* Bug Fix: Fixed issue with Address and Birthday custom fields in the Mailchimp Opt-In widget.
+* Bug Fix: Fixed incompatibility with Gutenberg.
+* Improvement: Updated ConvertKit link in the settings.
+* Feature: Added new blocks for Gutenberg.
+
 = 2.0.5 - 2024-07-15 =
 * Bug Fix: Fixed the issue with the Next Step link on the Opt-In Confirmation step.
 * Improvement: Improved the Checkout widget to display even when the cart is empty in the editor.

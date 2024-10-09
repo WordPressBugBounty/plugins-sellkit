@@ -4,6 +4,8 @@ namespace Sellkit\Admin\Settings\Integration;
 
 defined( 'ABSPATH' ) || die();
 
+use Sellkit\Global_Checkout\Checkout as Global_Checkout;
+
 /**
  * Class Google Analytics and Facebook Pixel integration.
  *
@@ -74,16 +76,22 @@ class Settings_Integration {
 	public function google_facebook_analytics() {
 		global $post;
 
+		$step_meta = $this->get_step_meta( $post );
+
 		if (
 			empty( $post ) ||
-			empty( get_post_meta( $post->ID, 'step_data' ) ) ||
+			empty( $step_meta ) ||
 			$this->is_elementor_preview()
 		) {
 			return;
 		}
 
-		self::$post      = get_post_meta( $post->ID, 'step_data' );
+		self::$post      = $step_meta;
 		self::$order_key = sellkit_htmlspecialchars( INPUT_GET, 'order-key' );
+
+		if ( empty( self::$order_key ) ) {
+			self::$order_key = sellkit_htmlspecialchars( INPUT_GET, 'key' );
+		}
 
 		if ( ! sellkit()->has_valid_dependencies() ) {
 			self::$order_key = null;
@@ -97,6 +105,88 @@ class Settings_Integration {
 		);
 
 		wp_localize_script( 'funnel-settings-variables', 'sellkitSettings', self::$localized_data );
+	}
+
+	/**
+	 * Get step meta.
+	 *
+	 * @param object $post post object.
+	 * @since 2.3.0
+	 * @return array|void
+	 */
+	private function get_step_meta( $post ) {
+		if ( empty( $post ) ) {
+			return;
+		}
+
+		$step_meta = get_post_meta( $post->ID, 'step_data' );
+
+		if ( ! empty( $step_meta ) ) {
+			return $step_meta;
+		}
+
+		$global_checkout_id = get_option( Global_Checkout::SELLKIT_GLOBAL_CHECKOUT_OPTION, 0 );
+
+		if ( empty( $global_checkout_id ) ) {
+			return;
+		}
+
+		if ( 'publish' !== get_post_status( $global_checkout_id ) ) {
+			return;
+		}
+
+		$global_chekout_nodes = get_post_meta( $global_checkout_id, 'nodes' );
+
+		if ( empty( $global_chekout_nodes ) ) {
+			return;
+		}
+
+		$global_chekout_nodes = $global_chekout_nodes[0];
+		$global_chekout_nodes = $this->check_global_checkout_steps( $global_chekout_nodes, $post->ID );
+
+		if ( empty( $global_chekout_nodes ) ) {
+			return;
+		}
+
+		return $global_chekout_nodes;
+	}
+
+	/**
+	 * Check global checkout steps.
+	 *
+	 * @param array $global_chekout_nodes global checkout nodes.
+	 * @param int   $post_id post id.
+	 * @since 2.3.0
+	 * @return array
+	 */
+	private function check_global_checkout_steps( $global_chekout_nodes, $post_id ) {
+		$default_checkout_page = intval( get_option( 'woocommerce_checkout_page_id', 0 ) );
+		$default_thankyou_page = is_checkout() && ! empty( is_wc_endpoint_url( 'order-received' ) );
+		$is_checkout_page      = is_checkout() && empty( is_wc_endpoint_url( 'order-received' ) );
+
+		$new_nodes = [];
+
+		if ( $default_checkout_page !== $post_id && $default_thankyou_page ) {
+			return [];
+		}
+
+		foreach ( $global_chekout_nodes as $node ) {
+			if ( 'checkout' === $node['type']['key'] && ! empty( $default_checkout_page ) && $is_checkout_page ) {
+				$new_nodes[ $default_checkout_page ] = $node;
+				continue;
+			}
+
+			if ( 'thankyou' === $node['type']['key'] && ! empty( $default_thankyou_page ) ) {
+				$new_nodes[ $post_id ] = $node;
+				continue;
+			}
+		}
+
+		if ( ! isset( $new_nodes[ $post_id ] ) ) {
+			return [];
+		}
+
+		return $new_nodes;
 	}
 
 	/**

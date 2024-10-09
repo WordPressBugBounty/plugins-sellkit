@@ -16,6 +16,14 @@ use Elementor\Plugin as Elementor;
 class Thankyou extends Base_Step {
 
 	/**
+	 * Post ID.
+	 *
+	 * @var int
+	 * @since 2.3.0
+	 */
+	private $post_id;
+
+	/**
 	 * Thankyou constructor.
 	 *
 	 * @since 1.1.0
@@ -122,16 +130,112 @@ class Thankyou extends Base_Step {
 
 		add_filter( 'sellkit_global_thankyou', '__return_true' );
 
-		// Add new content.
-		add_filter( 'the_content', function() use ( $thankyou_id ) {
-			ob_Start();
-			$content = Elementor::instance()->frontend->get_builder_content_for_display( (int) $thankyou_id, true );
-			echo do_shortcode( $content );
-			return ob_get_clean();
-		}, 5 );
+		if ( 'gutenberg' === sellkit()->page_builder() ) {
+			$thankyou_id = get_post( $thankyou_id );
+
+			$this->load_order_cart_details_block_frontend();
+
+			$thankyou_post = get_post( $thankyou_id );
+
+			global $post;
+			$post = $thankyou_post; // phpcs:ignore:WordPress.WP.GlobalVariablesOverride.OverrideProhibited
+			setup_postdata( $post );
+
+			$content = do_blocks( $post->post_content );
+
+			$content = apply_filters( 'the_content', $content );
+
+			add_filter( 'the_content', function() use ( $content ) {
+				ob_Start();
+
+				echo $content; // phpcs:ignore:WordPress.Security.EscapeOutput.OutputNotEscaped
+
+				return ob_get_clean();
+			}, 5 );
+
+			sellkit()->load_files( [
+				'templates/default-canvas'
+			] );
+		}
+
+		if ( defined( 'ELEMENTOR_VERSION' ) && 'elementor' === sellkit()->page_builder() ) {
+			// Add new content.
+			add_filter( 'the_content', function() use ( $thankyou_id ) {
+				ob_Start();
+				$content = Elementor::instance()->frontend->get_builder_content_for_display( (int) $thankyou_id, true );
+				echo do_shortcode( $content );
+				return ob_get_clean();
+			}, 5 );
+
+			sellkit()->load_files( [
+				'templates/canvas'
+			] );
+		}
+	}
+
+	/**
+	 * Load order cart details block on frontend.
+	 *
+	 * @since 2.3.0
+	 */
+	public function load_order_cart_details_block_frontend() {
+		global $post;
+
+		if ( empty( $post->post_content ) ) {
+			return;
+		}
+
+		$this->post_id = $post->ID;
+
+		$block = 'blocks/order-cart-details';
+
+		$block_data = explode( '/', $block );
+		$block_name = $block_data[1];
+
+		$class_name = str_replace( '-', ' ', $block_name );
+		$class_name = str_replace( ' ', '_', ucwords( $class_name ) );
+		$class_name = "Sellkit\blocks\Render\\{$class_name}";
+		$class_path = 'block-editor/' . $block . '/index';
 
 		sellkit()->load_files( [
-			'templates/canvas'
+			$class_path,
 		] );
+
+		$new_class = new $class_name( $this->post_id );
+		$this->register_inner_blocks_by_parent( $new_class );
+		$new_class->register_block_meta();
+	}
+
+	/**
+	 * Register inner blocks by parent.
+	 *
+	 * @param Object $parent_class Parent class name.
+	 * @since 2.3.0
+	 * @return void
+	 */
+	private function register_inner_blocks_by_parent( $parent_class ) {
+		if ( ! method_exists( $parent_class, 'has_inner_blocks' ) ) {
+			return;
+		}
+
+		$inner_blocks = $parent_class->get_inner_block();
+
+		sellkit()->load_files( $inner_blocks );
+
+		foreach ( $inner_blocks as $key => $value ) {
+			if ( isset( $this->inner_blocks[ "blocks/{$key}" ] ) ) {
+				continue;
+			}
+
+			$inner_block_class = 'Sellkit\Blocks\Inner_Block\\' . str_replace( '-', '_', ucwords( $key ) );
+
+			if ( ! class_exists( $inner_block_class ) ) {
+				continue;
+			}
+
+			$inner_block_instance = new $inner_block_class( $this->post_id );
+
+			$inner_block_instance->register_block_meta();
+		}
 	}
 }

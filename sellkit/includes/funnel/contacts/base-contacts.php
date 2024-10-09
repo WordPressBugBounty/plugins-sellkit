@@ -87,8 +87,12 @@ class Base_Contacts {
 		$type       = $funnel->current_step_data['type']['key'];
 		$old_values = [];
 
+		if ( ! isset( $_SESSION['entered_funnel_id'] ) ) {
+			return;
+		}
+
 		// Getting old data.
-		$result = $database->get( 'funnel_contact', [ 'id' => $_SESSION['entered_funnel_id'] ] );
+		$result = $database->get( 'funnel_contact', [ 'id' => isset( $_SESSION['entered_funnel_id'] ) ? $_SESSION['entered_funnel_id'] : '' ] );
 
 		if ( ! empty( $result[0][ $type ] ) ) {
 			$old_values = unserialize( $result[ 0 ][ $type ] ); // phpcs:ignore
@@ -99,7 +103,7 @@ class Base_Contacts {
 		$database->update(
 			'funnel_contact',
 			[ $funnel->current_step_data['type']['key'] => $new_values ],
-			[ 'id' => $_SESSION['entered_funnel_id'] ]
+			[ 'id' => isset( $_SESSION['entered_funnel_id'] ) ? $_SESSION['entered_funnel_id'] : '' ]
 		);
 	}
 

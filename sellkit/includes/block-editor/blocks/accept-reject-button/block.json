@@ -1,0 +1,123 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "name": "sellkit-blocks/accept-reject-button",
+  "title": "Accept/Reject Button",
+  "category": "sellkit-blocks",
+  "textdomain": "sellkit",
+  "attributes": {
+    "offerType": {
+			"type": "string",
+			"default": "accept"
+		},
+    "title": {
+      "type": "string",
+      "default": "Offer Action"
+    },
+    "textAlign": {
+			"type": "string"
+		},
+    "width": {
+			"type": "number"
+		},
+    "shadowColor": {
+      "type": "string",
+      "default": ""
+    },
+    "shadowHorizontal": {
+      "type": "number",
+      "default": 0
+    },
+    "shadowVertical": {
+      "type": "number",
+      "default": 0
+    },
+    "shadowBlur": {
+      "type": "number",
+      "default": 0
+    },
+    "shadowSpread": {
+      "type": "number",
+      "default": 0
+    },
+    "shadowPosition": {
+      "type": "string",
+      "default": "outset"
+    },
+    "textShadowColor": {
+      "type": "string",
+      "default": ""
+    },
+    "textShadowBlur": {
+      "type": "number",
+      "default": 0
+    },
+    "textshadowVertical": {
+      "type": "number",
+      "default": 0
+    },
+    "textShadowHorizontal": {
+      "type": "number",
+      "default": 0
+    },
+    "dynamicClassNames": {
+        "type": "string",
+        "default": ""
+    },
+    "combinedStyle": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "supports": {
+		"anchor": true,
+    "align": false,
+		"alignWide": false,
+    "color": {
+			"__experimentalSkipSerialization": true,
+			"gradients": true,
+			"__experimentalDefaultControls": {
+				"background": true,
+				"text": true
+			}
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontWeight": true,
+			"__experimentalFontStyle": true,
+			"__experimentalTextTransform": true,
+			"__experimentalTextDecoration": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true
+			}
+		},
+		"reusable": false,
+		"shadow": true,
+    "__experimentalBorder": {
+			"color": true,
+			"radius": true,
+			"style": true,
+			"width": true,
+			"__experimentalSkipSerialization": true,
+			"__experimentalDefaultControls": {
+				"color": true,
+				"radius": true,
+				"style": true,
+				"width": true
+			}
+		},
+    "spacing": {
+			"margin": true,
+			"padding": true,
+			"__experimentalDefaultControls": {
+				"margin": false,
+				"padding": false
+			}
+		},
+		"__experimentalSelector": ".sellkit-accept-reject-button-block .wp-block-button__link"
+	},
+  "editorStyle": "file:../../../../assets/dist/blocks/accept-reject-button/editor.css",
+  "style": [ "wp-block-sellkit-accept-reject-button sellkit-accept-reject-button-widget", "file:../../../../assets/dist/blocks/accept-reject-button/frontend.css" ]
+}

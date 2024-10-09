@@ -1,0 +1,136 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "name": "sellkit-blocks/optin",
+  "title": "Optin",
+  "category": "sellkit-blocks",
+  "textdomain": "sellkit",
+  "attributes": {
+    "locations": {
+      "type": "array",
+      "default": []
+    },
+    "selectedCRM": {
+      "type": "array",
+      "default": []
+    },
+    "activeCampaign": {
+      "type": "object",
+      "default": {}
+    },
+    "convertKit": {
+      "type": "object",
+      "default": {}
+    },
+    "drip": {
+      "type": "object",
+      "default": {}
+    },
+    "getResponse": {
+      "type": "object",
+      "default": {}
+    },
+    "mailChimp": {
+      "type": "object",
+      "default": {}
+    },
+    "mailerLite": {
+      "type": "object",
+      "default": {}
+    },
+    "webhookURL": {
+      "type": "string",
+      "default": ""
+    },
+    "afterSubmitDownload": {
+      "type": "string",
+      "default": ""
+    },
+    "afterSubmitDownloadURL": {
+      "type": "string",
+      "default": ""
+    },
+    "afterSubmitDownloadMedia": {
+      "type": "object",
+      "default": {
+        "url": "",
+        "filename": ""
+      }
+    },
+    "afterSubmitRedirect": {
+      "type": "string",
+      "default": ""
+    },
+    "afterSubmitRedirectURL": {
+      "type": "string",
+      "default": ""
+    },
+    "customMessagesEnabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "successCustomMessage": {
+      "type": "string",
+      "default": "The form was sent successfully!"
+    },
+    "errorsCustomMessage": {
+      "type": "string",
+      "default": "Please check the errors."
+    },
+    "requiredCustomMessage": {
+      "type": "string",
+      "default": "Required"
+    },
+    "clientId": {
+        "type": "string",
+        "default": ""
+    },
+    "postId": {
+        "type": "number",
+        "default": 0
+    },
+    "formId": {
+        "type": "string",
+        "default": ""
+    },
+    "textAlign": {
+			"type": "string"
+		},
+    "submitButtonText": {
+			"type": "string",
+      "default": "Subscribe"
+		}
+  },
+  "supports": {
+    "color": {
+			"gradients": true,
+			"heading": true,
+			"__experimentalDefaultControls": {
+				"background": true,
+				"text": true
+			}
+		},
+    "spacing": {
+			"margin": true,
+			"padding": true
+		},
+    "typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"__experimentalFontStyle": true,
+			"__experimentalFontWeight": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalTextTransform": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true
+			}
+		},
+    "inserter": true,
+		"anchor": true,
+		"alignWide": true,
+    "html": false,
+    "multiple": true,
+		"reusable": false
+	},
+  "editorStyle": "file:../../../../assets/dist/blocks/optin/editor.css",
+  "style": [ "wp-block-sellkit-optin", "file:../../../../assets/dist/blocks/optin/frontend.css" ]
+}

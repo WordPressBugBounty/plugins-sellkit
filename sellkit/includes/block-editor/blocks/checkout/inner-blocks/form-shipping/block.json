@@ -1,0 +1,62 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "name": "sellkit-inner-blocks/checkout-form-shipping",
+    "title": "Form Shipping",
+    "apiVersion": 3,
+    "supports": {
+      "inserter": true,
+      "color": {
+        "gradients": true,
+        "__experimentalDefaultControls": {
+          "background": true,
+          "text": true
+        }
+      },
+      "spacing": {
+        "margin": true,
+        "padding": true,
+        "__experimentalDefaultControls": {
+          "margin": false,
+          "padding": false
+        }
+      },
+      "typography": {
+        "fontSize": true,
+        "lineHeight": true,
+        "__experimentalFontFamily": true,
+        "__experimentalFontStyle": true,
+        "__experimentalFontWeight": true,
+        "__experimentalLetterSpacing": true,
+        "__experimentalTextTransform": true,
+        "__experimentalTextDecoration": true,
+        "__experimentalWritingMode": true,
+        "__experimentalDefaultControls": {
+          "fontSize": true
+        }
+      },
+      "shadow": true,
+      "align": [ "wide", "full" ],
+      "alignWide": true,
+      "textAlign": {
+        "type": "string",
+        "default": "center"
+      },
+      "className": true,
+      "__experimentalSelector": ".sellkit-checkout-form-shipping-block-editor"
+    },
+    "attributes": {
+      "customClassName": {
+        "type": "string",
+        "default": ""
+      },
+      "locations": {
+        "type": "array",
+        "default": []
+      },
+      "shippingHeadingText": {
+        "type": "string",
+        "default": "Shipping address"
+      }
+    },
+    "parent": [ "sellkit-blocks/checkout" ]
+  }

@@ -3,7 +3,7 @@
  * Plugin Name: Sellkit
  * Plugin URI: https://getsellkit.com/
  * Description: Build unlimited sales funnels, one-click order bumps and upsells, custom thank you pages, and more. The free version of SellKit also offers a huge round of features to optimize your WooCommerce store: build and style single or multi-step checkout pages with advanced styling options. Add, remove & reorder form fields. Fasten the form submission process with pre-populated form data, Instant form validation, and removing cart page. All this and more is 100% free and for an unlimited number of sites.
- * Version: 2.0.5
+ * Version: 2.3.0
  * Author: Artbees
  * Author URI: https://artbees.net
  * Text Domain: sellkit
@@ -238,10 +238,22 @@ if ( ! class_exists( 'Sellkit' ) ) {
 		 * @since 1.1.0
 		 */
 		public function plugins_loaded() {
+			if ( 'elementor' === $this->page_builder() ) {
+				$this->load_files( [
+					'elementor/class',
+				] );
+			}
+
 			$this->load_files( [
-				'elementor/class',
 				'admin/class-promote-sellkit-pro',
 			] );
+
+			if ( class_exists( 'WooCommerce' ) && 'gutenberg' === $this->page_builder() ) {
+				$this->load_files( [
+					'block-editor/helper',
+					'block-editor/class',
+				] );
+			}
 		}
 
 		/**
@@ -523,7 +535,32 @@ if ( ! class_exists( 'Sellkit' ) ) {
 				'sellkitProIsActive' => $this->has_pro,
 				'wcIsActivated' => $this->has_valid_dependencies(),
 				'activeTheme' => wp_get_theme()->get( 'Name' ),
+				'pageBuilder' => $this->page_builder(),
 			];
+		}
+
+		/**
+		 * Get page builder.
+		 *
+		 * @since 2.3.0
+		 * @return string
+		 */
+		public function page_builder() {
+			$default = 'gutenberg';
+
+			if ( class_exists( 'Elementor\Plugin' ) ) {
+				$default = 'elementor';
+			}
+
+			$page_builder = sellkit_get_option( 'page_builder', '' );
+
+			if ( empty( $page_builder ) ) {
+				sellkit_update_option( 'page_builder', $default );
+
+				return $default;
+			}
+
+			return $page_builder;
 		}
 
 		/**

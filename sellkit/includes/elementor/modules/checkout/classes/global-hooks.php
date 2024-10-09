@@ -957,7 +957,7 @@ class Global_Hooks {
 		if (
 			'default' === $source &&
 			array_key_exists( 'data', $step_data ) &&
-			array_key_exists( 'list', $step_data['data']['products'] )
+			( ! empty( $step_data['data']['products'] ) && array_key_exists( 'list', $step_data['data']['products'] ) )
 		) {
 			$products = $step_data['data']['products']['list'];
 		}
@@ -1000,8 +1000,8 @@ class Global_Hooks {
 
 			foreach ( $products as $product_id => $product_details ) {
 				if ( $item_id === $product_id ) {
-					$discount_type  = $product_details['discountType'];
-					$discount_value = $product_details['discount'];
+					$discount_type  = isset( $product_details['discountType'] ) ? $product_details['discountType'] : '';
+					$discount_value = isset( $product_details['discount'] ) ? $product_details['discount'] : '';
 
 					$price = Helper::calculate_discount( $item_id, $discount_type, $discount_value );
 				}
@@ -1326,7 +1326,7 @@ class Global_Hooks {
 			! empty( $upsell_data['data']['products']['list'] )
 		) {
 			$product_id = array_key_first( $upsell_data['data']['products']['list'] );
-			$qty        = $upsell_data['data']['products']['list'][ $product_id ]['quantity'];
+			$qty        = ! empty( $upsell_data['data']['products']['list'][ $product_id ] ) ? $upsell_data['data']['products']['list'][ $product_id ]['quantity'] : 0;
 		}
 
 		if ( empty( $qty ) ) {

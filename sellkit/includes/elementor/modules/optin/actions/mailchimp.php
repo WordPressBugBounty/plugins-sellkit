@@ -8,6 +8,7 @@ use Sellkit_Elementor_Optin_Ajaxhandler as AjaxHandler;
  * Initializing the MailChimp action by extending Action base and using CRM trait.
  *
  * @since 1.5.0
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Sellkit_Elementor_Optin_Action_Mailchimp extends Sellkit_Elementor_Optin_Action_Base {
 	use Sellkit_Elementor_Optin_CRM;
@@ -250,6 +251,13 @@ class Sellkit_Elementor_Optin_Action_Mailchimp extends Sellkit_Elementor_Optin_A
 		];
 	}
 
+	/**
+	 * Create the subscriber object for MailChimp.
+	 *
+	 * @since 1.5.0
+	 * @return array
+	 * @SuppressWarnings(PHPMD.NPathComplexity)
+	 */
 	protected function create_subscriber_object() {
 		$mapped_fields  = $this->get_field_mappings();
 		$subscriber     = [
@@ -302,7 +310,85 @@ class Sellkit_Elementor_Optin_Action_Mailchimp extends Sellkit_Elementor_Optin_A
 			$subscriber['interests'] = array_fill_keys( $groups, true );
 		}
 
+		if ( isset( $subscriber['merge_fields'] ) && ! empty( $subscriber['merge_fields']['BIRTHDAY'] ) ) {
+			$formatted_birthday = date( 'Y/m/d', strtotime( $subscriber['merge_fields']['BIRTHDAY'] ) );
+
+			$subscriber['merge_fields']['BIRTHDAY'] = $formatted_birthday;
+		}
+
+		if ( isset( $subscriber['merge_fields'] ) && ! empty( $subscriber['merge_fields']['ADDRESS'] ) ) {
+			$fields            = $this->ajax_handler->form_data['fields'];
+			$formatted_address = $subscriber['merge_fields']['ADDRESS'];
+
+			$mapping_fields = $this->ajax_handler->form['settings'][ $this->get_name() . '_fields_mapping' ];
+
+			foreach ( $mapping_fields as $map_field ) {
+				if ( ! isset( $map_field['remote_field'] ) || empty( $map_field['local_field'] ) ) {
+					continue;
+				}
+
+				if ( 'ADDRESS' !== $map_field['remote_field'] ) {
+					continue;
+				}
+
+				if ( empty( $fields[ "hidden_{$map_field['local_field']}" ] ) ) {
+					continue;
+				}
+
+				$formatted_address = $this->handle_mailchimp_address( $fields, $map_field );
+			}
+
+			$subscriber['merge_fields']['ADDRESS'] = $formatted_address;
+		}
+
 		return $subscriber;
+	}
+
+	/**
+	 * Handle the address field for MailChimp.
+	 *
+	 * @param array $fields
+	 * @param array $map_field
+	 * @since 2.3.0
+	 * @return array
+	 */
+	protected function handle_mailchimp_address( $fields, $map_field ) {
+		if ( empty( $fields[ "hidden_{$map_field['local_field']}" ] ) ) {
+			return [];
+		}
+
+		$address_json = stripslashes( $fields[ "hidden_{$map_field['local_field']}" ] );
+		$addresses    = json_decode( $address_json, true );
+
+		$mapping = [
+			'addr1'   => [ 'street_number', 'route' ],
+			'city'    => 'locality',
+			'state'   => 'administrative_area_level_1',
+			'zip'     => 'postal_code',
+			'country' => 'country'
+		];
+
+		$address_data = [];
+
+		foreach ( $mapping as $mailchimp_key => $source_keys ) {
+			if ( is_array( $source_keys ) ) {
+				$value = '';
+
+				foreach ( $source_keys as $key ) {
+					if ( ! empty( $addresses[ $key ] ) ) {
+						$value .= $addresses[ $key ] . ' ';
+					}
+				}
+
+				$address_data[ $mailchimp_key ] = trim( $value );
+
+				continue;
+			}
+
+			$address_data[ $mailchimp_key ] = ! empty( $addresses[ $source_keys ] ) ? $addresses[ $source_keys ] : '';
+		}
+
+		return $address_data;
 	}
 
 	protected function subscribe( $subscriber_data, $list_id ) {

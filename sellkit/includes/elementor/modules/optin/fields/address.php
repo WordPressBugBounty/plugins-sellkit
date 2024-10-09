@@ -16,6 +16,19 @@ class Sellkit_Elementor_Optin_Field_Address extends Sellkit_Elementor_Optin_Fiel
 		?>
 		<input <?php echo $this->widget->get_render_attribute_string( 'field-' . esc_attr( $this->get_id() ) ); ?>>
 		<?php
+
+		$attributes = [
+			'type'        => 'hidden',
+			'name'        => 'fields[hidden_' . $this->get_id() . ']',
+			'id'          => 'optin-field-hidden-' . $this->get_id(),
+			'class'       => $this->get_class(),
+			'data-type'   => 'hidden',
+		];
+
+		$this->widget->add_render_attribute( 'field-hidden-' . $this->get_id(), $attributes );
+		?>
+		<input <?php echo $this->widget->get_render_attribute_string( 'field-hidden-' . $this->get_id() ); ?>>
+		<?php
 	}
 
 	public static function get_additional_controls() {

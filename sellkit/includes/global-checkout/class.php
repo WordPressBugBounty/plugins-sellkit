@@ -13,6 +13,7 @@ use Sellkit\Funnel\Steps\Checkout as CheckoutStep;
  * @SuppressWarnings(PHPMD.NPathComplexity)
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @since 1.7.4
  */
 class Checkout {
@@ -20,13 +21,52 @@ class Checkout {
 	const SELLKIT_GLOBAL_CHECKOUT_HEADER_FOOTER_TEMPLATE = 'sellkit_global_checkout_header_footer_templates';
 
 	/**
+	 * Current post ID.
+	 *
+	 * @since 2.3.0
+	 * @var null|integer
+	 */
+	public $post_id = null;
+
+	/**
 	 * Construct.
 	 *
 	 * @since 1.7.4
 	 */
 	public function __construct() {
+		add_action( 'wp', [ $this, 'checkout_block_bump_query_var' ] );
 		add_action( 'wp', [ $this, 'init_sellkit_global_checkout' ] );
 		add_action( 'wp_ajax_handle_sellkit_global_checkout_ajax_requests', [ $this, 'handle_ajax_requests' ] );
+	}
+
+	/**
+	 * Order bump for sellkit checkout block
+	 *
+	 * @since 2.3.0
+	 */
+	public function checkout_block_bump_query_var() {
+		$global_checkout_id = get_option( self::SELLKIT_GLOBAL_CHECKOUT_OPTION, 0 );
+
+		$steps     = get_post_meta( $global_checkout_id, 'nodes', true );
+		$bump_data = [];
+
+		if ( ! is_array( $steps ) ) {
+			return;
+		}
+
+		foreach ( $steps as $step ) {
+			$step['type'] = (array) $step['type'];
+
+			if ( 'checkout' === $step['type']['key'] ) {
+				$bump_data = ! empty( $step['bump'] ) ? $step['bump'] : [];
+			}
+		}
+
+		if ( ! empty( $bump_data ) ) {
+			$bump_data = $this->get_valid_bumps( $bump_data );
+
+			set_query_var( 'bump_data', $bump_data );
+		}
 	}
 
 	/**
@@ -40,8 +80,7 @@ class Checkout {
 		if (
 			0 === $global_checkout_id ||
 			'publish' !== get_post_status( (int) $global_checkout_id ) ||
-			! is_checkout() ||
-			! defined( 'ELEMENTOR_VERSION' )
+			( function_exists( 'is_checkout' ) && ! is_checkout() )
 		) {
 			return;
 		}
@@ -80,21 +119,54 @@ class Checkout {
 		// Remove previous content.
 		remove_all_filters( 'the_content' );
 
-		// Set the page content.
-		add_filter( 'the_content', function() use ( $checkout_id ) {
-			ob_Start();
-			echo Elementor::instance()->frontend->get_builder_content_for_display( (int) $checkout_id, true );
-			return ob_get_clean();
-		}, 5 );
+		if ( defined( 'ELEMENTOR_VERSION' ) && 'elementor' === sellkit()->page_builder() ) {
+			// Set the page content.
+			add_filter( 'the_content', function() use ( $checkout_id ) {
+				ob_Start();
+				echo Elementor::instance()->frontend->get_builder_content_for_display( (int) $checkout_id, true );
+				return ob_get_clean();
+			}, 5 );
 
-		// Set sellkit canvas templates as the page template.
-		add_action( 'template_redirect', function() {
-			sellkit()->load_files( [
-				'templates/canvas'
-			] );
+			// Set sellkit canvas templates as the page template.
+			add_action( 'template_redirect', function() {
+				sellkit()->load_files( [
+					'templates/canvas'
+				] );
 
-			exit;
-		} );
+				exit;
+			} );
+		}
+
+		if ( 'gutenberg' === sellkit()->page_builder() ) {
+			$this->load_checkout_block_frontend();
+
+			$checkout_post = get_post( $checkout_id );
+
+			global $post;
+			$post = $checkout_post; // phpcs:ignore:WordPress.WP.GlobalVariablesOverride.OverrideProhibited
+			setup_postdata( $post );
+
+			$content = do_blocks( $post->post_content );
+
+			$content = apply_filters( 'the_content', $content );
+
+			add_filter( 'the_content', function() use ( $content ) {
+				ob_Start();
+
+				echo $content; // phpcs:ignore:WordPress.Security.EscapeOutput.OutputNotEscaped
+
+				return ob_get_clean();
+			}, 5 );
+
+			// Set sellkit canvas templates as the page template.
+			add_action( 'template_redirect', function() {
+				sellkit()->load_files( [
+					'templates/default-canvas'
+				] );
+
+				exit;
+			} );
+		}
 
 		add_filter( 'sellkit_global_checkout_activated', function() {
 			return true;
@@ -152,6 +224,76 @@ class Checkout {
 
 			return $default;
 		} );
+	}
+
+	/**
+	 * Load checkout block on frontend.
+	 *
+	 * @since 2.3.0
+	 */
+	public function load_checkout_block_frontend() {
+		global $post;
+
+		if ( empty( $post->post_content ) ) {
+			return;
+		}
+
+		$this->post_id = $post->ID;
+
+		$block = 'blocks/checkout';
+
+		$block_data = explode( '/', $block );
+		$block_name = $block_data[1];
+
+		$class_name = str_replace( '-', ' ', $block_name );
+		$class_name = str_replace( ' ', '_', ucwords( $class_name ) );
+		$class_name = "Sellkit\blocks\Render\\{$class_name}";
+		$class_path = 'block-editor/' . $block . '/index';
+
+		sellkit()->load_files( [
+			$class_path,
+		] );
+
+		$new_class = new $class_name( $this->post_id );
+
+		if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( "sellkit-blocks/{$block_name}" ) ) {
+			$this->register_inner_blocks_by_parent( $new_class );
+			$new_class->register_block_meta();
+		}
+	}
+
+	/**
+	 * Register inner blocks by parent.
+	 *
+	 * @param Object $parent_class Parent class name.
+	 * @since 2.3.0
+	 * @return void
+	 */
+	private function register_inner_blocks_by_parent( $parent_class ) {
+		if ( ! method_exists( $parent_class, 'has_inner_blocks' ) ) {
+			return;
+		}
+
+		$inner_blocks = $parent_class->get_inner_block();
+
+		sellkit()->load_files( $inner_blocks );
+
+		foreach ( $inner_blocks as $key => $value ) {
+			if ( isset( $this->inner_blocks[ "blocks/{$key}" ] ) ) {
+				continue;
+			}
+
+			$inner_block_class = 'Sellkit\Blocks\Inner_Block\\' . str_replace( '-', '_', ucwords( $key ) );
+
+			if ( ! class_exists( $inner_block_class ) ) {
+				continue;
+			}
+
+			$inner_block_instance = new $inner_block_class( $this->post_id );
+			if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( "sellkit-inner-blocks/{$key}" ) ) {
+				$inner_block_instance->register_block_meta();
+			}
+		}
 	}
 
 	/**

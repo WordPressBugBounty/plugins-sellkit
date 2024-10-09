@@ -312,6 +312,8 @@ class Checkout {
 	 *
 	 * @since 1.5.0
 	 * @access private
+	 *
+	 * @SuppressWarnings(PHPMD.NPathComplexity)
 	 */
 	private function check_bump_acceptance( $order ) {
 		if (
@@ -351,7 +353,7 @@ class Checkout {
 		$old_values = [];
 
 		// Getting old data.
-		$result = $database->get( 'funnel_contact', [ 'id' => $_SESSION['entered_funnel_id'] ] );
+		$result = $database->get( 'funnel_contact', [ 'id' => isset( $_SESSION['entered_funnel_id'] ) ? $_SESSION['entered_funnel_id'] : '' ] );
 
 		if ( ! empty( $result[0]['order_bump'] ) ) {
 			$old_values = unserialize( $result[0]['order_bump'] ); // phpcs:ignore
@@ -362,7 +364,7 @@ class Checkout {
 		$database->update(
 			'funnel_contact',
 			[ 'order_bump' => $new_values ],
-			[ 'id' => $_SESSION['entered_funnel_id'] ]
+			[ 'id' => isset( $_SESSION['entered_funnel_id'] ) ? $_SESSION['entered_funnel_id'] : '' ]
 		);
 	}
 

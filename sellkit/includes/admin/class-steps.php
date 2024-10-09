@@ -383,6 +383,10 @@ class Sellkit_Admin_Steps {
 			return $template;
 		}
 
+		if ( has_blocks( $post ) ) {
+			return $template;
+		}
+
 		remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head' );
 		add_filter( 'next_post_rel_link', '__return_empty_string' );
 		add_filter( 'previous_post_rel_link', '__return_empty_string' );

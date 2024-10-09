@@ -101,7 +101,9 @@ class Facebook extends Settings_Integration {
 			return;
 		}
 
-		$sellkit_page_meta = $post_meta[0]['type']['key'];
+		$first_index = array_key_first( $post_meta );
+
+		$sellkit_page_meta = $post_meta[ $first_index ]['type']['key'];
 		$fb_events_script  = '';
 
 		foreach ( $fb_pixel_events as $event ) {

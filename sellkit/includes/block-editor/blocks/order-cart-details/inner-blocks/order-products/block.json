@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "name": "sellkit-inner-blocks/order-products",
+  "title": "Order Products",
+  "apiVersion": 3,
+  "supports": {
+    "inserter": true,
+    "color": {
+      "gradients": true,
+      "link": true,
+      "__experimentalDefaultControls": {
+        "background": true,
+        "text": true
+      }
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "__experimentalDefaultControls": {
+        "margin": false,
+        "padding": false
+      }
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalWritingMode": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true
+      }
+    },
+    "shadow": true,
+    "align": [ "wide", "full" ],
+    "alignWide": true,
+    "className": true,
+    "__experimentalSelector": ".sellkit-order-cart-products"
+  },
+  "attributes": {
+    "customClassName": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "parent": [ "sellkit-blocks/order-cart-details" ]
+}

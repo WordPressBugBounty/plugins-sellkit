@@ -1,0 +1,74 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "name": "sellkit-inner-blocks/checkout-review-order",
+    "title": "Review Order",
+    "apiVersion": 3,
+    "supports": {
+      "inserter": true,
+      "color": {
+        "gradients": true,
+        "__experimentalDefaultControls": {
+          "background": true,
+          "text": true
+        }
+      },
+      "spacing": {
+        "margin": true,
+        "padding": true,
+        "__experimentalDefaultControls": {
+          "margin": false,
+          "padding": false
+        }
+      },
+      "typography": {
+        "fontSize": true,
+        "lineHeight": true,
+        "__experimentalFontFamily": true,
+        "__experimentalFontStyle": true,
+        "__experimentalFontWeight": true,
+        "__experimentalLetterSpacing": true,
+        "__experimentalTextTransform": true,
+        "__experimentalTextDecoration": true,
+        "__experimentalWritingMode": true,
+        "__experimentalDefaultControls": {
+          "fontSize": true
+        }
+      },
+      "shadow": true,
+      "align": [ "wide", "full" ],
+      "alignWide": true,
+      "textAlign": {
+        "type": "string",
+        "default": "center"
+      },
+      "className": true,
+      "__experimentalSelector": ".sellkit-checkout-review-order-block-editor"
+    },
+    "attributes": {
+      "customClassName": {
+        "type": "string",
+        "default": ""
+      },
+      "reviewHeadingText": {
+        "type": "string",
+        "default": "Your Order"
+      },
+      "couponButtonText": {
+        "type": "string",
+        "default": ""
+      },
+      "couponPlaceholderText": {
+        "type": "string",
+        "default": ""
+      },
+      "disableCartEditing": {
+        "type": "boolean",
+        "default": false
+      },
+      "disableCoupon": {
+        "type": "boolean",
+        "default": false
+      }
+    },
+    "parent": [ "sellkit-blocks/checkout" ]
+  }

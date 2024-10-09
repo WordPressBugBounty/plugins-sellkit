@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "name": "sellkit-blocks/smart-coupon",
+  "title": "Smart Coupon",
+  "category": "sellkit-blocks",
+  "textdomain": "sellkit",
+  "icon": "media-document",
+  "attributes": {},
+  "supports": {
+    "inserter": true,
+    "anchor": true,
+    "align": [ "wide", "full" ],
+    "alignWide": true,
+    "html": false,
+    "multiple": true,
+    "reusable": false
+ },
+  "editorStyle": "file:../../../../assets/dist/blocks/smart-coupon/editor.css",
+  "style": [ "wp-block-sellkit-smart-coupon sellkit-smart-coupon-widget", "file:../../../../assets/dist/blocks/smart-coupon/frontend.css" ]
+}

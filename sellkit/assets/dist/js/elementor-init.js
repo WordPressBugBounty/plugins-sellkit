@@ -1712,9 +1712,58 @@ var Optin = elementorModules.frontend.handlers.Base.extend({
     }
 
     _.each(addressFields, function (input) {
-      new google.maps.places.Autocomplete(input, {
+      var autocomplete = new google.maps.places.Autocomplete(input, {
         types: ['geocode'],
         fields: ['address_components']
+      });
+      autocomplete.addListener('place_changed', function () {
+        var place = autocomplete.getPlace(); // Extract address components
+
+        var address = {
+          street_number: '',
+          route: '',
+          locality: '',
+          administrative_area_level_1: '',
+          country: '',
+          postal_code: ''
+        }; // Map Google Maps address components to your address object
+
+        place.address_components.forEach(function (component) {
+          var componentType = component.types[0];
+
+          switch (componentType) {
+            case 'street_number':
+              address.street_number = component.long_name;
+              break;
+
+            case 'route':
+              address.route = component.long_name;
+              break;
+
+            case 'locality':
+              address.locality = component.long_name;
+              break;
+
+            case 'administrative_area_level_1':
+              address.administrative_area_level_1 = component.long_name;
+              break;
+
+            case 'country':
+              address.country = component.long_name;
+              break;
+
+            case 'postal_code':
+              address.postal_code = component.long_name;
+              break;
+          }
+        }); // Combine street number and route for the full street address
+
+        var addressString = JSON.stringify(address);
+        var addressHidenField = input.nextElementSibling;
+
+        if (addressHidenField && addressHidenField.type === 'hidden') {
+          addressHidenField.value = addressString;
+        }
       });
     });
   }
