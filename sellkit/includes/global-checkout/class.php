@@ -99,7 +99,7 @@ class Checkout {
 			$step['type'] = (array) $step['type'];
 
 			if ( 'checkout' === $step['type']['key'] ) {
-				$checkout_id       = $step['page_id'];
+				$checkout_id       = apply_filters( 'wpml_object_id', $step['page_id'], 'sellkit_step', true );
 				$bump_data         = ! empty( $step['bump'] ) ? $step['bump'] : [];
 				$optimization_data = ! empty( $step['data']['optimization'] ) ? $step['data']['optimization'] : '';
 				$funnel_id         = isset( $step['funnel_id'] ) ? $step['funnel_id'] : 0;

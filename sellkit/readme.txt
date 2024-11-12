@@ -4,7 +4,7 @@ Donate link: https://getsellkit.com/
 Tags: checkout optimizer, optimized checkout, sales funnel, smart coupon, checkout alert
 Requires at least: 5.6
 Tested up to: 6.6
-Stable tag: 2.3.0
+Stable tag: 2.3.2
 Requires PHP: 7.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -274,6 +274,10 @@ Main functionalities are only compatible with Elementor at the moment. Compatibi
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
+= 2.3.2 - 2024-10-25 =
+* Improvement: Improved compatibility of widgets and features with the WPML plugin.
+* Improvement: Replaced Growmatik with ConvesioConvert in CRM integrations.
+
 = 2.3.0 - 2024-10-07 =
 * Bug Fix: Fixed incompatibility between Google Analytics and Facebook Pixel on the Global Checkout.
 * Bug Fix: Fixed PHP warnings on the Global Checkout.

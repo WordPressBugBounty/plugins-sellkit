@@ -82,7 +82,17 @@ class Thankyou extends Base_Step {
 			// For the new method( upsell popup ) we show thakyou page right away after checkout step.
 			$thankyou_id    = $this->find_funnel_thankyou_page( $funnel_id );
 			$next_step_link = add_query_arg( [ 'order-key' => $order_key ], get_permalink( $thankyou_id ) );
-			$last_price     = $order->get_total() - $order->get_total_discount() - $order->get_total_tax();
+
+			if ( class_exists( 'SitePress' ) ) {
+				$thankyou_data = $this->wpml_compatibility_get_thank_you_page_data( $thankyou_id );
+				$thankyou_id   = isset( $thankyou_data['id'] ) ? $thankyou_data['id'] : $thankyou_id;
+
+				if ( isset( $thankyou_data['lang'] ) ) {
+					$next_step_link = $this->wpml_compatibility_get_next_step_link( $thankyou_id, $order_key, $thankyou_data['lang'] );
+				}
+			}
+
+			$last_price = $order->get_total() - $order->get_total_discount() - $order->get_total_tax();
 
 			$this->contacts->add_total_spent( $last_price, $funnel_id );
 
@@ -95,6 +105,78 @@ class Thankyou extends Base_Step {
 			wp_safe_redirect( $next_step_link );
 			exit();
 		}
+	}
+
+	/**
+	 * Retrieves the translated thank you page data for WPML compatibility.
+	 *
+	 * This function checks the referring page to determine the current language
+	 * and retrieves the translated thank you page ID for that language.
+	 *
+	 * @since 2.3.2
+	 *
+	 * @param int $thankyou_id The ID of the default thank you page.
+	 *
+	 * @return array {
+	 *     An associative array containing the translated thank you page ID and language code.
+	 *
+	 *     @type int    $id   The translated thank you page ID or the original if no translation is found.
+	 *     @type string $lang The language code for the thank you page.
+	 * }
+	 */
+	private function wpml_compatibility_get_thank_you_page_data( $thankyou_id ) {
+		$referrer_url     = wp_get_referer();
+		$previous_page_id = 0;
+
+		$data = [
+			'id' => $thankyou_id,
+			'lang' => '',
+		];
+
+		if ( $referrer_url ) {
+			$previous_page_id = url_to_postid( $referrer_url );
+		}
+
+		if ( $previous_page_id ) {
+			$order_language_details = apply_filters( 'wpml_post_language_details', null, $previous_page_id );
+			$current_language       = $order_language_details['language_code'];
+
+			if ( ! empty( $current_language ) ) {
+				$thankyou_id_translated = apply_filters( 'wpml_object_id', $thankyou_id, 'sellkit_step', true, $current_language );
+
+				if ( ! empty( $thankyou_id_translated ) ) {
+					$data['id']   = $thankyou_id_translated;
+					$data['lang'] = $current_language;
+
+					return $data;
+				}
+			}
+
+			return $data;
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Generates the next step link with WPML compatibility.
+	 *
+	 * This function generates the next step link by retrieving the translated permalink
+	 * for the thank you page in the specified language and appending the order key as a query argument.
+	 *
+	 * @since 2.3.2
+	 *
+	 * @param int    $thankyou_id The ID of the thank you page.
+	 * @param string $order_key   The order key used for generating the next step link.
+	 * @param string $lang        The language code for the thank you page.
+	 *
+	 * @return string The next step link URL, including the translated permalink and order key.
+	 */
+	private function wpml_compatibility_get_next_step_link( $thankyou_id, $order_key, $lang ) {
+		$permalink      = apply_filters( 'wpml_permalink', get_permalink( $thankyou_id ), $lang );
+		$next_step_link = add_query_arg( [ 'order-key' => $order_key ], $permalink );
+
+		return $next_step_link;
 	}
 
 	/**

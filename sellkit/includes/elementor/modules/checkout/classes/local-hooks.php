@@ -1254,11 +1254,11 @@ class Local_Hooks {
 
 		foreach ( $upsell_data as $data ) {
 			$id    = 'sellkit_funnel_upsell_popup_' . $i;
-			$class = 'sellkit_funnel_upsell_popup sellkit_funnel_upsell_popup_' . $data['page_id'];
+			$class = 'sellkit_funnel_upsell_popup sellkit_funnel_upsell_popup_' . apply_filters( 'wpml_object_id', $data['page_id'], 'sellkit_step', true );
 			?>
 				<div class="<?php echo esc_attr( $class ); ?>" id="<?php echo esc_attr( $id ); ?>">
-					<?php echo Elementor::instance()->frontend->get_builder_content_for_display( $data['page_id'] ); ?>
-					<input type="hidden" class="identify" value="<?php echo esc_attr( $data['page_id'] ); ?>" >
+					<?php echo Elementor::instance()->frontend->get_builder_content_for_display( apply_filters( 'wpml_object_id', $data['page_id'], 'sellkit_step', true ) ); ?>
+					<input type="hidden" class="identify" value="<?php echo esc_attr( apply_filters( 'wpml_object_id', $data['page_id'], 'sellkit_step', true ) ); ?>" >
 				</div>
 			<?php
 			$i++;

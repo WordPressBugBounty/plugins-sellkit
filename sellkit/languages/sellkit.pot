@@ -1,14 +1,14 @@
 # Copyright (c) 2024 SellKit.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sellkit 2.3.0\n"
+"Project-Id-Version: Sellkit 2.3.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sellkit\n"
 "Last-Translator: Artbees Team <info@artbees.net>\n"
 "Language-Team: Artbees Team <info@artbees.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-10-07T05:13:31+00:00\n"
+"POT-Creation-Date: 2024-11-06T08:50:41+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: sellkit\n"
@@ -16,8 +16,8 @@ msgstr ""
 #. Plugin Name of the plugin
 #: includes/elementor/class.php:79
 #: includes/funnel/homepage.php:137
-#: sellkit.php:424
-#: sellkit.php:466
+#: sellkit.php:431
+#: sellkit.php:473
 msgid "Sellkit"
 msgstr ""
 
@@ -199,13 +199,13 @@ msgid "Visitor's Timezone"
 msgstr ""
 
 #: includes/admin/class-promote-sellkit-pro.php:111
-#: includes/admin/class-steps.php:96
+#: includes/admin/class-steps.php:98
 #: assets/dist/admin/sellkit.js:280
 msgid "Upsell"
 msgstr ""
 
 #: includes/admin/class-promote-sellkit-pro.php:112
-#: includes/admin/class-steps.php:97
+#: includes/admin/class-steps.php:99
 #: assets/dist/admin/sellkit.js:280
 msgid "Downsell"
 msgstr ""
@@ -214,73 +214,73 @@ msgstr ""
 msgid "(PRO)"
 msgstr ""
 
-#: includes/admin/class-steps.php:92
-msgid "Sales Page"
-msgstr ""
-
-#: includes/admin/class-steps.php:93
-#: assets/dist/admin/sellkit.js:280
-msgid "Checkout"
-msgstr ""
-
 #: includes/admin/class-steps.php:94
-msgid "Thank You"
+msgid "Sales Page"
 msgstr ""
 
 #: includes/admin/class-steps.php:95
 #: assets/dist/admin/sellkit.js:280
+msgid "Checkout"
+msgstr ""
+
+#: includes/admin/class-steps.php:96
+msgid "Thank You"
+msgstr ""
+
+#: includes/admin/class-steps.php:97
+#: assets/dist/admin/sellkit.js:280
 msgid "Condition"
 msgstr ""
 
-#: includes/admin/class-steps.php:99
+#: includes/admin/class-steps.php:101
 #: assets/dist/admin/sellkit.js:280
 msgid "Opt-in"
 msgstr ""
 
-#: includes/admin/class-steps.php:164
-#: includes/admin/class-steps.php:215
+#: includes/admin/class-steps.php:172
+#: includes/admin/class-steps.php:223
 #: includes/admin/funnel/class.php:50
 msgid "Please install and activate WooCommerce."
 msgstr ""
 
-#: includes/admin/class-steps.php:410
+#: includes/admin/class-steps.php:418
 msgctxt "flow step general name"
 msgid "Steps"
 msgstr ""
 
-#: includes/admin/class-steps.php:411
+#: includes/admin/class-steps.php:419
 msgctxt "flow step singular name"
 msgid "Step"
 msgstr ""
 
-#: includes/admin/class-steps.php:412
+#: includes/admin/class-steps.php:420
 msgid "Search Steps"
 msgstr ""
 
-#: includes/admin/class-steps.php:413
+#: includes/admin/class-steps.php:421
 msgid "All Steps"
 msgstr ""
 
-#: includes/admin/class-steps.php:414
+#: includes/admin/class-steps.php:422
 msgid "Edit Step"
 msgstr ""
 
-#: includes/admin/class-steps.php:415
+#: includes/admin/class-steps.php:423
 #: assets/dist/admin/sellkit.js:280
 msgid "View Step"
 msgstr ""
 
-#: includes/admin/class-steps.php:416
-#: includes/admin/class-steps.php:418
+#: includes/admin/class-steps.php:424
+#: includes/admin/class-steps.php:426
 #: assets/dist/admin/sellkit.js:266
 msgid "Add New"
 msgstr ""
 
-#: includes/admin/class-steps.php:417
+#: includes/admin/class-steps.php:425
 msgid "Update Step"
 msgstr ""
 
-#: includes/admin/class-steps.php:419
+#: includes/admin/class-steps.php:427
 msgid "New Step Name"
 msgstr ""
 
@@ -1446,6 +1446,114 @@ msgstr ""
 
 #: includes/block-editor/helper.php:467
 msgid "Failed to fetch data from MailerLite API"
+msgstr ""
+
+#: includes/compatibility/wpml/module.php:56
+msgid "Sellkit Accept Reject Button: Title"
+msgstr ""
+
+#: includes/compatibility/wpml/module.php:61
+msgid "Sellkit Accept Reject Button: Sub Title"
+msgstr ""
+
+#: includes/compatibility/wpml/module.php:73
+msgid "Sellkit Checkout: Place Order Button Text"
+msgstr ""
+
+#: includes/compatibility/wpml/module.php:78
+msgid "Sellkit Checkout: Empty cart Text"
+msgstr ""
+
+#: includes/compatibility/wpml/module.php:83
+msgid "Sellkit Checkout: Payment Description"
+msgstr ""
+
+#: includes/compatibility/wpml/module.php:88
+msgid "Sellkit Checkout: Billing Details Description"
+msgstr ""
+
+#: includes/compatibility/wpml/module.php:104
+msgid "Sellkit Optin: Submit Button Text"
+msgstr ""
+
+#: includes/compatibility/wpml/module.php:109
+msgid "Sellkit Optin: Submit Button Sub Text"
+msgstr ""
+
+#: includes/compatibility/wpml/module.php:114
+msgid "Sellkit Optin: Download URL"
+msgstr ""
+
+#: includes/compatibility/wpml/module.php:119
+msgid "Sellkit Optin: Redirect URL"
+msgstr ""
+
+#: includes/compatibility/wpml/module.php:124
+msgid "Sellkit Optin: Success Message"
+msgstr ""
+
+#: includes/compatibility/wpml/module.php:129
+msgid "Sellkit Optin: Error Message"
+msgstr ""
+
+#: includes/compatibility/wpml/module.php:134
+msgid "Sellkit Optin: Required Message"
+msgstr ""
+
+#: includes/compatibility/wpml/module.php:149
+msgid "Sellkit Order Cart Details: Label"
+msgstr ""
+
+#: includes/compatibility/wpml/module.php:161
+msgid "Sellkit Order Details: Heading"
+msgstr ""
+
+#: includes/compatibility/wpml/modules/checkout-billing.php:54
+msgid "Sellkit Checkout: Billing Fields Field Label"
+msgstr ""
+
+#: includes/compatibility/wpml/modules/checkout-billing.php:57
+msgid "Sellkit Checkout: Billing Fields Default Value"
+msgstr ""
+
+#: includes/compatibility/wpml/modules/checkout-billing.php:60
+msgid "Sellkit Checkout: Billing Fields Options"
+msgstr ""
+
+#: includes/compatibility/wpml/modules/checkout-shipping.php:54
+msgid "Sellkit Checkout: Shipping Fields Field Label"
+msgstr ""
+
+#: includes/compatibility/wpml/modules/checkout-shipping.php:57
+msgid "Sellkit Checkout: Shipping Fields Default Value"
+msgstr ""
+
+#: includes/compatibility/wpml/modules/checkout-shipping.php:60
+msgid "Sellkit Checkout: Shipping Fields Options"
+msgstr ""
+
+#: includes/compatibility/wpml/modules/optin.php:56
+msgid "Sellkit Optin: Form Fields Label"
+msgstr ""
+
+#: includes/compatibility/wpml/modules/optin.php:59
+msgid "Sellkit Optin: Form Fields Default Value"
+msgstr ""
+
+#: includes/compatibility/wpml/modules/optin.php:62
+msgid "Sellkit Optin: Form Fields Placeholder"
+msgstr ""
+
+#: includes/compatibility/wpml/modules/optin.php:65
+msgid "Sellkit Optin: Form Fields Options"
+msgstr ""
+
+#: includes/compatibility/wpml/modules/optin.php:68
+msgid "Sellkit Optin: Form Fields Acceptance Text"
+msgstr ""
+
+#: includes/compatibility/wpml/modules/order-details.php:52
+msgid "Sellkit Order Details: Items Label"
 msgstr ""
 
 #: includes/contact-segmentation/conditions.php:138
@@ -3265,7 +3373,6 @@ msgstr ""
 
 #: includes/elementor/modules/optin/actions/growmatik.php:34
 #: includes/elementor/modules/optin/module.php:114
-#: assets/dist/admin/sellkit.js:280
 msgid "Growmatik"
 msgstr ""
 
@@ -3484,8 +3591,8 @@ msgstr ""
 #: includes/elementor/modules/optin/controls/tab-content.php:137
 #: includes/elementor/modules/order-cart-details/widgets/order-cart-details.php:320
 #: includes/elementor/modules/order-details/widgets/order-details.php:126
-#: sellkit.php:466
-#: sellkit.php:467
+#: sellkit.php:473
+#: sellkit.php:474
 #: assets/dist/admin/sellkit.js:280
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: assets/dist/blocks/optin.js:14
@@ -4063,18 +4170,18 @@ msgstr ""
 msgid "Search..."
 msgstr ""
 
-#: sellkit.php:427
+#: sellkit.php:434
 #: assets/dist/admin/sellkit.js:280
 msgid "Dashboard"
 msgstr ""
 
-#: sellkit.php:428
+#: sellkit.php:435
 #: assets/dist/admin/sellkit.js:266
 #: assets/dist/admin/sellkit.js:280
 msgid "Funnels"
 msgstr ""
 
-#: sellkit.php:429
+#: sellkit.php:436
 #: assets/dist/admin/sellkit.js:280
 msgid "Global Checkout"
 msgstr ""
@@ -4880,6 +4987,10 @@ msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
 msgid " account."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "ConvesioConvert"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280

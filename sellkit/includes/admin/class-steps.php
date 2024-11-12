@@ -61,6 +61,8 @@ class Sellkit_Admin_Steps {
 		add_action( 'wp_loaded', [ $this, 'sellkit_steps_flush_rules' ] );
 		add_action( 'sellkit_after_toggle_status_sellkit-funnels', [ $this, 'update_steps_post_status' ], 10, 2 );
 		add_action( 'sellkit_funnels_after_delete_posts_sellkit-funnels', [ $this, 'remove_steps_pages' ], 10, 1 );
+
+		add_action( 'wp_loaded', [ $this, 'sellkit_set_sellkit_translation_mode' ] );
 	}
 
 	/**
@@ -113,6 +115,12 @@ class Sellkit_Admin_Steps {
 			$step['number']    = $step_number;
 
 			if ( array_key_exists( 'page_id', $step ) ) {
+				$translated_step = apply_filters( 'wpml_object_id', $step['page_id'], 'sellkit_step', true );
+
+				if ( $step['page_id'] !== $translated_step ) {
+					update_post_meta( $translated_step, 'step_data', $step );
+				}
+
 				update_post_meta( $step['page_id'], 'step_data', $step );
 			}
 		}
@@ -525,6 +533,39 @@ class Sellkit_Admin_Steps {
 				'ID' => $step['page_id'],
 				'post_status' => $new_status,
 			) );
+		}
+	}
+
+	/**
+	 * Make SellKit custom post types translatable by default and set step_data custom field to "Copy".
+	 *
+	 * @since 2.3.2
+	 */
+	public function sellkit_set_sellkit_translation_mode() {
+		if ( function_exists( 'wpml_load_settings_helper' ) ) {
+			global $sitepress;
+
+			if ( $sitepress instanceof SitePress ) {
+				$settings_helper = wpml_load_settings_helper();
+
+				$post_types = [
+					'sellkit_step',
+					'sellkit-discount',
+					'sellkit-coupon',
+					'sellkit-alert',
+				];
+
+				foreach ( $post_types as $post_type ) {
+					$settings_helper->set_post_type_translatable( $post_type );
+					$settings_helper->set_post_type_translation_unlocked_option( $post_type, true );
+
+					if ( class_exists( '\WPML\Settings\PostType\Automatic' ) ) {
+						\WPML\Settings\PostType\Automatic::set( $post_type, true );
+					}
+				}
+
+				do_action( 'wpml_save_custom_field_translation_option', 'step_data', WPML_COPY_CUSTOM_FIELD );
+			}
 		}
 	}
 }

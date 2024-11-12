@@ -184,6 +184,10 @@ class Checkout {
 		$global_checkout_id  = get_option( Global_Checkout::SELLKIT_GLOBAL_CHECKOUT_OPTION, 0 );
 		$default_checkout_id = wc_get_page_id( 'checkout' );
 
+		if ( ! empty( $default_checkout_id ) ) {
+			$default_checkout_id = apply_filters( 'wpml_object_id', $default_checkout_id, 'page', true );
+		}
+
 		if (
 			(int) $global_checkout_id > 0 &&
 			'publish' === get_post_status( $global_checkout_id ) &&
@@ -196,7 +200,7 @@ class Checkout {
 				$step['type'] = (array) $step['type'];
 
 				if ( 'checkout' === $step['type']['key'] ) {
-					$checkout_id = $step['page_id'];
+					$checkout_id = apply_filters( 'wpml_object_id', $step['page_id'], 'sellkit_step', true );
 				}
 			}
 
