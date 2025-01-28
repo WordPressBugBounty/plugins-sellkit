@@ -282,15 +282,20 @@ abstract class Base {
 	 * @param string $field html string.
 	 * @param array  $args checkout fields options.
 	 * @param string $key key of field.
+	 * @param string $value value of field.
 	 * @return void
 	 * @since 1.1.0
 	 */
-	public function final_html_structure( $field, $args, $key ) {
+	public function final_html_structure( $field, $args, $key, $value = null ) {
 		$args  = $this->additional_class( $args, $key );
 		$args  = $this->set_required_class( $args );
 		$args  = $this->make_sure_sellkit_native_classes_exists( $args );
 		$args  = $this->try_to_set_default_value( $args, $key );
 		$class = implode( ' ', $args['class'] );
+
+		if ( empty( $args['default'] ) && ! empty( $value ) ) {
+			$args['default'] = $value;
+		}
 
 		// Remove all classes of fields.
 		$field = preg_replace( '/class=".*?"/', '', $field, 1 );

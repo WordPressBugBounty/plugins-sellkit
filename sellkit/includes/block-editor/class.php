@@ -641,6 +641,7 @@ class Sellkit_Blocks {
 		return [
 			'wc' => [
 				'placeholder' => wc_placeholder_img_src(),
+				'shipping_destination' => get_option( 'woocommerce_ship_to_destination', 'billing' ),
 			],
 			'optin' => [
 				'types' => [

@@ -57,6 +57,14 @@ class Checkout {
 		$redirect_url      = ! empty( $optimization_data['closed_checkout_redirect_url'] ) ? $optimization_data['closed_checkout_redirect_url'] : site_url();
 		$reset_cart        = isset( $funnel_data['data']['products']['reset_cart'] ) ? $funnel_data['data']['products']['reset_cart'] : 'true';
 
+		$auto_apply_coupon_cookie_value = null;
+
+		if ( isset( $_COOKIE['sellkit_rejected_coupon'] ) ) {
+			// Get the value of the cookie.
+			$auto_apply_coupon_cookie_value = sanitize_text_field( wp_unslash( $_COOKIE['sellkit_rejected_coupon'] ) );
+			$auto_apply_coupon_cookie_value = explode( ',', $auto_apply_coupon_cookie_value );
+		}
+
 		add_action( 'template_redirect', function () use ( $funnel_data, $reset_cart ) {
 			$product_settings = ! empty( $funnel_data['data']['products']['settings'] ) ? $funnel_data['data']['products']['settings'] : '';
 			$bump_data        = ! empty( $funnel_data['bump'] ) ? $funnel_data['bump'] : '';
@@ -70,6 +78,8 @@ class Checkout {
 				$bump_data = $this->get_valid_bumps( $bump_data );
 
 				set_query_var( 'bump_data', $bump_data );
+			} else {
+				set_query_var( 'bump_data', [] );
 			}
 
 			set_query_var( 'funnel_reset_cart', $reset_cart );
@@ -129,6 +139,10 @@ class Checkout {
 
 		if ( self::apply_coupon_validation( $optimization_data ) ) {
 			foreach ( $optimization_data['auto_apply_coupons'] as $auto_apply_coupon ) {
+
+				if ( ! empty( $auto_apply_coupon_cookie_value ) && in_array( $auto_apply_coupon['label'], $auto_apply_coupon_cookie_value, true ) ) {
+					continue;
+				}
 				wc()->cart->add_discount( get_the_title( $auto_apply_coupon['value'] ) );
 			}
 

@@ -65,13 +65,13 @@ class Select extends Base {
 	public function field( $field, $args, $key ) {
 		echo '<span class="sellkit-select-appearance"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M201.4 342.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 274.7 86.6 137.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"/></svg></span>';
 
-		if ( 'shipping_country' === $key || 'billing_country' === $key ) {
-			$default = '';
-			if ( array_key_exists( 'default', $args ) ) {
-				$default = $args['default'];
-			}
+		$default_value = '';
+		if ( array_key_exists( 'default', $args ) ) {
+			$default_value = $args['default'];
+		}
 
-			$this->woocommerce_field_country( $key, $default );
+		if ( 'shipping_country' === $key || 'billing_country' === $key ) {
+			$this->woocommerce_field_country( $key, $default_value );
 
 			return;
 		}
@@ -89,7 +89,7 @@ class Select extends Base {
 
 			$states = WC()->countries->get_states( $country_code );
 
-			$this->woocommerce_field_state( $key, $args, $states );
+			$this->woocommerce_field_state( $key, $args, $states, $default_value );
 
 			return;
 		}
@@ -107,9 +107,6 @@ class Select extends Base {
 						data-placeholder="<?php echo esc_attr( $placeholder ); ?>"
 						data-label="<?php echo ( array_key_exists( 'label', $args ) ) ? esc_attr( $args['label'] ) : ''; ?>"
 					>
-						<?php
-							$default_value = ( array_key_exists( 'default', $args ) ) ? $args['default'] : '';
-						?>
 						<?php foreach ( $args['options'] as $value => $label ) : ?>
 							<?php
 								if ( $value === $default_value ) {
@@ -202,10 +199,11 @@ class Select extends Base {
 	 * @param string $key field key.
 	 * @param array  $args field options.
 	 * @param array  $states country states.
+	 * @param string $default_value field default value.
 	 * @since 1.1.0
 	 * @return void
 	 */
-	private function woocommerce_field_state( $key, $args, $states ) {
+	private function woocommerce_field_state( $key, $args, $states, $default_value ) {
 		$placeholder = $this->placeholder_required_value( $args );
 
 		?>
@@ -239,7 +237,12 @@ class Select extends Base {
 						<option value="">' . esc_html__( 'Select a state…', 'sellkit' ) . '</option>';
 
 						foreach ( $states as $state_key => $state_label ) {
-							$field .= '<option value="' . esc_attr( $state_key ) . '" >' . esc_html( $state_label ) . '</option>';
+							$selected = '';
+
+							if ( $default_value === $state_key ) {
+								$selected = 'selected';
+							}
+							$field .= '<option ' . $selected . '  value="' . esc_attr( $state_key ) . '" >' . esc_html( $state_label ) . '</option>';
 						}
 
 						$field .= '</select>';
@@ -252,6 +255,7 @@ class Select extends Base {
 							],
 							'option' => [
 								'value' => true,
+								'selected' => true,
 							],
 						];
 

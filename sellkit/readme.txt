@@ -4,7 +4,7 @@ Donate link: https://getsellkit.com/
 Tags: checkout optimizer, optimized checkout, sales funnel, smart coupon, checkout alert
 Requires at least: 5.6
 Tested up to: 6.6
-Stable tag: 2.3.2
+Stable tag: 2.3.3
 Requires PHP: 7.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -101,7 +101,7 @@ From engagement to sales, discover how your funnels are performing within the ch
 = More funnel builder features =
 
 * Facebook Pixel integration
-* Works with Elementor
+* Works with Elementor and Gutenberg
 * Built for Mobile
 
 == Optimize the checkout page and streamline the conversion ==
@@ -249,10 +249,11 @@ SellKit is fully integrated with:
 * Facebook Pixel
 * Google Analytics
 * Elementor page builder
+* Block Editor (Gateway)
 
 == NOTE ==
 
-Main functionalities are only compatible with Elementor at the moment. Compatibility with more builders are in development.
+Main functionalities are only compatible with Elementor and Gutenberg at the moment. Compatibility with more builders are in development.
 
 == Screenshots ==
 
@@ -274,6 +275,13 @@ Main functionalities are only compatible with Elementor at the moment. Compatibi
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
+= 2.3.3 - 2025-01-27 =
+* Bug Fix: Fixed display order bump.
+* Bug Fix: Fixed issues of funnel & global checkout.
+* Bug Fix: Fixed security issue.
+* Bug Fix: Fixed fatal error.
+* Bug Fix: Fixed issue of auto apply coupon in checkout widget.
+
 = 2.3.2 - 2024-10-25 =
 * Improvement: Improved compatibility of widgets and features with the WPML plugin.
 * Improvement: Replaced Growmatik with ConvesioConvert in CRM integrations.

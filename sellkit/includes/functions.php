@@ -174,3 +174,36 @@ if ( ! function_exists( 'array_key_last' ) ) {
 		return key( $array );
 	}
 }
+
+add_action( 'woocommerce_removed_coupon', 'sellkit_set_cookie_after_auto_apply_coupon_removed', 10, 1 );
+
+/**
+ * Create cookie for deleted auto apply coupon.
+ *
+ * @param string $coupon_code coupon code.
+ */
+function sellkit_set_cookie_after_auto_apply_coupon_removed( $coupon_code ) {
+	$cookie_value = null;
+	$parsed_url   = wp_parse_url( site_url() );
+	$domain       = $parsed_url['host'];
+
+	if ( isset( $_COOKIE['sellkit_rejected_coupon'] ) ) {
+		$cookie_value = sanitize_text_field( wp_unslash( $_COOKIE['sellkit_rejected_coupon'] ) );
+	}
+
+	$cookie_value = $cookie_value . ',' . $coupon_code;
+	setcookie( 'sellkit_rejected_coupon', $cookie_value, time() + 600, '/', $domain );
+}
+
+add_action( 'woocommerce_checkout_order_processed', 'sellkit_remove_rejected_auto_apply_coupon_cookie' );
+
+/**
+ * Remove cookie after make an order.
+ */
+function sellkit_remove_rejected_auto_apply_coupon_cookie() {
+	if ( isset( $_COOKIE['sellkit_rejected_coupon'] ) ) {
+		$parsed_url = wp_parse_url( site_url() );
+		$domain     = $parsed_url['host'];
+		setcookie( 'sellkit_rejected_coupon', '', time() - 600, '/', $domain );
+	}
+}

@@ -79,7 +79,6 @@ if ( ! WC()->cart->needs_shipping() ) {
 	<?php /* multi step - step 3 */ ?>
 	<?php do_action( 'sellkit-checkout-step-c-begins' ); ?>
 
-	<?php do_action( 'woocommerce_checkout_billing' ); ?>
 	<?php do_action( 'sellkit_checkout_after_term_and_condition' ); ?>
 	<?php
 		$order_button_text = apply_filters( 'sellkit-checkout-place-order-btn-text', __( 'Place Order', 'woocommerce' ) );

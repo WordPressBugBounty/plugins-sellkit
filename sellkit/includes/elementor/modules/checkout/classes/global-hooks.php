@@ -272,6 +272,14 @@ class Global_Hooks {
 			return;
 		}
 
+		$auto_apply_coupon_cookie_value = null;
+
+		if ( isset( $_COOKIE['sellkit_rejected_coupon'] ) ) {
+			// Get the value of the cookie.
+			$auto_apply_coupon_cookie_value = sanitize_text_field( wp_unslash( $_COOKIE['sellkit_rejected_coupon'] ) );
+			$auto_apply_coupon_cookie_value = explode( ',', $auto_apply_coupon_cookie_value );
+		}
+
 		// Help to apply funnel discount prices and coupons when changing product quantity.
 		self::apply_discounted_prices( wc()->cart, $funnel_id );
 		self::apply_discounted_prices( wc()->cart, $funnel_id, 'bumps' );
@@ -280,6 +288,9 @@ class Global_Hooks {
 			WC()->cart->remove_coupons();
 
 			foreach ( $optimization_data['auto_apply_coupons'] as $auto_apply_coupon ) {
+				if ( ! empty( $auto_apply_coupon_cookie_value ) && in_array( $auto_apply_coupon['label'], $auto_apply_coupon_cookie_value, true ) ) {
+					continue;
+				}
 				wc()->cart->add_discount( get_the_title( $auto_apply_coupon['value'] ) );
 			}
 
@@ -1190,6 +1201,14 @@ class Global_Hooks {
 		self::apply_discounted_prices( wc()->cart, $checkout_id );
 		self::apply_discounted_prices( wc()->cart, $checkout_id, 'bumps' );
 
+		$auto_apply_coupon_cookie_value = null;
+
+		if ( isset( $_COOKIE['sellkit_rejected_coupon'] ) ) {
+			// Get the value of the cookie.
+			$auto_apply_coupon_cookie_value = sanitize_text_field( wp_unslash( $_COOKIE['sellkit_rejected_coupon'] ) );
+			$auto_apply_coupon_cookie_value = explode( ',', $auto_apply_coupon_cookie_value );
+		}
+
 		// We should re apply coupons after each price changes. to make sure everything is correct.
 		$optimization_data = ! empty( $funnel_data['data']['optimization'] ) ? $funnel_data['data']['optimization'] : '';
 
@@ -1197,6 +1216,9 @@ class Global_Hooks {
 			WC()->cart->remove_coupons();
 
 			foreach ( $optimization_data['auto_apply_coupons'] as $auto_apply_coupon ) {
+				if ( ! empty( $auto_apply_coupon_cookie_value ) && in_array( $auto_apply_coupon['label'], $auto_apply_coupon_cookie_value, true ) ) {
+					continue;
+				}
 				wc()->cart->add_discount( get_the_title( $auto_apply_coupon['value'] ) );
 			}
 

@@ -347,7 +347,7 @@ class Local_Hooks {
 			$class = new $class();
 			$field = '';
 
-			$class->final_html_structure( $field, $details, $key );
+			$class->final_html_structure( $field, $details, $key, $checkout->get_value( $key ) );
 		}
 	}
 
@@ -435,7 +435,7 @@ class Local_Hooks {
 			$class = new $class();
 			$field = '';
 
-			$field = $class->final_html_structure( $field, $details, $key );
+			$field = $class->final_html_structure( $field, $details, $key, $checkout->get_value( $key ) );
 		}
 	}
 

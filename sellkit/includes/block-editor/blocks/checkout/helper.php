@@ -1718,7 +1718,7 @@ class Helper {
 	 * @since 2.3.0
 	 */
 	public function add_trigger_field_for_upsell_steps() {
-		echo sprintf( '<input type="hidden" name="sellkit_current_page_id" value="%1$s">',
+		echo sprintf( '<input type="hidden" id="sellkit_current_page_id" name="sellkit_current_page_id" value="%1$s">',
 			esc_attr( get_the_ID() )
 		);
 

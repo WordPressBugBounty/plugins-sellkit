@@ -55,9 +55,12 @@ class Multi_Step {
 		remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20 );
 		add_action( 'sellkit-checkout-step-c-begins', 'woocommerce_checkout_payment', 20 );
 
-		// Bring billing field before payment methods section.
-		remove_action( 'woocommerce_checkout_billing', [ WC()->checkout(), 'checkout_form_billing' ] );
-		add_action( 'sellkit-checkout-step-c-begins', [ WC()->checkout(), 'checkout_form_billing' ], 10 );
+		$shipping_destination = get_option( 'woocommerce_ship_to_destination', true );
+
+		if ( 'billing_only' !== $shipping_destination ) {
+			remove_action( 'woocommerce_checkout_billing', [ WC()->checkout(), 'checkout_form_billing' ] );
+			add_action( 'sellkit-checkout-step-c-begins', [ WC()->checkout(), 'checkout_form_billing' ], 10 );
+		}
 
 		// Sidebar order-review wrap.
 		add_action( 'sellkit-checkout-multistep-sidebar-begins', [ $this, 'sidebar_starts' ], 10 );

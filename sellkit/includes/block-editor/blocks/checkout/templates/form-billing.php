@@ -18,6 +18,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+$shipping_destination = get_option( 'woocommerce_ship_to_destination', true );
+
 ?>
 <div class="woocommerce-billing-fields sellkit-one-page-checkout-billing sellkit-checkout-local-fields">
 	<div class="sellkit-one-page-checkout-billing-header heading">
@@ -31,7 +33,7 @@ defined( 'ABSPATH' ) || exit;
 	</p>
 	<?php do_action( 'woocommerce_before_checkout_billing_form', $checkout ); ?>
 
-	<?php if ( WC()->cart->needs_shipping() ) : // Display this section just if we need to ship products. ?>
+	<?php if ( ! empty( WC()->cart ) && WC()->cart->needs_shipping() && 'billing_only' !== $shipping_destination ) : // Display this section just if we need to ship products. ?>
 
 	<div class="billing-method" >
 		<div>

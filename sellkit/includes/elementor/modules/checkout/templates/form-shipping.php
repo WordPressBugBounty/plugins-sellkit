@@ -37,7 +37,7 @@ if ( WC()->cart->needs_shipping() ) : ?>
 			</h4>
 			<?php endif; ?>
 
-			<div id="ship-to-different-address">
+			<div id="ship-to-different-address" style="display: none;">
 				<input id="ship-to-different-address-checkbox" class="woocommerce-form__input woocommerce-form__input-checkbox input-checkbox" type="checkbox" name="ship_to_different_address" value="1" checked/>
 			</div>
 

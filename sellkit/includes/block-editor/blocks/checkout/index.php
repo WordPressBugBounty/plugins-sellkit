@@ -51,7 +51,9 @@ class Checkout {
 	 * @return boolean
 	 */
 	public function get_inner_block() {
-		return [
+		$shipping_destination = get_option( 'woocommerce_ship_to_destination', true );
+
+		$inner_blocks = [
 			'checkout-contact-information' => 'block-editor/blocks/checkout/inner-blocks/contact-information/class',
 			'checkout-form-shipping' => 'block-editor/blocks/checkout/inner-blocks/form-shipping/class',
 			'checkout-cart-shipping' => 'block-editor/blocks/checkout/inner-blocks/cart-shipping/class',
@@ -60,6 +62,19 @@ class Checkout {
 			'checkout-payment' => 'block-editor/blocks/checkout/inner-blocks/payment/class',
 			'checkout-payment-continue' => 'block-editor/blocks/checkout/inner-blocks/payment-continue/class',
 		];
+
+		if ( 'billing_only' === $shipping_destination ) {
+			$inner_blocks = [
+				'checkout-contact-information' => 'block-editor/blocks/checkout/inner-blocks/contact-information/class',
+				'checkout-billing-details' => 'block-editor/blocks/checkout/inner-blocks/billing-details/class',
+				'checkout-cart-shipping' => 'block-editor/blocks/checkout/inner-blocks/cart-shipping/class',
+				'checkout-review-order' => 'block-editor/blocks/checkout/inner-blocks/review-order/class',
+				'checkout-payment' => 'block-editor/blocks/checkout/inner-blocks/payment/class',
+				'checkout-payment-continue' => 'block-editor/blocks/checkout/inner-blocks/payment-continue/class',
+			];
+		}
+		
+		return $inner_blocks;
 	}
 
 	/**

@@ -151,14 +151,28 @@ class Sellkit_Elementor_Checkout_Widget extends Sellkit_Elementor_Base_Widget {
 
 		$this->clear_sellkit_checkout_custom_hooks( $settings );
 
+		$shipping_destination = get_option( 'woocommerce_ship_to_destination', true );
+
 		if ( 'multi-step' === $settings['layout-type'] ) {
 			$this->apply_multi_step_design( $settings );
+
+			remove_action( 'woocommerce_checkout_billing', [ WC()->checkout(), 'checkout_form_billing' ] );
+
+			if ( 'billing_only' === $shipping_destination ) {
+				remove_action( 'woocommerce_checkout_shipping', [ WC()->checkout(), 'checkout_form_shipping' ] );
+				add_action( 'woocommerce_checkout_shipping', [ WC()->checkout(), 'checkout_form_billing' ], 10 );
+			}
 		}
 
 		if ( 'one-page' === $settings['layout-type'] ) {
-			// Bring billing field before payment methods section.
 			remove_action( 'woocommerce_checkout_billing', [ WC()->checkout(), 'checkout_form_billing' ] );
-			add_action( 'woocommerce_checkout_order_review', [ WC()->checkout(), 'checkout_form_billing' ], 10 );
+
+			if ( 'billing_only' === $shipping_destination ) {
+				remove_action( 'woocommerce_checkout_shipping', [ WC()->checkout(), 'checkout_form_shipping' ] );
+				add_action( 'woocommerce_checkout_shipping', [ WC()->checkout(), 'checkout_form_billing' ], 10 );
+			} else {
+				add_action( 'woocommerce_checkout_order_review', [ WC()->checkout(), 'checkout_form_billing' ], 10 );
+			}
 		}
 
 		$this->apply_local_hooks( $settings );

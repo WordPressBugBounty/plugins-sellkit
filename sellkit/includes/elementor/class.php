@@ -214,9 +214,19 @@ class Sellkit_Elementor {
 	 * @return array
 	 */
 	public function get_localize_data() {
+		$needs_shipping = '';
+
+		if ( function_exists( 'WC' ) ) {
+			$cart = WC()->cart;
+
+			if ( $cart && method_exists( $cart, 'needs_shipping' ) ) {
+				$needs_shipping = $cart->needs_shipping();
+			}
+		}
+
 		return [
 			'nonce' => wp_create_nonce( 'sellkit_elementor' ),
-			'wcNeedShipping' => ( function_exists( 'WC' ) ) ? WC()->cart->needs_shipping() : '',
+			'wcNeedShipping' => $needs_shipping,
 			'url' => [
 				'assets' => sellkit()->plugin_url() . 'assets/',
 			],

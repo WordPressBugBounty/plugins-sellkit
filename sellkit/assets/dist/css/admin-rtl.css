@@ -9,26 +9,32 @@
   padding-right: 0 !important;
   border-right-color: #635cff;
 }
+
 .sellkit-notice h3 {
   margin-top: 0;
 }
+
 .sellkit-notice .sellkit-notice-content {
   display: block;
   padding: 20px;
 }
+
 .sellkit-notice .sellkit-notice-content .sellkit-notice-content-footer {
   margin-top: 15px;
 }
+
 .sellkit-notice .sellkit-notice-content .sellkit-notice-content-header {
   margin-bottom: 15px;
   font-size: 16px;
   font-weight: bold;
 }
+
 .sellkit-notice .sellkit-notice-aside {
   width: 55px;
   background-color: rgba(223, 222, 255, 0.3);
   text-align: center;
 }
+
 .sellkit-notice .sellkit-notice-aside-icon {
   display: inline-block;
   width: 28px;
@@ -38,6 +44,7 @@
   background-size: cover;
   vertical-align: middle;
 }
+
 .sellkit-notice .sellkit-notice-loading-icon:after {
   display: inline-block;
   width: 28px;
@@ -47,17 +54,20 @@
   content: "";
   vertical-align: middle;
 }
+
 .sellkit-notice .sellkit-notice-content-footer .button-link {
   display: inline-block;
   margin-right: 25px;
   text-decoration: none;
 }
+
 .sellkit-notice .sellkit-notice-content-footer .button-link img {
   display: inline-block;
   position: relative;
   top: 3px;
   margin-left: 5px;
 }
+
 .sellkit-notice .sellkit-notice-partner-theme-body {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -73,17 +83,21 @@
   align-items: stretch;
   padding-top: 24px;
 }
+
 .sellkit-notice .sellkit-notice-partner-theme-body .sk-notice-title {
   font-size: 14px;
   font-weight: 400;
 }
+
 .sellkit-notice .sellkit-notice-partner-theme-body b {
   font-size: 15px;
 }
+
 .sellkit-notice .sellkit-notice-partner-theme-body .btn-content a {
   text-align: center;
   text-decoration: none;
 }
+
 .sellkit-notice .sellkit-notice-partner-theme-body .btn-content .btn-inner-wrap {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -109,11 +123,13 @@
   border-color: #e932f1;
   background-image: linear-gradient(115deg, #f9d2ed 0%, #fce9f6 48%, white 100%);
 }
+
 .sellkit-notice .sellkit-notice-partner-theme-body .btn-content .btn-inner-wrap .offer-text {
   color: #000000;
   font-size: 15px;
   text-decoration: underline;
 }
+
 .sellkit-notice .sellkit-notice-partner-theme-body .btn-content .btn-role {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -135,16 +151,20 @@
   font-weight: 500;
   line-height: 1.143;
 }
+
 .sellkit-notice .sellkit-notice-partner-theme-body .btn-content .offer-price-section {
   font-size: 14px;
   text-align: center;
 }
+
 .sellkit-notice .sellkit-notice-partner-theme-body .btn-content .offer-price-section .offer-price-discount {
   font-weight: 700;
 }
+
 .sellkit-notice .sellkit-notice-partner-theme-body .btn-content .offer-price {
   text-decoration: line-through;
 }
+
 .sellkit-notice .sellkit-notice-attributes-list {
   display: grid;
   margin-top: 27px;
@@ -154,6 +174,7 @@
   grid-template-columns: repeat(3, 1fr);
   row-gap: 10px;
 }
+
 .sellkit-notice .sellkit-notice-attributes-list > div {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -175,6 +196,7 @@
   font-size: 14px;
   font-weight: 400;
 }
+
 .sellkit-notice .sellkit-notice-attributes-list > div img {
   width: 15px;
   height: 15px;
@@ -189,13 +211,15 @@
   align-items: center;
   color: #FF00F9 !important;
 }
+
 .sellkit-upgrade-to-pro .sellkit-icon-upgarde-to-pro {
   margin-left: 5px;
 }
+
 .sellkit-upgrade-to-pro .sellkit-icon-upgarde-to-pro::before {
   display: block;
   width: 16px;
   height: 16px;
   background-image: url("data:image/svg+xml,%3Csvg aria-hidden='true' focusable='false' data-prefix='fas' data-icon='rocket' class='svg-inline--fa fa-rocket fa-w-16' role='img' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%23FF00F9' d='M505.05 19.1a15.89 15.89 0 0 0-12.2-12.2C460.65 0 435.46 0 410.36 0c-103.2 0-165.1 55.2-211.29 128H94.87A48 48 0 0 0 52 154.49l-49.42 98.8A24 24 0 0 0 24.07 288h103.77l-22.47 22.47a32 32 0 0 0 0 45.25l50.9 50.91a32 32 0 0 0 45.26 0L224 384.16V488a24 24 0 0 0 34.7 21.49l98.7-49.39a47.91 47.91 0 0 0 26.5-42.9V312.79c72.59-46.3 128-108.4 128-211.09.1-25.2.1-50.4-6.85-82.6zM384 168a40 40 0 1 1 40-40 40 40 0 0 1-40 40z'%3E%3C/path%3E%3C/svg%3E");
-  content: "";
+  content: '';
 }

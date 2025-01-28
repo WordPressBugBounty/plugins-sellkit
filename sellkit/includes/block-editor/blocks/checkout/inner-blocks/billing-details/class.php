@@ -105,6 +105,13 @@ class Checkout_Billing_Details {
 
 		$checkout = $woocommerce->checkout;
 
+		$shipping_destination = get_option( 'woocommerce_ship_to_destination', true );
+
+		if ( 'billing_only' === $shipping_destination ) {
+			$attributes['billingHeadingText']     = esc_html__( 'Billing & Shipping', 'sellkit' );
+			$attributes['billingDescriptionText'] = '';
+		}
+
 		ob_start();
 		?>
 		<div class="woocommerce-billing-fields sellkit-one-page-checkout-billing sellkit-checkout-local-fields <?php echo esc_attr( $attributes['customClassName'] ); ?>">
@@ -116,7 +123,7 @@ class Checkout_Billing_Details {
 			</p>
 			<?php do_action( 'woocommerce_before_checkout_billing_form', $checkout ); ?>
 
-			<?php if ( ! empty( WC()->cart ) && WC()->cart->needs_shipping() ) : // Display this section just if we need to ship products. ?>
+			<?php if ( ! empty( WC()->cart ) && WC()->cart->needs_shipping() && 'billing_only' !== $shipping_destination ) : // Display this section just if we need to ship products. ?>
 
 			<div class="billing-method" >
 				<div>
@@ -138,7 +145,17 @@ class Checkout_Billing_Details {
 
 			<?php endif; ?>
 
-			<div class="woocommerce-billing-fields__field-wrapper" id="sellkit-checkout-billing-field-wrapper">
+			<?php
+
+			$border_top = '';
+
+			if ( 'billing_only' === $shipping_destination ) {
+				$border_top = 'border-top';
+			}
+
+			?>
+
+			<div class="woocommerce-billing-fields__field-wrapper <?php echo esc_attr( $border_top ); ?>" id="sellkit-checkout-billing-field-wrapper">
 				<?php
 					$fields = $checkout->get_checkout_fields( 'billing' );
 

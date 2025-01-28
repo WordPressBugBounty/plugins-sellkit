@@ -242,9 +242,16 @@ class Helper {
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
 	 */
 	public function validate_user_defined_fields( $shipping_fields, $billing_fields ) {
+		$shipping_destination = get_option( 'woocommerce_ship_to_destination', true );
+
 		foreach ( $shipping_fields as $data ) {
 			// Escape all if cart does not need shipping information.
 			if ( ! WC()->cart->needs_shipping() ) {
+				continue;
+			}
+
+			// Escape all if shipping destination be billing only.
+			if ( 'billing_only' === $shipping_destination ) {
 				continue;
 			}
 

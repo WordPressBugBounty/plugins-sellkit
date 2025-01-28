@@ -66,4 +66,39 @@ class Db_Updater extends \WP_Background_Process {
 
 		sellkit_update_option( 'current_db_version', $this->db_version );
 	}
+
+	/**
+	 * Maybe process queue
+	 *
+	 * Checks whether data exists within the queue and that
+	 * the process is not already running.
+	 *
+	 * @since 2.3.3
+	 */
+	public function maybe_handle() {
+		// Don't lock up other requests while processing.
+		session_write_close();
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Unauthorized', 403 );
+
+			exit;
+		}
+
+		if ( $this->is_process_running() ) {
+			// Background process already running.
+			wp_die();
+		}
+
+		if ( $this->is_queue_empty() ) {
+			// No data to process.
+			wp_die();
+		}
+
+		check_ajax_referer( $this->identifier, 'nonce' );
+
+		$this->handle();
+
+		wp_die();
+	}
 }
