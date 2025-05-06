@@ -272,6 +272,10 @@ class Helper {
 			return;
 		}
 
+		if ( function_exists( 'sellkit_pro' ) && ! sellkit_pro()->is_active_sellkit_pro ) {
+			$optimization_data = null;
+		}
+
 		// Help to apply funnel discount prices and coupons when changing product quantity.
 		$this->apply_discounted_prices( wc()->cart, $funnel_id );
 		$this->apply_discounted_prices( wc()->cart, $funnel_id, 'bumps' );

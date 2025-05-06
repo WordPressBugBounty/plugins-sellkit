@@ -4,7 +4,7 @@ Donate link: https://getsellkit.com/
 Tags: checkout optimizer, optimized checkout, sales funnel, smart coupon, checkout alert
 Requires at least: 5.6
 Tested up to: 6.6
-Stable tag: 2.3.3
+Stable tag: 2.3.4
 Requires PHP: 7.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -249,7 +249,7 @@ SellKit is fully integrated with:
 * Facebook Pixel
 * Google Analytics
 * Elementor page builder
-* Block Editor (Gateway)
+* Block Editor (Gutenberg)
 
 == NOTE ==
 
@@ -275,6 +275,12 @@ Main functionalities are only compatible with Elementor and Gutenberg at the mom
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
+= 2.3.4 - 2025-05-05 =
+* Feature: Added free option for Maxmind integration.
+* Improvement: Improved licence Activation for Sellkit Pro.
+* Bug Fix: Fixed some issues related to Checkout Widget.
+* Bug Fix: Fixed conflict of Sellkit & JupiterX customizer.
+
 = 2.3.3 - 2025-01-27 =
 * Bug Fix: Fixed display order bump.
 * Bug Fix: Fixed issues of funnel & global checkout.

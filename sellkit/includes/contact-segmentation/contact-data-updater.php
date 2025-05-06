@@ -209,8 +209,9 @@ class Contact_Data_Updater {
 			return;
 		}
 
-		$account_id = sellkit_get_option( 'geolocation_account_id' );
-		$api_key    = sellkit_get_option( 'geolocation_licence_key' );
+		$account_id      = sellkit_get_option( 'geolocation_account_id' );
+		$api_key         = sellkit_get_option( 'geolocation_licence_key' );
+		$maxmind_api_url = $this->get_maxmind_url();
 
 		if ( empty( $api_key ) || empty( $account_id ) ) {
 			return;
@@ -218,7 +219,7 @@ class Contact_Data_Updater {
 
 		$auth = base64_encode( $account_id . ':' . $api_key );
 
-		$response = wp_remote_get( 'https://geoip.maxmind.com/geoip/v2.1/city/' . $ip, [
+		$response = wp_remote_get( $maxmind_api_url . $ip, [
 			'timeout' => 10,
 			'headers' => [
 				'Authorization' => 'Basic ' . $auth,
@@ -241,6 +242,18 @@ class Contact_Data_Updater {
 		}
 
 		self::$new_data['updated_at'] = time();
+	}
+
+	/**
+	 * Maxmind Api Url.
+	 *
+	 * @since 2.3.4
+	 */
+	private function get_maxmind_url() {
+		$is_free_maxmind = sellkit_get_option( 'maxmind_is_free_service' ) === '1' ? true : false;
+		$maxmind_api_url = $is_free_maxmind ? 'https://geolite.info/geoip/v2.1/city/' : 'https://geoip.maxmind.com/geoip/v2.1/city/';
+
+		return $maxmind_api_url;
 	}
 
 	/**

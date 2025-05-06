@@ -690,6 +690,10 @@ body.theme-bridge .elementor-widget-sellkit-checkout span.woocommerce-input-wrap
   order: 1;
 }
 
+.sellkit-checkout-widget-one-page-build #sellkit-checkout-widget-id form .sellkit-one-page-checkout-login #customer_details #shipping_text_title {
+  margin-top: 18px;
+}
+
 .sellkit-checkout-widget-one-page-build #sellkit-checkout-widget-id form .sellkit-one-page-shipping-methods {
   -webkit-box-ordinal-group: 3;
   -ms-flex-order: 2;
@@ -964,6 +968,10 @@ body.theme-bridge .elementor-widget-sellkit-checkout span.woocommerce-input-wrap
 .sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-checkout-left-column .sellkit-multistep-checkout-first .sellkit-one-page-checkout-login #customer_details {
   width: auto !important;
   float: none !important;
+}
+
+.sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-checkout-left-column .sellkit-multistep-checkout-first .sellkit-one-page-checkout-login #customer_details .sellkit-one-page-checkout-billing #shipping_text_title {
+  margin-top: 18px;
 }
 
 .sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-checkout-left-column .sellkit-multistep-checkout-first .sellkit-multistep-checkout-first-footer {
@@ -2815,7 +2823,7 @@ body.theme-bridge .elementor-widget-sellkit-checkout span.woocommerce-input-wrap
 
 /* Shipping & Billing Fields */
 #sellkit-checkout-widget-id .woocommerce-billing-fields__field-wrapper {
-  padding: 16px 0px 4px 16px;
+  padding: 16px 16px 4px 16px;
   border: solid 1px #e1e1e1;
   border-top: none;
   background-color: #fafafa;
@@ -3593,7 +3601,8 @@ body.theme-bridge .elementor-widget-sellkit-checkout span.woocommerce-input-wrap
     -webkit-box-ordinal-group: 2;
     -ms-flex-order: 1;
     order: 1;
-    width: 100%;
+    width: 95%;
+    margin: 0 auto;
   }
   .sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-checkout-right-column > div {
     width: 100%;
@@ -3686,16 +3695,15 @@ body.theme-bridge .elementor-widget-sellkit-checkout span.woocommerce-input-wrap
     -webkit-box-direction: normal;
     -ms-flex-direction: row;
     flex-direction: row;
-    -ms-flex-wrap: nowrap;
-    flex-wrap: nowrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
     -ms-flex-line-pack: center;
     align-content: center;
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
-    -webkit-box-pack: start;
-    -ms-flex-pack: start;
-    justify-content: flex-start;
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
     height: 63px;
     border: solid 1px #e1e1e1;
     border-top: none;
@@ -3703,13 +3711,26 @@ body.theme-bridge .elementor-widget-sellkit-checkout span.woocommerce-input-wrap
     border-left: none;
     background-color: #fafafa;
   }
-  .sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-multistep-checkout-sidebar .summary_toggle .sellkit-checkout-summary-toggle-shop-icon svg {
+  .sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-multistep-checkout-sidebar .summary_toggle .summery_toggle_link_wrapper {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+  .sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-multistep-checkout-sidebar .summary_toggle .summery_toggle_link_wrapper .sellkit-checkout-summary-toggle-shop-icon svg {
     width: 16px;
     height: 16px;
-    margin: 2px 0px 4px;
     fill: #007bff;
   }
-  .sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-multistep-checkout-sidebar .summary_toggle .title {
+  .sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-multistep-checkout-sidebar .summary_toggle .summery_toggle_link_wrapper .title {
     height: 16px;
     margin: 0 5px 0 10px;
     color: #007bff;
@@ -3722,22 +3743,20 @@ body.theme-bridge .elementor-widget-sellkit-checkout span.woocommerce-input-wrap
     cursor: pointer;
     font-stretch: normal;
   }
-  .sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-multistep-checkout-sidebar .summary_toggle .sellkit-checkout-summary-toggle-up svg {
+  .sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-multistep-checkout-sidebar .summary_toggle .summery_toggle_link_wrapper .sellkit-checkout-summary-toggle-up svg {
     width: 14px;
     height: 14px;
     fill: #007bff;
   }
-  .sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-multistep-checkout-sidebar .summary_toggle .sellkit-checkout-summary-toggle-down {
+  .sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-multistep-checkout-sidebar .summary_toggle .summery_toggle_link_wrapper .sellkit-checkout-summary-toggle-down {
     display: none;
   }
-  .sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-multistep-checkout-sidebar .summary_toggle .sellkit-checkout-summary-toggle-down svg {
+  .sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-multistep-checkout-sidebar .summary_toggle .summery_toggle_link_wrapper .sellkit-checkout-summary-toggle-down svg {
     width: 14px;
     height: 14px;
     fill: #007bff;
   }
   .sellkit-checkout-widget-multi-page-build form .inner_wrapper .sellkit-multistep-checkout-sidebar .summary_toggle .price {
-    position: absolute;
-    right: 22px;
     color: #323232;
     font-size: 18px;
     font-style: normal;

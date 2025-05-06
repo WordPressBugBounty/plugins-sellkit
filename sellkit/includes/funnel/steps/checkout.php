@@ -59,6 +59,10 @@ class Checkout {
 
 		$auto_apply_coupon_cookie_value = null;
 
+		if ( function_exists( 'sellkit_pro' ) && ! sellkit_pro()->is_active_sellkit_pro ) {
+			$optimization_data = null;
+		}
+
 		if ( isset( $_COOKIE['sellkit_rejected_coupon'] ) ) {
 			// Get the value of the cookie.
 			$auto_apply_coupon_cookie_value = sanitize_text_field( wp_unslash( $_COOKIE['sellkit_rejected_coupon'] ) );

@@ -113,6 +113,9 @@ function _default($scope) {
 
     breadcrumb.find('.information').removeClass('current').addClass('blue-line');
     breadcrumb.find('.shipping').addClass('current').removeClass('inactive');
+    $('html, body').animate({
+      scrollTop: $('.sellkit-checkout-left-column').offset().top
+    }, 500);
   });
   $('.go-to-first').on('click', function () {
     first.show();
@@ -124,6 +127,9 @@ function _default($scope) {
 
     breadcrumb.find('.information').removeClass('blue-line').addClass('current');
     breadcrumb.find('.shipping, .payment').removeClass('current').removeClass('blue-line').addClass('inactive');
+    $('html, body').animate({
+      scrollTop: $('.sellkit-checkout-left-column').offset().top
+    }, 500);
   });
   $('.go-to-payment').on('click', function () {
     // Checks if required fields are filled.
@@ -146,6 +152,9 @@ function _default($scope) {
 
     breadcrumb.find('.shipping').addClass('blue-line').removeClass('current');
     breadcrumb.find('.payment').addClass('current').removeClass('inactive');
+    $('html, body').animate({
+      scrollTop: $('.sellkit-checkout-left-column').offset().top
+    }, 500);
   });
   $('.go-to-second , .go-to-second-header').on('click', function () {
     // Checks if required fields are filled.
@@ -171,6 +180,9 @@ function _default($scope) {
 
     breadcrumb.find('.shipping').addClass('current').removeClass('blue-line');
     breadcrumb.find('.payment').removeClass('current').addClass('inactive');
+    $('html, body').animate({
+      scrollTop: $('.sellkit-checkout-left-column').offset().top
+    }, 500);
   }); //Inject login wrapper & functionality.
 
   emailProcess();
@@ -438,7 +450,7 @@ var mobileSummary = function mobileSummary() {
     $('#order_review').addClass('sellkit-mobile-multistep-order-summary');
   }
 
-  var toggleBtn = $('.summary_toggle > .title, .summary_toggle > .sellkit-checkout-summary-toggle-up, .summary_toggle > .icon');
+  var toggleBtn = $('.summary_toggle > .summery_toggle_link_wrapper > .title, .summary_toggle > .summery_toggle_link_wrapper > .sellkit-checkout-summary-toggle-up, .summary_toggle > .summery_toggle_link_wrapper > .icon, .summary_toggle > .summery_toggle_link_wrapper > .sellkit-checkout-summary-toggle-down');
   var wrap = $('.summary_toggle');
   toggleBtn.on('click', function () {
     $('#order_review').toggle();

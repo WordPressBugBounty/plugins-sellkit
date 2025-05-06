@@ -111,6 +111,10 @@ class Funnel_Homepage {
 				$step_data = get_post_meta( $step->ID, 'step_data', true );
 			}
 
+			if ( empty( $step_data ) ) {
+				continue;
+			}
+
 			if ( isset( $step_data['funnel_id'] ) && intval( $global_checkout_id ) === intval( $step_data['funnel_id'] ) ) {
 				continue;
 			}

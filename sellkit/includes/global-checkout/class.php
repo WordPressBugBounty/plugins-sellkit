@@ -34,6 +34,10 @@ class Checkout {
 	 * @since 1.7.4
 	 */
 	public function __construct() {
+		if ( ! function_exists( 'sellkit_pro' ) || ! sellkit_pro()->is_active_sellkit_pro ) {
+			return;
+		}
+
 		add_action( 'wp', [ $this, 'checkout_block_bump_query_var' ] );
 		add_action( 'wp', [ $this, 'init_sellkit_global_checkout' ] );
 		add_action( 'wp_ajax_handle_sellkit_global_checkout_ajax_requests', [ $this, 'handle_ajax_requests' ] );
