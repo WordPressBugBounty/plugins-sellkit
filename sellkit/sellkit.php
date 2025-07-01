@@ -3,7 +3,7 @@
  * Plugin Name: Sellkit
  * Plugin URI: https://getsellkit.com/
  * Description: Build unlimited sales funnels, one-click order bumps and upsells, custom thank you pages, and more. The free version of SellKit also offers a huge round of features to optimize your WooCommerce store: build and style single or multi-step checkout pages with advanced styling options. Add, remove & reorder form fields. Fasten the form submission process with pre-populated form data, Instant form validation, and removing cart page. All this and more is 100% free and for an unlimited number of sites.
- * Version: 2.3.4
+ * Version: 2.3.5
  * Author: Artbees
  * Author URI: https://artbees.net
  * Text Domain: sellkit

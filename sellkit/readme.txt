@@ -4,7 +4,7 @@ Donate link: https://getsellkit.com/
 Tags: checkout optimizer, optimized checkout, sales funnel, smart coupon, checkout alert
 Requires at least: 5.6
 Tested up to: 6.6
-Stable tag: 2.3.4
+Stable tag: 2.3.5
 Requires PHP: 7.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -275,6 +275,11 @@ Main functionalities are only compatible with Elementor and Gutenberg at the mom
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
+= 2.3.5 - 2025-06-30 =
+* Bug Fix: Fixed issue related to get_price.
+* Bug Fix: Fixed displaying Next Step when the condition step is empty.
+* Bug Fix: Fixed product discount that doesn't work in upsell & downsell.
+
 = 2.3.4 - 2025-05-05 =
 * Feature: Added free option for Maxmind integration.
 * Improvement: Improved licence Activation for Sellkit Pro.

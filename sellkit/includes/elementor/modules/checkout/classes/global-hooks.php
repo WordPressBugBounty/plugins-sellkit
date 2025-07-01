@@ -17,6 +17,7 @@ use Sellkit_Funnel;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.NPathComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @since 1.1.0
  */
 class Global_Hooks {
@@ -26,6 +27,13 @@ class Global_Hooks {
 	 * @var int
 	 */
 	private $helper_id = 0;
+
+	/**
+	 * List of upsell product with price
+	 *
+	 * @var array
+	 */
+	private static $sellkit_upsell_products;
 
 	/**
 	 * Create instance of class without construct.
@@ -1015,6 +1023,10 @@ class Global_Hooks {
 					$discount_value = isset( $product_details['discount'] ) ? $product_details['discount'] : '';
 
 					$price = Helper::calculate_discount( $item_id, $discount_type, $discount_value );
+
+					if ( 'upsell' === $source ) {
+						self::$sellkit_upsell_products[ $product_id ] = $price;
+					}
 				}
 			}
 
@@ -1022,7 +1034,7 @@ class Global_Hooks {
 				$details['data']->set_price( $price );
 			}
 
-			$final_price += $details['data']->get_price( $price ) * $details['quantity'];
+			$final_price += $details['data']->get_price() * $details['quantity'];
 		}
 
 		self::modify_products_price_before_woo_apply_discounts( $final_price );
@@ -1157,6 +1169,7 @@ class Global_Hooks {
 	 * Recalculate checkout and cart prices.
 	 *
 	 * @since 1.2.8
+	 *  @SuppressWarnings(PHPMD.CyclomaticComplexity)
 	 */
 	public function before_cart_calculate() {
 		// More than twice isn't necessary. this is called multiple times by WooCommerce.
@@ -1200,6 +1213,33 @@ class Global_Hooks {
 		// Apply funnel prices.
 		self::apply_discounted_prices( wc()->cart, $checkout_id );
 		self::apply_discounted_prices( wc()->cart, $checkout_id, 'bumps' );
+
+		// Apply upsell discount.
+		$sellkit_upsell_prices = null;
+		if ( isset( $_POST['woocommerce-process-checkout-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce-process-checkout-nonce'] ) ), 'woocommerce-process_checkout' ) ) {
+			$sellkit_upsell_prices = isset( $_POST['sellkit_product_prices'] ) ? sanitize_textarea_field( wp_unslash( $_POST['sellkit_product_prices'] ) ) : null;
+		}
+		$upsell_product_ids;
+
+		if ( isset( $sellkit_upsell_prices ) && ! empty( $sellkit_upsell_prices ) ) {
+			$sellkit_upsell_prices = json_decode( $sellkit_upsell_prices, true );
+			$upsell_product_ids    = array_keys( $sellkit_upsell_prices );
+		}
+
+		if ( isset( $upsell_product_ids ) ) {
+			foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+				$product      = $cart_item['data'];
+				$product_name = $product->get_name();
+				$product_id   = $product->get_id();
+
+				if ( in_array( $product_id, $upsell_product_ids, true ) ) {
+					$upsell_price = $sellkit_upsell_prices[ $product_id ];
+					$product->set_price( $upsell_price );
+				}
+
+				$price = $product->get_price();
+			}
+		}
 
 		$auto_apply_coupon_cookie_value = null;
 
@@ -1302,8 +1342,8 @@ class Global_Hooks {
 		$decicion_data = $funnel->next_step_data;
 		$conditions    = $decicion_data['data']['conditions'];
 		$funnel_data   = get_post_meta( $funnel->funnel_id, 'nodes', true );
-		$next_no       = $funnel_data[ $decicion_data['targets'][1]['nodeId'] ];
-		$next_yes      = $funnel_data[ $decicion_data['targets'][0]['nodeId'] ];
+		$next_no       = 'none' !== $decicion_data['targets'][1]['nodeId'] ? $funnel_data[ $decicion_data['targets'][1]['nodeId'] ] : $funnel->end_node_step_data;
+		$next_yes      = 'none' !== $decicion_data['targets'][0]['nodeId'] ? $funnel_data[ $decicion_data['targets'][0]['nodeId'] ] : $funnel->end_node_step_data;
 		$is_valid      = sellkit_conditions_validation( $conditions );
 		$next_step     = $next_no;
 
@@ -1391,6 +1431,7 @@ class Global_Hooks {
 				[
 					'next_id'   => $funnel->end_node_step_data['page_id'],
 					'next_type' => $funnel->end_node_step_data['type']['key'],
+					'upsell_prices' => wp_json_encode( self::$sellkit_upsell_products ),
 				]
 			);
 		}
@@ -1403,6 +1444,7 @@ class Global_Hooks {
 		$response = [
 			'next_id'   => apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ),
 			'next_type' => $next_step['type']['key'],
+			'upsell_prices' => wp_json_encode( self::$sellkit_upsell_products ),
 		];
 
 		wp_send_json_success( $response );

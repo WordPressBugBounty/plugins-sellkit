@@ -58,6 +58,13 @@ class Helper {
 	private $is_accept_reject_button_registered = false;
 
 	/**
+	 * List of upsell product with price
+	 *
+	 * @var array
+	 */
+	private static $sellkit_upsell_products;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 2.3.0
@@ -484,7 +491,9 @@ class Helper {
 		$shipping_attributes = $this->get_inner_block_attributes( 'checkout', 'checkout-form-shipping', $post_id );
 		$billing_attributes  = $this->get_inner_block_attributes( 'checkout', 'checkout-billing-details', $post_id );
 
-		$this->checkout_fields_validation( $shipping_attributes['locations'], $billing_attributes['locations'] );
+		if ( isset( $shipping_attributes['locations'] ) ) {
+			$this->checkout_fields_validation( $shipping_attributes['locations'], $billing_attributes['locations'] );
+		}
 
 		add_filter( 'woocommerce_checkout_fields', function( $default_fields ) {
 			unset( $default_fields['billing']['billing_email'] );
@@ -892,6 +901,10 @@ class Helper {
 					$discount_value = isset( $product_details['discount'] ) ? $product_details['discount'] : '';
 
 					$price = $this->calculate_discount( $item_id, $discount_type, $discount_value );
+
+					if ( 'upsell' === $source ) {
+						self::$sellkit_upsell_products[ $product_id ] = $price;
+					}
 				}
 			}
 
@@ -899,7 +912,7 @@ class Helper {
 				$details['data']->set_price( $price );
 			}
 
-			$final_price += $details['data']->get_price( $price ) * $details['quantity'];
+			$final_price += $details['data']->get_price() * $details['quantity'];
 		}
 
 		$this->modify_products_price_before_woo_apply_discounts( $final_price );
@@ -1114,6 +1127,8 @@ class Helper {
 	 * @since 2.3.0
 	 *
 	 * @SuppressWarnings(PHPMD.NPathComplexity)
+	 * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
 	 */
 	public function before_cart_calculate() {
 		// More than twice isn't necessary. this is called multiple times by WooCommerce.
@@ -1157,6 +1172,33 @@ class Helper {
 		// Apply funnel prices.
 		$this->apply_discounted_prices( wc()->cart, $checkout_id );
 		$this->apply_discounted_prices( wc()->cart, $checkout_id, 'bumps' );
+
+		// Apply upsell discount.
+		$sellkit_upsell_prices = null;
+		if ( isset( $_POST['woocommerce-process-checkout-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce-process-checkout-nonce'] ) ), 'woocommerce-process_checkout' ) ) {
+			$sellkit_upsell_prices = isset( $_POST['sellkit_product_prices'] ) ? sanitize_textarea_field( wp_unslash( $_POST['sellkit_product_prices'] ) ) : null;
+		}
+		$upsell_product_ids;
+
+		if ( isset( $sellkit_upsell_prices ) && ! empty( $sellkit_upsell_prices ) ) {
+			$sellkit_upsell_prices = json_decode( $sellkit_upsell_prices, true );
+			$upsell_product_ids    = array_keys( $sellkit_upsell_prices );
+		}
+
+		if ( isset( $upsell_product_ids ) ) {
+			foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+				$product      = $cart_item['data'];
+				$product_name = $product->get_name();
+				$product_id   = $product->get_id();
+
+				if ( in_array( $product_id, $upsell_product_ids, true ) ) {
+					$upsell_price = $sellkit_upsell_prices[ $product_id ];
+					$product->set_price( $upsell_price );
+				}
+
+				$price = $product->get_price();
+			}
+		}
 
 		// We should re apply coupons after each price changes. to make sure everything is correct.
 		$optimization_data = ! empty( $funnel_data['data']['optimization'] ) ? $funnel_data['data']['optimization'] : '';
@@ -1248,8 +1290,8 @@ class Helper {
 		$decicion_data = $funnel->next_step_data;
 		$conditions    = $decicion_data['data']['conditions'];
 		$funnel_data   = get_post_meta( $funnel->funnel_id, 'nodes', true );
-		$next_no       = $funnel_data[ $decicion_data['targets'][1]['nodeId'] ];
-		$next_yes      = $funnel_data[ $decicion_data['targets'][0]['nodeId'] ];
+		$next_no       = 'none' !== $decicion_data['targets'][1]['nodeId'] ? $funnel_data[ $decicion_data['targets'][1]['nodeId'] ] : $funnel->end_node_step_data;
+		$next_yes      = 'none' !== $decicion_data['targets'][0]['nodeId'] ? $funnel_data[ $decicion_data['targets'][0]['nodeId'] ] : $funnel->end_node_step_data;
 		$is_valid      = sellkit_conditions_validation( $conditions );
 		$next_step     = $next_no;
 
@@ -1339,6 +1381,7 @@ class Helper {
 				[
 					'next_id'   => $funnel->end_node_step_data['page_id'],
 					'next_type' => $funnel->end_node_step_data['type']['key'],
+					'upsell_prices' => wp_json_encode( self::$sellkit_upsell_products ),
 				]
 			);
 		}
@@ -1351,6 +1394,7 @@ class Helper {
 		$response = [
 			'next_id'   => $next_step['page_id'],
 			'next_type' => $next_step['type']['key'],
+			'upsell_prices' => wp_json_encode( self::$sellkit_upsell_products ),
 		];
 
 		wp_send_json_success( $response );
@@ -1734,6 +1778,7 @@ class Helper {
 
 		echo '<input type="hidden" id="sellkit_funnel_has_upsell" value="upsell" >';
 		echo '<input type="hidden" id="sellkit_funnel_popup_step_id" value="0" >';
+		echo '<input type="hidden" id="sellkit_product_prices" autocomplete="off" name="sellkit_product_prices" value="0" >';
 	}
 
 	/**
@@ -2177,6 +2222,7 @@ class Helper {
 			'block-editor/blocks/checkout/form-fields/select',
 			'block-editor/blocks/checkout/form-fields/text',
 			'block-editor/blocks/checkout/form-fields/tel',
+			'block-editor/blocks/checkout/form-fields/hidden',
 		] );
 	}
 

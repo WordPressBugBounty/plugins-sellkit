@@ -1461,6 +1461,7 @@ var sellkitCallUpsell = function sellkitCallUpsell() {
         $(document.body).trigger('update_checkout');
         parent.find('.sellkit-upsell-updating').removeClass('active');
         parent.find('.sellkit-upsell-accepted').addClass('active');
+        updateSellkitPriceField(data.upsell_prices);
         onSuccess(data);
       }).fail(function (data) {
         // eslint-disable-next-line no-console
@@ -1504,6 +1505,23 @@ var sellkitCallUpsell = function sellkitCallUpsell() {
     console.error(data);
     $('button[type=submit]').find('img').remove();
   });
+};
+
+var updateSellkitPriceField = function updateSellkitPriceField(data) {
+  if (data === 'null' || data === null) {
+    return;
+  }
+
+  var current_val = $('input#sellkit_product_prices').val();
+
+  if (!current_val || current_val === '0') {
+    $('input#sellkit_product_prices').val(data);
+  } else {
+    var oldVal = JSON.parse(current_val);
+    var newVal = JSON.parse(data);
+    var val = JSON.stringify(Object.assign({}, oldVal, newVal));
+    $('input#sellkit_product_prices').val(val);
+  }
 };
 /**
  * Toggle order notes field.

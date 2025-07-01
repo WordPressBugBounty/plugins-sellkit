@@ -231,6 +231,15 @@ class Checkout {
 			'type'  => 'hidden',
 			'class' => [ 'hidden form-row-wide' ],
 		], $id );
+
+		// This field added for passing upsell discount price to backend.
+		woocommerce_form_field( 'sellkit_product_prices', [
+			'type'  => 'hidden',
+			'class' => [ 'hidden form-row-wide' ],
+			'autocomplete' => 'off',
+			'autocorrect' => 'off',
+			'autocapitalize' => 'off',
+		], '0' );
 	}
 
 	/**
