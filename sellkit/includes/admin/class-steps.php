@@ -80,7 +80,9 @@ class Sellkit_Admin_Steps {
 		}
 
 		foreach ( $nodes[0] as $node ) {
-			wp_delete_post( $node['page_id'] );
+			if ( isset( $node['page_id'] ) ) {
+				wp_delete_post( $node['page_id'] );
+			}
 		}
 	}
 
@@ -326,7 +328,7 @@ class Sellkit_Admin_Steps {
 		$keys                               = array_keys( $nodes );
 
 		if (
-			'last-node' !== $origin_node &&
+			'last-node' !== $origin_node && ! empty( $nodes[ $origin_node ] ) &&
 			'decision' !== $nodes[ $origin_node ]['type']['key'] &&
 			'upsell' !== $nodes[ $origin_node ]['type']['key'] &&
 			'downsell' !== $nodes[ $origin_node ]['type']['key']
@@ -335,7 +337,7 @@ class Sellkit_Admin_Steps {
 		}
 
 		if (
-			'last-node' !== $origin_node &&
+			'last-node' !== $origin_node && isset( $nodes[ $origin_node ]['type'] ) &&
 			(
 				'decision' === $nodes[ $origin_node ]['type']['key'] ||
 				'upsell' === $nodes[ $origin_node ]['type']['key'] ||

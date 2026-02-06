@@ -91,7 +91,9 @@ class Helper {
 		$fields = [];
 
 		foreach ( $user_defined_fields as $field ) {
-			$fields[] = $field[ $type ];
+			if ( isset( $field[ $type ] ) ) {
+				$fields[] = $field[ $type ];
+			}
 		}
 
 		return $fields;
@@ -288,7 +290,7 @@ class Helper {
 		}
 
 		foreach ( $billing_fields as $data ) {
-			$final_name = $data['billing_list_field'];
+			$final_name = isset( $data['billing_list_field'] ) ? $data['billing_list_field'] : '';
 
 			if ( 'custom_role' !== $final_name ) {
 				continue;
@@ -517,7 +519,7 @@ class Helper {
 
 			// Make it optional.
 			foreach ( $widget_billing_fields as $data ) {
-				$slug        = $data['billing_list_field'];
+				$slug        = isset( $data['billing_list_field'] ) ? $data['billing_list_field'] : '';
 				$is_required = false;
 
 				if ( 'custom_role' === $slug ) {

@@ -491,7 +491,9 @@ class Helper {
 		$shipping_attributes = $this->get_inner_block_attributes( 'checkout', 'checkout-form-shipping', $post_id );
 		$billing_attributes  = $this->get_inner_block_attributes( 'checkout', 'checkout-billing-details', $post_id );
 
-		if ( isset( $shipping_attributes['locations'] ) ) {
+		if ( ! isset( $shipping_attributes['locations'] ) ) {
+			$this->checkout_fields_validation( null, $billing_attributes['locations'] );
+		} else {
 			$this->checkout_fields_validation( $shipping_attributes['locations'], $billing_attributes['locations'] );
 		}
 
@@ -1454,17 +1456,19 @@ class Helper {
 	public function checkout_fields_validation( $shipping_fields, $billing_fields ) {
 		$shipping_prefix = esc_html__( 'Shipping', 'sellkit' );
 
-		foreach ( $shipping_fields as $data ) {
-			if ( ! WC()->cart->needs_shipping() ) {
-				continue;
-			}
+		if ( $shipping_fields ) {
+			foreach ( $shipping_fields as $data ) {
+				if ( ! WC()->cart->needs_shipping() ) {
+					continue;
+				}
 
-			$final_name = isset( $data['role'] ) ? $data['role'] : '';
-			$value      = filter_input( INPUT_POST, $final_name, FILTER_DEFAULT );
+				$final_name = isset( $data['role'] ) ? $data['role'] : '';
+				$value      = filter_input( INPUT_POST, $final_name, FILTER_DEFAULT );
 
-			if ( $data['required'] && ( empty( $value ) ) ) {
-				/* translators: %s field_name. */
-				wc_add_notice( sprintf( esc_html__( '%s is a required field.', 'sellkit' ), '<strong>' . esc_html( $shipping_prefix ) . ' ' . esc_html( $data['label'] ) . '</strong>' ), 'error' );
+				if ( $data['required'] && ( empty( $value ) ) ) {
+					/* translators: %s field_name. */
+					wc_add_notice( sprintf( esc_html__( '%s is a required field.', 'sellkit' ), '<strong>' . esc_html( $shipping_prefix ) . ' ' . esc_html( $data['label'] ) . '</strong>' ), 'error' );
+				}
 			}
 		}
 

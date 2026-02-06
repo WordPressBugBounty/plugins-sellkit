@@ -119,7 +119,7 @@ class Funnel_Homepage {
 				continue;
 			}
 
-			if ( ! in_array( $step_data['type']['key'], self::VALID_TYPES, true ) ) {
+			if ( isset( $step_data['type'] ) && ! in_array( $step_data['type']['key'], self::VALID_TYPES, true ) ) {
 				continue;
 			}
 

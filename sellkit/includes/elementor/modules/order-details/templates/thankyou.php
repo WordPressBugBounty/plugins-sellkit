@@ -45,6 +45,7 @@ defined( 'ABSPATH' ) || exit;
 
 			<ul <?php echo $this->get_render_attribute_string( 'details-order-content' ); ?> >
 				<?php
+					add_filter( 'sellkit_global_thankyou', '__return_true' );
 					foreach ( $fields as $field ) {
 						Sellkit_Elementor_Order_Details_Module::render_field( $this, $field );
 					}

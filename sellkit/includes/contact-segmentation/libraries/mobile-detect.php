@@ -1463,7 +1463,9 @@ class Mobile_Detect
      */
     public function match($regex, $userAgent = null)
     {
-        $match = (bool) preg_match(sprintf('#%s#is', $regex), (false === empty($userAgent) ? $userAgent : $this->userAgent), $matches);
+        $subject = (string) ($userAgent ?? $this->userAgent);
+        $match   = (bool) preg_match(sprintf('#%s#is', $regex), $subject, $matches);
+
         // If positive match is found, store the results for debug.
         if ($match) {
             $this->matchingRegex = $regex;

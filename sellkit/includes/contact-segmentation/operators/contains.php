@@ -62,6 +62,8 @@ class Contains extends Operator_Base {
 	 * @param mixed $condition_value  The value of condition input.
 	 */
 	public function is_valid( $value, $condition_value ) {
+		$value           = strtolower( $value );
+		$condition_value = strtolower( $condition_value );
 		if ( false !== strpos( $value, $condition_value ) ) {
 			return true;
 		}

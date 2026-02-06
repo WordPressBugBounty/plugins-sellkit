@@ -1524,7 +1524,7 @@ var updateSellkitPriceField = function updateSellkitPriceField(data) {
   }
 };
 /**
- * Toggle order notes field.
+ * Toggle order notes.
  *
  * @since 1.8.9
  */
@@ -1534,7 +1534,70 @@ var orderNotesToggle = function orderNotesToggle() {
   $('#sellkit-add-notes-to-order-box').on('change', function () {
     $(this).parent().next().toggle();
   });
-};
+}; // --- Sellkit: Sync custom state fields to standard WooCommerce fields for gateway compatibility ---
+
+
+var ensureStandardWooFields = function ensureStandardWooFields() {
+  try {
+    var form = document.querySelector('form.checkout');
+
+    if (!form) {
+      return;
+    } // Billing state
+
+
+    var sellkitBillingState = document.getElementById('sellkit-billing_state');
+
+    if (sellkitBillingState) {
+      var billingState = document.getElementById('billing_state');
+
+      if (!billingState) {
+        billingState = document.createElement('input');
+        billingState.type = 'hidden';
+        billingState.id = 'billing_state';
+        billingState.name = 'billing_state';
+        form.appendChild(billingState);
+      }
+
+      billingState.value = sellkitBillingState.value;
+    } // Shipping state
+
+
+    var sellkitShippingState = document.getElementById('sellkit-shipping_state');
+
+    if (sellkitShippingState) {
+      var shippingState = document.getElementById('shipping_state');
+
+      if (!shippingState) {
+        shippingState = document.createElement('input');
+        shippingState.type = 'hidden';
+        shippingState.id = 'shipping_state';
+        shippingState.name = 'shipping_state';
+        form.appendChild(shippingState);
+      }
+
+      shippingState.value = sellkitShippingState.value;
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('[Sellkit] Error syncing state fields for gateway compatibility:', e);
+  }
+}; // Attach to form submit and on state field change
+
+
+jQuery(document).ready(function (_$) {
+  var form = _$('form.checkout');
+
+  if (form.length) {
+    form.on('submit', function () {
+      ensureStandardWooFields();
+    }); // Also update on state field change
+
+    _$('#sellkit-billing_state, #sellkit-shipping_state').on('change input', function () {
+      ensureStandardWooFields();
+    });
+  }
+});
 
 },{"./checkout-settings":1,"@babel/runtime/helpers/interopRequireDefault":9,"@wordpress/i18n":16}],3:[function(require,module,exports){
 "use strict";

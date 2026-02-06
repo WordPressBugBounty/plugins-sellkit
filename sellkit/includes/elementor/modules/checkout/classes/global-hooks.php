@@ -1462,9 +1462,12 @@ class Global_Hooks {
 			wp_send_json_error( esc_html__( 'Empty Upsell ID.', 'sellkit' ) );
 		}
 
-		$funnel            = new Sellkit_Funnel( $upsell_id );
-		$next_step         = $funnel->next_no_step_data;
-		$next_step['type'] = (array) $next_step['type'];
+		$funnel    = new Sellkit_Funnel( $upsell_id );
+		$next_step = $funnel->next_no_step_data;
+
+		if ( $next_step ) {
+			$next_step['type'] = (array) $next_step['type'];
+		}
 
 		// Step with empty data, will be redirected to thankyou page.
 		if ( empty( $next_step ) || empty( $next_step['type'] ) ) {
