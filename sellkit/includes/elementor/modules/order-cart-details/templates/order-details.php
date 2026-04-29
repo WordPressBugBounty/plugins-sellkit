@@ -16,6 +16,8 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- WooCommerce/Elementor template; variables mirror core docs.
+
 
 if ( $order ) {
 	$show_purchase_note = $order->has_status( apply_filters( 'woocommerce_purchase_note_order_statuses', array( 'completed', 'processing' ) ) );
@@ -84,7 +86,7 @@ if ( ! empty( $show_downloads ) ) {
 			?>
 			<?php if ( $order && $order->get_customer_note() ) : ?>
 				<tr>
-					<th><?php esc_html_e( 'Note:', 'woocommerce' ); ?></th>
+					<th><?php esc_html_e( 'Note:', 'sellkit' ); ?></th>
 					<td><?php echo wp_kses_post( nl2br( wptexturize( $order->get_customer_note() ) ) ); ?></td>
 				</tr>
 			<?php endif; ?>

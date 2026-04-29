@@ -91,6 +91,6 @@ class Summary {
 		$this->data['average_order_value'] = ! empty( $average_order_value ) ? floatval( number_format( $average_order_value , 2 ) ) : 0;
 		// phpcs:enable
 
-		$this->data['target_title'] = get_the_title( $funnel_id );
+		$this->data['target_title'] = sellkit_decode_entity_title( get_the_title( $funnel_id ) );
 	}
 }

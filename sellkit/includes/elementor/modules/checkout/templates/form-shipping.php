@@ -17,6 +17,8 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- WooCommerce/Elementor template; variables mirror core docs.
+
 
 $show_title = apply_filters( 'sellkit-checkout-disable-shipping-fields-title', true );
 

@@ -73,7 +73,7 @@ class Google extends Settings_Integration {
 
 		$google_script .= $this->google_analytics_events( self::$post, $google_tracking_id );
 
-		echo $google_script;
+		echo $google_script; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Inline analytics script; tracking IDs escaped with esc_js.
 	}
 
 	/**

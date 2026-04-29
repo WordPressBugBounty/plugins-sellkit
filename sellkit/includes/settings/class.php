@@ -90,7 +90,8 @@ class Sellkit_Settings {
 
 		add_filter( 'the_content', function() use ( $template_id ) {
 			ob_start();
-			echo \Elementor\Plugin::instance()->frontend->get_builder_content_for_display( $template_id, true );
+			$content = \Elementor\Plugin::instance()->frontend->get_builder_content_for_display( (int) $template_id, true );
+			echo do_shortcode( $content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor template HTML; wp_kses_post strips required style/script.
 			return ob_get_clean();
 		} );
 	}

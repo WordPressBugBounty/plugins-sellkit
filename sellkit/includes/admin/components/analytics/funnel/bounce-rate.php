@@ -53,8 +53,16 @@ class Bounce_Rate extends Analytics_Base {
 		$neat_data = [];
 
 		foreach ( $results as $result ) {
-			$total_leave = $result['total_started'] - $result['total_finished'];
-			$bounce_rate = ( $total_leave * 100 ) / $result['total_started'];
+			$total_started  = (int) $result['total_started'];
+			$total_finished = (int) $result['total_finished'];
+
+			if ( $total_started <= 0 ) {
+				$neat_data[ $result['day'] ] = 0.0;
+				continue;
+			}
+
+			$total_leave = $total_started - $total_finished;
+			$bounce_rate = ( $total_leave * 100 ) / $total_started;
 
 			$neat_data[ $result['day'] ] = floatval( number_format( $bounce_rate, 2 ) );
 		}

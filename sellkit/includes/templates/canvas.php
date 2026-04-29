@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- Sellkit canvas template scope.
+
 use Elementor\Plugin as Elementor;
 
 $is_global_checkout = apply_filters( 'sellkit_global_checkout_activated', false );
@@ -38,7 +40,8 @@ if ( $is_global_checkout ) {
 		}
 
 		if ( $is_global_checkout && intval( $header_template ) > 0 ) {
-			echo Elementor::instance()->frontend->get_builder_content_for_display( intval( $header_template ), true );
+			$content = Elementor::instance()->frontend->get_builder_content_for_display( intval( $header_template ), true );
+			echo do_shortcode( $content );
 		}
 	?>
 	<div class="sellkit-container" >
@@ -58,7 +61,8 @@ if ( $is_global_checkout ) {
 		}
 
 		if ( $is_global_checkout && intval( $footer_template ) > 0 ) {
-			echo Elementor::instance()->frontend->get_builder_content_for_display( intval( $footer_template ), true );
+			$content = Elementor::instance()->frontend->get_builder_content_for_display( intval( $footer_template ), true );
+			echo do_shortcode( $content );
 		}
 	?>
 	<?php wp_footer(); ?>

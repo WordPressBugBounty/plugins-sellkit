@@ -643,6 +643,9 @@ class Sellkit_Blocks {
 				'placeholder' => wc_placeholder_img_src(),
 				'shipping_destination' => get_option( 'woocommerce_ship_to_destination', 'billing' ),
 			],
+			'pro' => [
+				'hasPro' => sellkit()->has_pro,
+			],
 			'optin' => [
 				'types' => [
 					'text'       => esc_html__( 'Text', 'sellkit' ),

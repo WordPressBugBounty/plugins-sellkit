@@ -68,7 +68,7 @@ class Summary {
 		$discount_table    = "{$wpdb->prefix}{$sellkit_prefix}applied_coupon";
 		$posts_table       = "{$wpdb->prefix}posts ";
 		$posts_meta_table  = "{$wpdb->prefix}postmeta ";
-		$coupon_start_date = date( 'Y-m-d H:i:s', time() - ( 60 * 60 * 24 * Analytics::$date_range ) );
+		$coupon_start_date = gmdate( 'Y-m-d H:i:s', time() - ( 60 * 60 * 24 * Analytics::$date_range ) );
 
 		// phpcs:disable
 		$coupons = $wpdb->get_results(
@@ -111,6 +111,6 @@ class Summary {
 			$this->data['conversion_rate'] = floatval( number_format( $this->data['conversion_rate'], 2 ) );
 		}
 
-		$this->data['target_title'] = get_the_title( $rule_id );
+		$this->data['target_title'] = sellkit_decode_entity_title( get_the_title( $rule_id ) );
 	}
 }

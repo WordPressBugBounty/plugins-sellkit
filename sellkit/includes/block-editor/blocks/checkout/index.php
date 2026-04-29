@@ -1,6 +1,8 @@
 <?php
 namespace Sellkit\Blocks\Render;
 
+defined( 'ABSPATH' ) || exit;
+
 use Sellkit\Blocks\Sellkit_Blocks;
 use Sellkit\Global_Checkout\Checkout as Global_Checkout;
 
@@ -86,10 +88,86 @@ class Checkout {
 		remove_all_actions( 'sellkit_block_checkout_shipping_fields' );
 		remove_all_actions( 'sellkit_block_checkout_billing_fields' );
 		remove_all_actions( 'sellkit_block_checkout_after_shipping_section' );
+		remove_all_actions( 'sellkit-checkout-widget-express-methods' );
 		remove_all_actions( 'sellkit-checkout-widget-custom-coupon-form' );
 		remove_all_actions( 'sellkit-checkout-widget-custom-coupon-form' );
 		remove_all_actions( 'woocommerce_checkout_update_order_review' );
 		remove_all_filters( 'woocommerce_locate_template' );
+	}
+
+	/**
+	 * Register express checkout integrations for block checkout.
+	 *
+	 * @since 2.3.0
+	 * @return void
+	 */
+	private function setup_express_checkout_integrations() {
+		sellkit()->load_files( [
+			'elementor/modules/checkout/integrations/integration',
+			'elementor/modules/checkout/integrations/paypal-for-woocommerce',
+			'elementor/modules/checkout/integrations/woo-payment-gateway',
+			'elementor/modules/checkout/integrations/stripe-for-woocommerce',
+			'elementor/modules/checkout/integrations/klarma-checkout-woocommerce',
+			'elementor/modules/checkout/integrations/amazon-pay-woocommerce',
+			'elementor/modules/checkout/integrations/stripe-woocommerce-official',
+		] );
+
+		$gateways = [
+			'Paypal_For_Woocommerce',
+			'Woo_Payment_Gateway',
+			'Stripe_For_Woocommerce',
+			'Klarma_Checkout_Woocommerce',
+			'Amazon_Pay_Woocommerce',
+			'Stripe_Woocommerce_Official',
+		];
+
+		foreach ( $gateways as $gateway ) {
+			$class = 'Sellkit\Elementor\Modules\Checkout\Integrations\\' . $gateway;
+			$class = new $class();
+			$class->run();
+		}
+	}
+
+	/**
+	 * Render express checkout section for block checkout.
+	 *
+	 * @param array $attributes Checkout block attributes.
+	 * @since 2.3.0
+	 * @return string
+	 */
+	private function express_checkout_html( $attributes ) {
+		if ( empty( $attributes['showExpressCheckout'] ) ) {
+			return '';
+		}
+
+		ob_start();
+		do_action( 'sellkit-checkout-widget-express-methods' );
+		$methods = trim( ob_get_clean() );
+
+		if ( empty( $methods ) ) {
+			return '';
+		}
+
+		ob_start();
+		?>
+			<section class="sellkit-checkout-widget-express-checkout sellkit-checkout-express-checkout-step-1">
+				<fieldset class="express-box sellkit-checkout-widget-divider">
+					<legend class="sellkit-express-checkout-legend heading">
+						<?php echo esc_html__( 'Express Checkout', 'sellkit' ); ?>
+					</legend>
+					<div class="express-methods">
+						<?php echo wp_kses_post( $methods ); ?>
+					</div>
+				</fieldset>
+			</section>
+			<section class="sellkit-checkout-widget-express-checkout sellkit-checkout-express-checkout-step-2">
+				<fieldset id="sellkit-checkout-or-divider" class="divider-box sellkit-checkout-widget-divider">
+					<legend class="heading"><?php echo esc_html__( 'OR', 'sellkit' ); ?></legend>
+				</fieldset>
+			</section>
+		<?php
+
+		return ob_get_clean();
 	}
 
 	/**
@@ -125,6 +203,11 @@ class Checkout {
 		] );
 
 		do_action( 'sellkit_block_before_checkout_form' );
+
+		if ( sellkit()->has_pro ) {
+			$this->setup_express_checkout_integrations();
+			$block_html .= $this->express_checkout_html( $attributes );
+		}
 
 		foreach ( $block->inner_blocks as $inner_block ) {
 			$block_name    = str_replace( 'sellkit-inner-blocks/', '', $inner_block->parsed_block['blockName'] );
@@ -216,6 +299,23 @@ class Checkout {
 
 				return $block_html;
 			}
+
+			// Valid order on the order-received endpoint: render WooCommerce's thank-you
+			// template instead of the checkout form. SellKit's own redirect_after_purchase
+			// already runs earlier on template_redirect, but express-checkout flows that
+			// skip SellKit's hidden fields (so no sellkit_funnel_next_step_data meta is
+			// saved) fall through to here and must not show a filled-in checkout form.
+			ob_start();
+			echo '<div class="woocommerce">';
+			wc_get_template( 'checkout/thankyou.php', [ 'order' => wc_get_order( $order_id ) ] );
+			echo '</div>';
+			$thankyou_html = ob_get_clean();
+
+			return sprintf(
+				'<div %1$s>%2$s</div>',
+				wp_kses_data( $wrapper_attributes ),
+				$thankyou_html // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WooCommerce template output.
+			);
 		}
 
 		if (

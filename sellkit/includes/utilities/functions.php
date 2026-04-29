@@ -1,4 +1,6 @@
 <?php
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Get value from $_POST.
  *
@@ -10,7 +12,8 @@
  * @return string Returns the value if found; else $default is returned.
  */
 function sellkit_post( $needle, $default = null ) {
-	return sellkit_get( $needle, $_POST, $default ); // phpcs:ignore WordPress.CSRF.NonceVerification.NoNonceVerification
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.CSRF.NonceVerification.NoNonceVerification -- Generic accessor; callers verify nonces when required.
+	return sellkit_get( $needle, $_POST, $default );
 }
 
 
@@ -28,7 +31,8 @@ function sellkit_post( $needle, $default = null ) {
 function sellkit_get( $needle, $haystack = false, $default = null ) {
 
 	if ( false === $haystack ) {
-		$haystack = $_GET; // phpcs:ignore WordPress.CSRF.NonceVerification.NoNonceVerification
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.CSRF.NonceVerification.NoNonceVerification -- Generic read helper; callers verify nonces when required.
+		$haystack = $_GET;
 	}
 
 	$haystack = (array) $haystack;

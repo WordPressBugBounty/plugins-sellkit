@@ -19,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- WooCommerce template scope.
+
 if ( $order && ! apply_filters( 'woocommerce_order_item_visible', true, $item ) ) {
 	return;
 }

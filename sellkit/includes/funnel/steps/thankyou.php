@@ -58,53 +58,64 @@ class Thankyou extends Base_Step {
 
 		$order_key = filter_input( INPUT_GET, 'key', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
-		if ( ! empty( $order_key ) ) {
-			$order_id = wc_get_order_id_by_order_key( $order_key );
-			$order    = wc_get_order( $order_id );
+		if ( empty( $order_key ) ) {
+			return;
+		}
 
-			if ( ! is_a( $order, 'WC_Order' ) ) {
-				return;
+		$order_id = wc_get_order_id_by_order_key( $order_key );
+		$order    = wc_get_order( $order_id );
+
+		if ( ! is_a( $order, 'WC_Order' ) ) {
+			return;
+		}
+
+		// Always run WooCommerce's native cart-clearing logic on a valid order-received
+		// request, regardless of whether SellKit has its own next-step data to follow.
+		// This covers express-checkout flows that bypass SellKit's hidden fields and
+		// protects against SellKit's global-checkout template_redirect exit preventing
+		// WooCommerce's own priority-20 cart-clearing hook from running.
+		if ( function_exists( 'wc_clear_cart_after_payment' ) ) {
+			wc_clear_cart_after_payment();
+		}
+
+		$next_step = $order->get_meta( 'sellkit_funnel_next_step_data' );
+		$funnel_id = (int) $order->get_meta( 'sellkit_funnel_id' );
+
+		if ( empty( $next_step ) ) {
+			return;
+		}
+
+		if ( empty( $funnel_id ) ) {
+			$step_id   = intval( $next_step['page_id'] );
+			$step_data = get_post_meta( $step_id, 'step_data', true );
+			$funnel_id = (int) $step_data['funnel_id'];
+		}
+
+		// For the new method( upsell popup ) we show thakyou page right away after checkout step.
+		$thankyou_id    = $this->find_funnel_thankyou_page( $funnel_id );
+		$next_step_link = add_query_arg( [ 'order-key' => $order_key ], get_permalink( $thankyou_id ) );
+
+		if ( class_exists( 'SitePress' ) ) {
+			$thankyou_data = $this->wpml_compatibility_get_thank_you_page_data( $thankyou_id );
+			$thankyou_id   = isset( $thankyou_data['id'] ) ? $thankyou_data['id'] : $thankyou_id;
+
+			if ( isset( $thankyou_data['lang'] ) ) {
+				$next_step_link = $this->wpml_compatibility_get_next_step_link( $thankyou_id, $order_key, $thankyou_data['lang'] );
 			}
+		}
 
-			$next_step = ! empty( $order ) ? $order->get_meta( 'sellkit_funnel_next_step_data' ) : '';
-			$funnel_id = (int) $order->get_meta( 'sellkit_funnel_id' );
+		$last_price = $order->get_total() - $order->get_total_discount() - $order->get_total_tax();
 
-			if ( empty( $next_step ) ) {
-				return;
-			}
+		$this->contacts->add_total_spent( $last_price, $funnel_id );
 
-			if ( empty( $funnel_id ) ) {
-				$step_id   = intval( $next_step['page_id'] );
-				$step_data = get_post_meta( $step_id, 'step_data', true );
-				$funnel_id = (int) $step_data['funnel_id'];
-			}
-
-			// For the new method( upsell popup ) we show thakyou page right away after checkout step.
-			$thankyou_id    = $this->find_funnel_thankyou_page( $funnel_id );
-			$next_step_link = add_query_arg( [ 'order-key' => $order_key ], get_permalink( $thankyou_id ) );
-
-			if ( class_exists( 'SitePress' ) ) {
-				$thankyou_data = $this->wpml_compatibility_get_thank_you_page_data( $thankyou_id );
-				$thankyou_id   = isset( $thankyou_data['id'] ) ? $thankyou_data['id'] : $thankyou_id;
-
-				if ( isset( $thankyou_data['lang'] ) ) {
-					$next_step_link = $this->wpml_compatibility_get_next_step_link( $thankyou_id, $order_key, $thankyou_data['lang'] );
-				}
-			}
-
-			$last_price = $order->get_total() - $order->get_total_discount() - $order->get_total_tax();
-
-			$this->contacts->add_total_spent( $last_price, $funnel_id );
-
-			$global_funnel_id = (int) get_option( Global_Checkout::SELLKIT_GLOBAL_CHECKOUT_OPTION );
-			if ( $global_funnel_id === $funnel_id ) {
-				$this->global_thankyou( $thankyou_id );
-				exit();
-			}
-
-			wp_safe_redirect( $next_step_link );
+		$global_funnel_id = (int) get_option( Global_Checkout::SELLKIT_GLOBAL_CHECKOUT_OPTION );
+		if ( $global_funnel_id === $funnel_id ) {
+			$this->global_thankyou( $thankyou_id );
 			exit();
 		}
+
+		wp_safe_redirect( $next_step_link );
+		exit();
 	}
 
 	/**
@@ -138,11 +149,11 @@ class Thankyou extends Base_Step {
 		}
 
 		if ( $previous_page_id ) {
-			$order_language_details = apply_filters( 'wpml_post_language_details', null, $previous_page_id );
+			$order_language_details = apply_filters( 'wpml_post_language_details', null, $previous_page_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 			$current_language       = $order_language_details['language_code'];
 
 			if ( ! empty( $current_language ) ) {
-				$thankyou_id_translated = apply_filters( 'wpml_object_id', $thankyou_id, 'sellkit_step', true, $current_language );
+				$thankyou_id_translated = apply_filters( 'wpml_object_id', $thankyou_id, 'sellkit_step', true, $current_language ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 
 				if ( ! empty( $thankyou_id_translated ) ) {
 					$data['id']   = $thankyou_id_translated;
@@ -173,7 +184,7 @@ class Thankyou extends Base_Step {
 	 * @return string The next step link URL, including the translated permalink and order key.
 	 */
 	private function wpml_compatibility_get_next_step_link( $thankyou_id, $order_key, $lang ) {
-		$permalink      = apply_filters( 'wpml_permalink', get_permalink( $thankyou_id ), $lang );
+		$permalink      = apply_filters( 'wpml_permalink', get_permalink( $thankyou_id ), $lang ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 		$next_step_link = add_query_arg( [ 'order-key' => $order_key ], $permalink );
 
 		return $next_step_link;
@@ -182,7 +193,7 @@ class Thankyou extends Base_Step {
 	/**
 	 * Find funnel thankyou page using one of steps data.
 	 *
-	 * @param array $funnel_id funnel id.
+	 * @param int $funnel_id funnel id.
 	 * @since 1.6.2
 	 */
 	private function find_funnel_thankyou_page( $funnel_id ) {
@@ -225,7 +236,7 @@ class Thankyou extends Base_Step {
 
 			$content = do_blocks( $post->post_content );
 
-			$content = apply_filters( 'the_content', $content );
+			$content = apply_filters( 'the_content', $content ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core filter.
 
 			add_filter( 'the_content', function() use ( $content ) {
 				ob_Start();
@@ -291,7 +302,7 @@ class Thankyou extends Base_Step {
 	/**
 	 * Register inner blocks by parent.
 	 *
-	 * @param Object $parent_class Parent class name.
+	 * @param object $parent_class Parent class name.
 	 * @since 2.3.0
 	 * @return void
 	 */

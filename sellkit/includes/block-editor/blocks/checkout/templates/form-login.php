@@ -16,6 +16,8 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- WooCommerce/Elementor template; variables mirror core docs.
+
 
 
 if ( is_user_logged_in() ) {
@@ -73,7 +75,11 @@ if ( is_user_logged_in() ) {
 								id="billing_email"
 								class="login-mail validate-email"
 								placeholder="<?php echo esc_html__( 'Email Address', 'sellkit' ); ?>"
-								autocomplete=""
+								autocomplete="email"
+								autocapitalize="none"
+								autocorrect="off"
+								spellcheck="false"
+								inputmode="email"
 							>
 						</span>
 						<span class="sellkit-checkout-widget-email-error login-section-error">

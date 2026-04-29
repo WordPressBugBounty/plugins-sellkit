@@ -78,7 +78,7 @@ class Shipping_Method extends Item_Base {
 		?>
 		<strong
 			<?php
-				echo $this->widget->get_render_attribute_string( 'order-details-item-' . esc_attr( $this->get_id() ) );
+				echo $this->widget->get_render_attribute_string( 'order-details-item-' . esc_attr( $this->get_id() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor-generated attributes.
 			?>
 			>
 			<?php
@@ -100,7 +100,7 @@ class Shipping_Method extends Item_Base {
 		?>
 		<strong
 			<?php
-				echo $this->widget->get_render_attribute_string( 'order-details-item-' . esc_attr( $this->get_id() ) );
+				echo $this->widget->get_render_attribute_string( 'order-details-item-' . esc_attr( $this->get_id() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor-generated attributes.
 			?>
 			>
 			<?php

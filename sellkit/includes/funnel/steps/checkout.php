@@ -41,6 +41,47 @@ class Checkout {
 		add_action( 'woocommerce_checkout_create_order', [ $this, 'save_order_custom_meta_data' ], 10 );
 		add_action( 'woocommerce_after_order_notes', [ $this, 'custom_checkout_hidden_fields' ], 10 );
 		add_action( 'wc_ajax_update_order_review', [ $this, 'do_actions' ] );
+
+		// Persist the current checkout step id in the WC session so express-checkout
+		// AJAX requests (which do not submit the sellkit_current_page_id hidden field)
+		// can still resolve the funnel context and save sellkit_funnel_next_step_data
+		// on the created order.
+		if ( ! wp_doing_ajax() && ! is_admin() ) {
+			add_action( 'wp', [ $this, 'store_checkout_step_in_session' ], 20 );
+		}
+	}
+
+	/**
+	 * Store the current checkout step id in the WC session when rendering an actual
+	 * SellKit funnel checkout step page. The value is later consumed by
+	 * Sellkit_Funnel::get_page_id() during AJAX requests (e.g. Stripe express
+	 * checkout) that lack the sellkit_current_page_id POST field.
+	 *
+	 * A timestamp is stored alongside the id so the fallback can be ignored if it
+	 * is stale, avoiding cross-contamination between unrelated checkouts.
+	 *
+	 * @since 2.3.3
+	 * @return void
+	 */
+	public function store_checkout_step_in_session() {
+		if ( ! function_exists( 'WC' ) || ! is_object( WC()->session ) ) {
+			return;
+		}
+
+		$post_id = get_the_ID();
+
+		if ( empty( $post_id ) || 'sellkit_step' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		$step_data = get_post_meta( $post_id, 'step_data', true );
+
+		if ( empty( $step_data['type']['key'] ) || 'checkout' !== $step_data['type']['key'] ) {
+			return;
+		}
+
+		WC()->session->set( 'sellkit_current_page_id', (int) $post_id );
+		WC()->session->set( 'sellkit_current_page_id_time', time() );
 	}
 
 	/**
@@ -203,7 +244,7 @@ class Checkout {
 		$default_checkout_id = wc_get_page_id( 'checkout' );
 
 		if ( ! empty( $default_checkout_id ) ) {
-			$default_checkout_id = apply_filters( 'wpml_object_id', $default_checkout_id, 'page', true );
+			$default_checkout_id = apply_filters( 'wpml_object_id', $default_checkout_id, 'page', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 		}
 
 		if (
@@ -218,7 +259,7 @@ class Checkout {
 				$step['type'] = (array) $step['type'];
 
 				if ( 'checkout' === $step['type']['key'] ) {
-					$checkout_id = apply_filters( 'wpml_object_id', $step['page_id'], 'sellkit_step', true );
+					$checkout_id = apply_filters( 'wpml_object_id', $step['page_id'], 'sellkit_step', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 				}
 			}
 
@@ -384,7 +425,9 @@ class Checkout {
 		$old_values = [];
 
 		// Getting old data.
-		$result = $database->get( 'funnel_contact', [ 'id' => isset( $_SESSION['entered_funnel_id'] ) ? $_SESSION['entered_funnel_id'] : '' ] );
+		$contact_id = isset( $_SESSION['entered_funnel_id'] ) ? absint( $_SESSION['entered_funnel_id'] ) : 0;
+
+		$result = $database->get( 'funnel_contact', [ 'id' => $contact_id ] );
 
 		if ( ! empty( $result[0]['order_bump'] ) ) {
 			$old_values = unserialize( $result[0]['order_bump'] ); // phpcs:ignore
@@ -395,7 +438,7 @@ class Checkout {
 		$database->update(
 			'funnel_contact',
 			[ 'order_bump' => $new_values ],
-			[ 'id' => isset( $_SESSION['entered_funnel_id'] ) ? $_SESSION['entered_funnel_id'] : '' ]
+			[ 'id' => $contact_id ]
 		);
 	}
 

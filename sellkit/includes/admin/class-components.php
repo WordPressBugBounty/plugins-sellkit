@@ -78,7 +78,6 @@ class Sellkit_Admin_Components {
 	public function modify_coupon_list_table_columns( $columns, $posts ) {
 		$columns['labels'] = [
 			esc_html__( 'Author', 'sellkit' ),
-			esc_html__( 'Created at', 'sellkit' ),
 		];
 
 		foreach ( $posts as $post ) {
@@ -90,7 +89,6 @@ class Sellkit_Admin_Components {
 					'type' => 'search',
 					'value' => $author_id,
 				],
-				get_the_date( 'Y/m/d h:i A', $post->ID ),
 			];
 		}
 
@@ -107,7 +105,6 @@ class Sellkit_Admin_Components {
 	public function modify_discount_list_table_columns( $columns, $posts ) {
 		$columns['labels'] = [
 			__( 'Author', 'sellkit' ),
-			__( 'Created at', 'sellkit' ),
 		];
 
 		foreach ( $posts as $post ) {
@@ -119,7 +116,6 @@ class Sellkit_Admin_Components {
 					'type' => 'search',
 					'value' => $author_id,
 				],
-				get_the_date( 'Y/m/d h:i A', $post->ID ),
 			];
 		}
 
@@ -136,7 +132,6 @@ class Sellkit_Admin_Components {
 	public function modify_alert_list_table_columns( $columns, $posts ) {
 		$columns['labels'] = [
 			esc_html__( 'Author', 'sellkit' ),
-			esc_html__( 'Created at', 'sellkit' ),
 		];
 
 		foreach ( $posts as $post ) {
@@ -148,7 +143,6 @@ class Sellkit_Admin_Components {
 					'type' => 'search',
 					'value' => $author_id,
 				],
-				get_the_date( 'Y/m/d h:i A', $post->ID ),
 			];
 		}
 
@@ -166,7 +160,6 @@ class Sellkit_Admin_Components {
 	public function modify_funnel_list_table_columns( $columns, $posts ) {
 		$columns['labels'] = [
 			__( 'Author', 'sellkit' ),
-			__( 'Created at', 'sellkit' ),
 		];
 
 		foreach ( $posts as $post ) {
@@ -178,7 +171,6 @@ class Sellkit_Admin_Components {
 					'type' => 'search',
 					'value' => $author_id,
 				],
-				get_the_date( 'Y/m/d h:i A', $post->ID ),
 			];
 		}
 

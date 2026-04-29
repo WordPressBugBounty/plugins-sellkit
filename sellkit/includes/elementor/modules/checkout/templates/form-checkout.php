@@ -19,12 +19,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- WooCommerce template scope.
+
 do_action( 'woocommerce_before_checkout_form', $checkout );
 do_action( 'sellkit_checkout_one_page_express_methods' );
 
 // If checkout registration is disabled and not logged in, the user cannot checkout.
 if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_required() && ! is_user_logged_in() ) {
-	echo esc_html( apply_filters( 'woocommerce_checkout_must_be_logged_in_message', __( 'You must be logged in to checkout.', 'woocommerce' ) ) );
+	echo esc_html( apply_filters( 'woocommerce_checkout_must_be_logged_in_message', __( 'You must be logged in to checkout.', 'sellkit' ) ) );
 	return;
 }
 
@@ -81,7 +83,7 @@ if ( ! WC()->cart->needs_shipping() ) {
 
 	<?php do_action( 'sellkit_checkout_after_term_and_condition' ); ?>
 	<?php
-		$order_button_text = apply_filters( 'sellkit-checkout-place-order-btn-text', __( 'Place Order', 'woocommerce' ) );
+		$order_button_text = apply_filters( 'sellkit-checkout-place-order-btn-text', __( 'Place Order', 'sellkit' ) );
 		require __DIR__ . '/payment-continue.php';
 	?>
 	<?php do_action( 'sellkit-checkout-step-c-ends' ); ?>
@@ -100,7 +102,7 @@ if ( ! WC()->cart->needs_shipping() ) {
 
 		<div id="sellkit-checkout-widget-order-review-wrap" >
 			<h4 class="sellkit-checkout-order-review-heading header heading">
-				<?php esc_html_e( 'Your order', 'woocommerce' ); ?>
+				<?php esc_html_e( 'Your order', 'sellkit' ); ?>
 			</h4>
 			<?php do_action( 'woocommerce_checkout_order_review' ); ?>
 		</div>

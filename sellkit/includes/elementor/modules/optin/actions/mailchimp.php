@@ -311,7 +311,7 @@ class Sellkit_Elementor_Optin_Action_Mailchimp extends Sellkit_Elementor_Optin_A
 		}
 
 		if ( isset( $subscriber['merge_fields'] ) && ! empty( $subscriber['merge_fields']['BIRTHDAY'] ) ) {
-			$formatted_birthday = date( 'Y/m/d', strtotime( $subscriber['merge_fields']['BIRTHDAY'] ) );
+			$formatted_birthday = gmdate( 'Y/m/d', strtotime( $subscriber['merge_fields']['BIRTHDAY'] ) );
 
 			$subscriber['merge_fields']['BIRTHDAY'] = $formatted_birthday;
 		}

@@ -18,6 +18,8 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- WooCommerce/Elementor template; variables mirror core docs.
+
 
 $formatted_destination    = isset( $formatted_destination ) ? $formatted_destination : WC()->countries->get_formatted_address( $package['destination'], ', ' );
 $has_calculated_shipping  = ! empty( $has_calculated_shipping );
@@ -68,10 +70,10 @@ $chosen_method_2 = apply_filters( 'sellkit-shipping-methods-choosen-method', $ch
 					<?php
 					if ( $formatted_destination ) {
 						// Translators: $s shipping destination.
-						printf( esc_html__( 'Shipping to %s.', 'woocommerce' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' );
-						$calculator_text = esc_html__( 'Change address', 'woocommerce' );
+						printf( esc_html__( 'Shipping to %s.', 'sellkit' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' );
+						$calculator_text = esc_html__( 'Change address', 'sellkit' );
 					} else {
-						echo wp_kses_post( apply_filters( 'woocommerce_shipping_estimate_html', __( 'Shipping options will be updated during checkout.', 'woocommerce' ) ) );
+						echo wp_kses_post( apply_filters( 'woocommerce_shipping_estimate_html', __( 'Shipping options will be updated during checkout.', 'sellkit' ) ) );
 					}
 					?>
 				</p>
@@ -79,16 +81,16 @@ $chosen_method_2 = apply_filters( 'sellkit-shipping-methods-choosen-method', $ch
 			<?php
 		elseif ( ! $has_calculated_shipping || ! $formatted_destination ) :
 			if ( is_cart() && 'no' === get_option( 'woocommerce_enable_shipping_calc' ) ) {
-				echo wp_kses_post( apply_filters( 'woocommerce_shipping_not_enabled_on_cart_html', __( 'Shipping costs are calculated during checkout.', 'woocommerce' ) ) );
+				echo wp_kses_post( apply_filters( 'woocommerce_shipping_not_enabled_on_cart_html', __( 'Shipping costs are calculated during checkout.', 'sellkit' ) ) );
 			} else {
-				echo wp_kses_post( apply_filters( 'woocommerce_shipping_may_be_available_html', __( 'Enter your address to view shipping options.', 'woocommerce' ) ) );
+				echo wp_kses_post( apply_filters( 'woocommerce_shipping_may_be_available_html', __( 'Enter your address to view shipping options.', 'sellkit' ) ) );
 			}
 		elseif ( ! is_cart() ) :
-			echo wp_kses_post( apply_filters( 'woocommerce_no_shipping_available_html', __( 'There are no shipping options available. Please ensure that your address has been entered correctly, or contact us if you need any help.', 'woocommerce' ) ) );
+			echo wp_kses_post( apply_filters( 'woocommerce_no_shipping_available_html', __( 'There are no shipping options available. Please ensure that your address has been entered correctly, or contact us if you need any help.', 'sellkit' ) ) );
 		else :
 			// Translators: $s shipping destination.
-			echo wp_kses_post( apply_filters( 'woocommerce_cart_no_shipping_available_html', sprintf( esc_html__( 'No shipping options were found for %s.', 'woocommerce' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' ) ) );
-			$calculator_text = esc_html__( 'Enter a different address', 'woocommerce' );
+			echo wp_kses_post( apply_filters( 'woocommerce_cart_no_shipping_available_html', sprintf( esc_html__( 'No shipping options were found for %s.', 'sellkit' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' ) ) );
+			$calculator_text = esc_html__( 'Enter a different address', 'sellkit' );
 		endif;
 		?>
 

@@ -112,6 +112,17 @@ class Sellkit_Elementor_Checkout_Widget extends Sellkit_Elementor_Base_Widget {
 
 				return;
 			}
+
+			// Valid order on the order-received endpoint: render WooCommerce's thank-you
+			// template instead of the checkout form. SellKit's redirect_after_purchase
+			// already runs earlier on template_redirect, but express-checkout flows that
+			// skip SellKit's hidden fields (so no sellkit_funnel_next_step_data meta is
+			// saved) fall through to here and must not show a filled-in checkout form.
+			echo '<div class="woocommerce">';
+			wc_get_template( 'checkout/thankyou.php', [ 'order' => wc_get_order( $order_id ) ] );
+			echo '</div>';
+
+			return;
 		}
 
 		if (
@@ -195,7 +206,7 @@ class Sellkit_Elementor_Checkout_Widget extends Sellkit_Elementor_Base_Widget {
 			$current_user = wp_get_current_user()->ID;
 		}
 
-		echo '<div ' . $this->get_render_attribute_string( 'wrapper' ) . ' >';
+		echo '<div ' . $this->get_render_attribute_string( 'wrapper' ) . ' >'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor-generated attributes.
 		echo do_shortcode( '[woocommerce_checkout]' );
 		echo do_shortcode( '[sellkit_checkout_widget_simulated]' );
 		echo '</div>';

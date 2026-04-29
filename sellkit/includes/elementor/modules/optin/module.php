@@ -111,7 +111,7 @@ class Sellkit_Elementor_Optin_Module extends Sellkit_Elementor_Base_Module {
 	 */
 	public static function get_action_types() {
 		return [
-			'growmatik'      => esc_html__( 'Growmatik', 'sellkit' ),
+			'growmatik'      => esc_html__( 'ConvesioConvert', 'sellkit' ),
 			'activecampaign' => esc_html__( 'ActiveCampaign', 'sellkit' ),
 			'convertkit'     => esc_html__( 'ConvertKit', 'sellkit' ),
 			'drip'           => esc_html__( 'Drip', 'sellkit' ),

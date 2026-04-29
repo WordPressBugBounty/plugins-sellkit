@@ -15,14 +15,16 @@
  * @version 5.2.0
  */
 
-defined( 'ABSPATH' ) || exit; ?>
+defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- WooCommerce/Elementor template; variables mirror core docs.
+ ?>
 
 	<table class="shop_table woocommerce-checkout-review-order-table" cellspacing="0">
 		<thead>
 			<?php ob_start(); ?>
 			<tr>
-				<th class="product-name"><?php esc_html_e( 'Product', 'woocommerce' ); ?></th>
-				<th class="product-total"><?php esc_html_e( 'Subtotal', 'woocommerce' ); ?></th>
+				<th class="product-name"><?php esc_html_e( 'Product', 'sellkit' ); ?></th>
+				<th class="product-total"><?php esc_html_e( 'Subtotal', 'sellkit' ); ?></th>
 			</tr>
 			<?php ob_get_clean(); ?>
 		</thead>
@@ -61,7 +63,7 @@ defined( 'ABSPATH' ) || exit; ?>
 
 		<tfoot class="sellkit-checkout-widget-order-summary-tfoot">
 			<tr class="cart-subtotal">
-				<th class="sellkit-checkout-widget-divider"><?php esc_html_e( 'Subtotal', 'woocommerce' ); ?></th>
+				<th class="sellkit-checkout-widget-divider"><?php esc_html_e( 'Subtotal', 'sellkit' ); ?></th>
 				<td class="sellkit-checkout-widget-divider"><?php wc_cart_totals_subtotal_html(); ?></td>
 			</tr>
 
@@ -122,7 +124,7 @@ defined( 'ABSPATH' ) || exit; ?>
 			<?php do_action( 'woocommerce_review_order_before_order_total' ); ?>
 
 			<tr class="order-total">
-				<th class="sellkit-checkout-widget-divider sellkit-order-total"><?php esc_html_e( 'Total', 'woocommerce' ); ?></th>
+				<th class="sellkit-checkout-widget-divider sellkit-order-total"><?php esc_html_e( 'Total', 'sellkit' ); ?></th>
 				<td class="sellkit-checkout-widget-divider sellkit-order-total"><?php wc_cart_totals_order_total_html(); ?></td>
 			</tr>
 

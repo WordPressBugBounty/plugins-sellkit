@@ -39,26 +39,49 @@ class Sellkit_Global_Checkout {
 	}
 
 	/**
-	 * Toggle global checkout funnel status.
+	 * Set global checkout funnel post status (activate / deactivate).
+	 *
+	 * Expects POST `status` as the target status: `publish` or `draft`.
 	 *
 	 * @since 1.7.4
 	 */
 	public function change_status() {
 		check_ajax_referer( 'sellkit', 'nonce' );
 
-		$status = filter_input( INPUT_POST, 'status', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		$id     = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
-		$post   = get_post( $id );
+		$target_status = isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : '';
+		$post_id       = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
 
-		$post->post_status = 'draft';
-
-		if ( 'publish' !== $status ) {
-			$post->post_status = 'publish';
+		if ( ! in_array( $target_status, [ 'publish', 'draft' ], true ) || ! $post_id ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid request.', 'sellkit' ) ] );
 		}
 
-		$id = wp_update_post( $post );
+		$post = get_post( $post_id );
 
-		wp_send_json_success( $post->post_status );
+		if ( ! $post || 'sellkit-funnels' !== $post->post_type ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid funnel.', 'sellkit' ) ] );
+		}
+
+		$global_checkout_id = (int) get_option( Checkout::SELLKIT_GLOBAL_CHECKOUT_OPTION, 0 );
+
+		if ( $global_checkout_id !== $post_id ) {
+			wp_send_json_error( [ 'message' => __( 'Not the Global Checkout funnel.', 'sellkit' ) ] );
+		}
+
+		$updated = wp_update_post(
+			[
+				'ID'          => $post_id,
+				'post_status' => $target_status,
+			],
+			true
+		);
+
+		if ( is_wp_error( $updated ) || ! $updated ) {
+			wp_send_json_error( [ 'message' => __( 'Could not update status.', 'sellkit' ) ] );
+		}
+
+		$saved_status = get_post_status( $post_id );
+
+		wp_send_json_success( $saved_status ? $saved_status : $target_status );
 	}
 }
 

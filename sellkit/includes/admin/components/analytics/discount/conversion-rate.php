@@ -98,7 +98,7 @@ class Conversion_Rate {
 
 		for ( $i = Analytics::$date_range; $i >= 0; $i-- ) {
 			$time   = strtotime( "-{$i} days" );
-			$date   = date( 'M_d', $time );
+			$date   = gmdate( 'M_d', $time );
 			$result = [
 				'date' => str_replace( '_', ' ', $date ),
 				'value' => 0,

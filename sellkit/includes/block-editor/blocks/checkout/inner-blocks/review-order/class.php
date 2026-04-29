@@ -1,6 +1,8 @@
 <?php
 namespace Sellkit\Blocks\Inner_Block;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Review Order class.
  *

@@ -34,7 +34,7 @@ class Created_Coupon extends Analytics_Base {
 	public function set_coupons_details() {
 		global $wpdb;
 
-		$start_date       = date( 'Y-m-d H:i:s', time() - ( 60 * 60 * 24 * Analytics::$date_range ) );
+		$start_date       = gmdate( 'Y-m-d H:i:s', time() - ( 60 * 60 * 24 * Analytics::$date_range ) );
 		$posts_table      = "{$wpdb->prefix}posts ";
 		$posts_meta_table = "{$wpdb->prefix}postmeta ";
 

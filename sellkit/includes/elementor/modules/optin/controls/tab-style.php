@@ -175,7 +175,7 @@ class Sellkit_Elementor_Optin_Tab_Style {
 				'name'      => 'field_tab_box_shadow_normal',
 				'separator' => 'before',
 				'selector'  => '{{WRAPPER}} .sellkit-field',
-				'exclude'   => [ 'box_shadow_position' ],
+				'exclude'   => [ 'box_shadow_position' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- Elementor control keys, not WP_Query.
 			]
 		);
 
@@ -290,7 +290,7 @@ class Sellkit_Elementor_Optin_Tab_Style {
 			'box-shadow',
 			[
 				'name'      => 'field_tab_box_shadow_focus',
-				'exclude'   => [ 'box_shadow_position' ],
+				'exclude'   => [ 'box_shadow_position' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- Elementor control keys, not WP_Query.
 				'separator' => 'before',
 				'selector'  => '{{WRAPPER}} .sellkit-field:focus',
 			]
@@ -986,7 +986,7 @@ class Sellkit_Elementor_Optin_Tab_Style {
 			'background',
 			[
 				'name'     => 'button_normal_background',
-				'exclude'  => [ 'image' ],
+				'exclude'  => [ 'image' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- Elementor control keys, not WP_Query.
 				'selector' => '{{WRAPPER}} .sellkit-submit-button',
 			]
 		);
@@ -996,7 +996,7 @@ class Sellkit_Elementor_Optin_Tab_Style {
 			[
 				'name'      => 'button_normal_box_shadow',
 				'selector'  => '{{WRAPPER}} .sellkit-submit-button',
-				'exclude'   => [ 'box_shadow_position' ],
+				'exclude'   => [ 'box_shadow_position' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- Elementor control keys, not WP_Query.
 			]
 		);
 
@@ -1064,7 +1064,7 @@ class Sellkit_Elementor_Optin_Tab_Style {
 			'background',
 			[
 				'name'     => 'button_hover_background',
-				'exclude'  => [ 'image' ],
+				'exclude'  => [ 'image' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- Elementor control keys, not WP_Query.
 				'selector' => '{{WRAPPER}} .sellkit-submit-button:hover',
 			]
 		);
@@ -1075,7 +1075,7 @@ class Sellkit_Elementor_Optin_Tab_Style {
 				'name'      => 'button_hover_box_shadow',
 				'separator' => 'before',
 				'selector'  => '{{WRAPPER}} .sellkit-submit-button:hover',
-				'exclude'   => [ 'box_shadow_position' ],
+				'exclude'   => [ 'box_shadow_position' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- Elementor control keys, not WP_Query.
 			]
 		);
 

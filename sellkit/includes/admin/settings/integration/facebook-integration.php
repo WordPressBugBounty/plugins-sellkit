@@ -84,7 +84,7 @@ class Facebook extends Settings_Integration {
 
 		$facebook_script .= $this->facebook_pixel_events( self::$post, $fb_tracking_id );
 
-		echo $facebook_script;
+		echo $facebook_script; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Inline pixel script; tracking IDs escaped with esc_js.
 	}
 
 	/**

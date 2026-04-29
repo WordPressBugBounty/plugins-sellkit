@@ -99,7 +99,7 @@ class Sellkit_Admin_Steps {
 			'decision' => esc_html__( 'Condition', 'sellkit' ),
 			'upsell' => esc_html__( 'Upsell', 'sellkit' ),
 			'downsell' => esc_html__( 'Downsell', 'sellkit' ),
-			'optin-confirmation' => esc_html__( 'Opt-in Confirmation' ),
+			'optin-confirmation' => esc_html__( 'Opt-in Confirmation', 'sellkit' ),
 			'optin' => esc_html__( 'Opt-in', 'sellkit' ),
 		];
 	}
@@ -117,7 +117,7 @@ class Sellkit_Admin_Steps {
 			$step['number']    = $step_number;
 
 			if ( array_key_exists( 'page_id', $step ) ) {
-				$translated_step = apply_filters( 'wpml_object_id', $step['page_id'], 'sellkit_step', true );
+				$translated_step = apply_filters( 'wpml_object_id', $step['page_id'], 'sellkit_step', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 
 				if ( $step['page_id'] !== $translated_step ) {
 					update_post_meta( $translated_step, 'step_data', $step );
@@ -226,7 +226,7 @@ class Sellkit_Admin_Steps {
 		}
 
 		if ( empty( $products_id ) ) {
-			wp_send_json_error( __( 'Please send some product ids' ) );
+			wp_send_json_error( __( 'Please send some product ids', 'sellkit' ) );
 		}
 
 		$products_id = is_array( $products_id ) ? $products_id : [ $products_id ];
@@ -566,7 +566,7 @@ class Sellkit_Admin_Steps {
 					}
 				}
 
-				do_action( 'wpml_save_custom_field_translation_option', 'step_data', WPML_COPY_CUSTOM_FIELD );
+				do_action( 'wpml_save_custom_field_translation_option', 'step_data', WPML_COPY_CUSTOM_FIELD ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 			}
 		}
 	}

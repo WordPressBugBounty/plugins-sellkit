@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 
 use Sellkit\Contact_Segmentation\Conditions;
 
@@ -117,7 +118,7 @@ function sellkit_get_ip() {
  * @param string $column Column name.
  * @return mixed|string|void
  */
-function get_funnel_contact_value_by_column( $column ) {
+function sellkit_get_funnel_contact_value_by_column( $column ) {
 	$results  = [];
 	$contacts = sellkit()->db->get( 'funnel_contact', [
 		'user_id' => get_current_user_id()

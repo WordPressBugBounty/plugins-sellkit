@@ -1,25 +1,21 @@
-# Copyright (c) 2025 SellKit.
+# Copyright (c) 2026 SellKit.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sellkit 2.4.0\n"
+"Project-Id-Version: SellKit - Funnel builder and checkout optimizer for WooCommerce to sell more, faster 2.5.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sellkit\n"
 "Last-Translator: Artbees Team <info@artbees.net>\n"
 "Language-Team: Artbees Team <info@artbees.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-11-27T14:31:44+00:00\n"
+"POT-Creation-Date: 2026-04-29T03:38:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: sellkit\n"
 
 #. Plugin Name of the plugin
 #: sellkit.php
-#: includes/elementor/class.php:79
-#: includes/funnel/homepage.php:141
-#: sellkit.php:434
-#: sellkit.php:476
-msgid "Sellkit"
+msgid "SellKit - Funnel builder and checkout optimizer for WooCommerce to sell more, faster"
 msgstr ""
 
 #. Plugin URI of the plugin
@@ -51,22 +47,15 @@ msgid "Header Behavior (Meta option)"
 msgstr ""
 
 #: includes/admin/class-components.php:80
-#: includes/admin/class-components.php:109
-#: includes/admin/class-components.php:138
-#: includes/admin/class-components.php:168
+#: includes/admin/class-components.php:107
+#: includes/admin/class-components.php:134
+#: includes/admin/class-components.php:162
 msgid "Author"
 msgstr ""
 
-#: includes/admin/class-components.php:81
-#: includes/admin/class-components.php:110
-#: includes/admin/class-components.php:139
-#: includes/admin/class-components.php:169
-msgid "Created at"
-msgstr ""
-
-#: includes/admin/class-custom-tables.php:229
-#: includes/admin/class-custom-tables.php:316
-#: includes/admin/class-custom-tables.php:342
+#: includes/admin/class-custom-tables.php:249
+#: includes/admin/class-custom-tables.php:336
+#: includes/admin/class-custom-tables.php:362
 #: includes/admin/funnel/importer/ajax-handler.php:64
 #: includes/admin/funnel/importer/ajax-handler.php:153
 #: includes/admin/funnel/importer/ajax-handler.php:215
@@ -74,22 +63,38 @@ msgstr ""
 msgid "Something went wrong."
 msgstr ""
 
-#: includes/admin/class-custom-tables.php:402
+#: includes/admin/class-custom-tables.php:422
 msgid "The details have been updated."
+msgstr ""
+
+#: includes/admin/class-global-checkout.php:55
+msgid "Invalid request."
+msgstr ""
+
+#: includes/admin/class-global-checkout.php:61
+msgid "Invalid funnel."
+msgstr ""
+
+#: includes/admin/class-global-checkout.php:67
+msgid "Not the Global Checkout funnel."
+msgstr ""
+
+#: includes/admin/class-global-checkout.php:79
+msgid "Could not update status."
 msgstr ""
 
 #: includes/admin/class-notices.php:35
 msgid "The operation was successful."
 msgstr ""
 
-#: includes/admin/class-personalised-coupons.php:37
+#: includes/admin/class-personalised-coupons.php:39
 #: includes/admin/class-posts.php:77
 #: includes/admin/class-posts.php:293
 #: includes/admin/funnel/importer/ajax-handler.php:179
 msgid "something went wrong"
 msgstr ""
 
-#: includes/admin/class-personalised-coupons.php:43
+#: includes/admin/class-personalised-coupons.php:45
 msgid "The new coupon was added"
 msgstr ""
 
@@ -122,9 +127,9 @@ msgid "Upgrade to Pro"
 msgstr ""
 
 #: includes/admin/class-promote-sellkit-pro.php:76
-#: includes/block-editor/blocks/checkout/inner-blocks/review-order/class.php:44
-#: includes/block-editor/blocks/checkout/templates/review-order.php:100
-#: includes/elementor/modules/checkout/templates/review-order.php:72
+#: includes/block-editor/blocks/checkout/inner-blocks/review-order/class.php:46
+#: includes/block-editor/blocks/checkout/templates/review-order.php:102
+#: includes/elementor/modules/checkout/templates/review-order.php:74
 #: assets/dist/admin/sellkit.js:280
 #: assets/dist/blocks/order-cart-details/inner-blocks.js:14
 #: includes/block-editor/blocks/order-cart-details/inner-blocks/order-details/order-details.js:38
@@ -237,6 +242,10 @@ msgstr ""
 msgid "Condition"
 msgstr ""
 
+#: includes/admin/class-steps.php:102
+msgid "Opt-in Confirmation"
+msgstr ""
+
 #: includes/admin/class-steps.php:103
 #: assets/dist/admin/sellkit.js:280
 msgid "Opt-in"
@@ -246,6 +255,10 @@ msgstr ""
 #: includes/admin/class-steps.php:225
 #: includes/admin/funnel/class.php:50
 msgid "Please install and activate WooCommerce."
+msgstr ""
+
+#: includes/admin/class-steps.php:229
+msgid "Please send some product ids"
 msgstr ""
 
 #: includes/admin/class-steps.php:420
@@ -289,12 +302,16 @@ msgstr ""
 msgid "New Step Name"
 msgstr ""
 
-#: includes/admin/components/class-list-table.php:181
-#: includes/admin/components/class-list-table.php:229
+#: includes/admin/components/class-analytics.php:121
+msgid "Forbidden."
+msgstr ""
+
+#: includes/admin/components/class-list-table.php:287
+#: includes/admin/components/class-list-table.php:335
 msgid "Clone"
 msgstr ""
 
-#: includes/admin/components/class-list-table.php:448
+#: includes/admin/components/class-list-table.php:554
 msgid "You can not import multiple funnels to the global checkout."
 msgstr ""
 
@@ -308,6 +325,10 @@ msgstr ""
 #: includes/admin/funnel/importer/ajax-handler.php:144
 #: includes/admin/funnel/importer/ajax-handler.php:169
 msgid "Invalid nonce."
+msgstr ""
+
+#: includes/admin/funnel/importer/ajax-handler.php:74
+msgid "The data has been imported successfully."
 msgstr ""
 
 #: includes/admin/funnel/importer/ajax-handler.php:102
@@ -433,7 +454,7 @@ msgstr ""
 msgid "Somethings went wrong."
 msgstr ""
 
-#: includes/admin/views/promotion-banner.php:69
+#: includes/admin/views/promotion-banner.php:71
 msgctxt "admin promotion banner"
 msgid "Dismiss promotion"
 msgstr ""
@@ -474,7 +495,7 @@ msgid "Select a state…"
 msgstr ""
 
 #: includes/block-editor/blocks/checkout/helper.php:310
-#: includes/block-editor/blocks/checkout/helper.php:1457
+#: includes/block-editor/blocks/checkout/helper.php:1467
 #: includes/elementor/modules/checkout/classes/global-hooks.php:318
 #: includes/elementor/modules/checkout/classes/helper.php:272
 #: includes/elementor/modules/checkout/classes/multi-step.php:283
@@ -491,27 +512,27 @@ msgstr ""
 msgid "Email or password field is not valid."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:780
+#: includes/block-editor/blocks/checkout/helper.php:790
 #: includes/elementor/modules/checkout/classes/global-hooks.php:902
 msgid "Oh do not be tricky."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1324
-#: includes/block-editor/blocks/checkout/helper.php:1414
+#: includes/block-editor/blocks/checkout/helper.php:1334
+#: includes/block-editor/blocks/checkout/helper.php:1424
 #: includes/elementor/modules/checkout/classes/global-hooks.php:1372
 #: includes/elementor/modules/checkout/classes/global-hooks.php:1462
 msgid "Empty Upsell ID."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1330
+#: includes/block-editor/blocks/checkout/helper.php:1340
 #: includes/elementor/modules/checkout/classes/global-hooks.php:1378
 msgid "Empty Step Data."
 msgstr ""
 
 #. translators: %s field_name.
-#: includes/block-editor/blocks/checkout/helper.php:1470
-#: includes/block-editor/blocks/checkout/helper.php:1489
-#: includes/block-editor/blocks/checkout/helper.php:1501
+#: includes/block-editor/blocks/checkout/helper.php:1480
+#: includes/block-editor/blocks/checkout/helper.php:1499
+#: includes/block-editor/blocks/checkout/helper.php:1511
 #: includes/elementor/modules/checkout/classes/helper.php:282
 #: includes/elementor/modules/checkout/classes/helper.php:317
 #: includes/elementor/modules/checkout/classes/helper.php:333
@@ -519,66 +540,67 @@ msgstr ""
 msgid "%s is a required field."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1476
+#: includes/block-editor/blocks/checkout/helper.php:1486
 #: includes/elementor/modules/checkout/classes/helper.php:307
 msgid "Billing"
 msgstr ""
 
 #. translators: %s field_name.
-#: includes/block-editor/blocks/checkout/helper.php:1501
-#: includes/block-editor/blocks/checkout/helper.php:1507
-#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:51
-#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:85
-#: includes/block-editor/blocks/checkout/templates/form-login.php:36
-#: includes/block-editor/blocks/checkout/templates/form-login.php:65
+#: includes/block-editor/blocks/checkout/helper.php:1511
+#: includes/block-editor/blocks/checkout/helper.php:1517
+#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:53
+#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:87
+#: includes/block-editor/blocks/checkout/templates/form-login.php:38
+#: includes/block-editor/blocks/checkout/templates/form-login.php:67
 #: includes/elementor/modules/checkout/classes/helper.php:333
 #: includes/elementor/modules/checkout/classes/helper.php:339
-#: includes/elementor/modules/checkout/templates/form-login.php:36
-#: includes/elementor/modules/checkout/templates/form-login.php:65
+#: includes/elementor/modules/checkout/templates/form-login.php:38
+#: includes/elementor/modules/checkout/templates/form-login.php:67
 msgid "Email address"
 msgstr ""
 
 #. translators: %s field_name.
-#: includes/block-editor/blocks/checkout/helper.php:1507
+#: includes/block-editor/blocks/checkout/helper.php:1517
 #: includes/elementor/modules/checkout/classes/helper.php:339
 #, php-format
 msgid "%s is not a valid email."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1531
-#: includes/elementor/modules/checkout/classes/local-hooks.php:1288
+#: includes/block-editor/blocks/checkout/helper.php:1541
+#: includes/elementor/modules/checkout/classes/local-hooks.php:1289
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: includes/block-editor/blocks/checkout/inner-blocks/payment/payment.js:98
 msgid "Add a note to your order"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2044
-#: includes/elementor/modules/checkout/classes/local-hooks.php:851
+#: includes/block-editor/blocks/checkout/helper.php:2054
+#: includes/elementor/modules/checkout/classes/local-hooks.php:852
 msgid "Your Products"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2048
-#: includes/block-editor/blocks/checkout/inner-blocks/review-order/class.php:80
-#: includes/block-editor/blocks/checkout/templates/review-order.php:50
-#: includes/elementor/modules/checkout/classes/local-hooks.php:855
+#: includes/block-editor/blocks/checkout/helper.php:2058
+#: includes/block-editor/blocks/checkout/inner-blocks/review-order/class.php:82
+#: includes/block-editor/blocks/checkout/templates/review-order.php:52
+#: includes/elementor/modules/checkout/classes/local-hooks.php:856
+#: includes/elementor/modules/checkout/templates/review-order.php:26
 #: includes/elementor/modules/checkout/widgets/style-controls.php:1127
 #: assets/dist/admin/sellkit.js:280
 msgid "Product"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2049
-#: includes/elementor/modules/checkout/classes/local-hooks.php:856
+#: includes/block-editor/blocks/checkout/helper.php:2059
+#: includes/elementor/modules/checkout/classes/local-hooks.php:857
 #: assets/dist/admin/sellkit.js:280
 msgid "Quantity"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2050
-#: includes/elementor/modules/checkout/classes/local-hooks.php:857
+#: includes/block-editor/blocks/checkout/helper.php:2060
+#: includes/elementor/modules/checkout/classes/local-hooks.php:858
 #: assets/dist/admin/sellkit.js:280
 msgid "Price"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2195
+#: includes/block-editor/blocks/checkout/helper.php:2219
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: includes/block-editor/blocks/checkout/inner-blocks/billing-details/billing-details.js:272
 #: includes/block-editor/blocks/checkout/inner-blocks/form-shipping/form-shipping.js:268
@@ -587,178 +609,206 @@ msgid "(optional)"
 msgstr ""
 
 #: includes/block-editor/blocks/checkout/index.php:156
-#: includes/block-editor/blocks/checkout/templates/form-checkout.php:26
+#: includes/elementor/modules/checkout/classes/local-hooks.php:532
+#: includes/elementor/modules/checkout/widgets/settings-controls.php:167
+#: assets/dist/blocks/checkout.js:14
+#: includes/block-editor/blocks/checkout/edit.js:63
+msgid "Express Checkout"
+msgstr ""
+
+#: includes/block-editor/blocks/checkout/index.php:165
+#: includes/elementor/modules/checkout/classes/local-hooks.php:541
+msgid "OR"
+msgstr ""
+
+#: includes/block-editor/blocks/checkout/index.php:239
+#: includes/block-editor/blocks/checkout/templates/form-checkout.php:28
+#: includes/elementor/modules/checkout/templates/form-checkout.php:29
 msgid "You must be logged in to checkout."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/billing-details/class.php:111
-#: includes/block-editor/blocks/checkout/templates/form-shipping.php:27
-#: includes/elementor/modules/checkout/templates/form-billing.php:26
-#: includes/elementor/modules/checkout/templates/form-shipping.php:27
+#: includes/block-editor/blocks/checkout/inner-blocks/billing-details/class.php:113
+#: includes/block-editor/blocks/checkout/templates/form-shipping.php:29
+#: includes/elementor/modules/checkout/templates/form-billing.php:28
+#: includes/elementor/modules/checkout/templates/form-shipping.php:29
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: includes/block-editor/blocks/checkout/inner-blocks/billing-details/billing-details.js:375
 msgid "Billing & Shipping"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/billing-details/class.php:133
-#: includes/block-editor/blocks/checkout/templates/form-billing.php:43
-#: includes/elementor/modules/checkout/templates/form-billing.php:47
+#: includes/block-editor/blocks/checkout/inner-blocks/billing-details/class.php:135
+#: includes/block-editor/blocks/checkout/templates/form-billing.php:45
+#: includes/elementor/modules/checkout/templates/form-billing.php:49
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: includes/block-editor/blocks/checkout/inner-blocks/billing-details/billing-details.js:382
 msgid "Same as shipping address"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/billing-details/class.php:141
-#: includes/block-editor/blocks/checkout/templates/form-billing.php:51
-#: includes/elementor/modules/checkout/templates/form-billing.php:55
+#: includes/block-editor/blocks/checkout/inner-blocks/billing-details/class.php:143
+#: includes/block-editor/blocks/checkout/templates/form-billing.php:53
+#: includes/elementor/modules/checkout/templates/form-billing.php:57
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: includes/block-editor/blocks/checkout/inner-blocks/billing-details/billing-details.js:390
 msgid "Use a different billing address"
 msgstr ""
 
 #. Translators: %d is the shipping package number.
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:68
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:70
 #, php-format
 msgctxt "shipping packages"
 msgid "Shipping %d"
 msgstr ""
 
 #. Translators: %d is the shipping package number.
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:68
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:70
 msgctxt "shipping packages"
 msgid "Shipping"
 msgstr ""
 
 #. Translators: $s shipping destination.
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:122
-#: includes/block-editor/blocks/checkout/templates/cart-shipping.php:71
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:124
+#: includes/block-editor/blocks/checkout/templates/cart-shipping.php:73
+#: includes/elementor/modules/checkout/templates/cart-shipping.php:73
 #, php-format
 msgid "Shipping to %s."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:123
-#: includes/block-editor/blocks/checkout/templates/cart-shipping.php:72
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:125
+#: includes/block-editor/blocks/checkout/templates/cart-shipping.php:74
+#: includes/elementor/modules/checkout/templates/cart-shipping.php:74
 msgid "Change address"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:125
-#: includes/block-editor/blocks/checkout/templates/cart-shipping.php:74
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:127
+#: includes/block-editor/blocks/checkout/templates/cart-shipping.php:76
+#: includes/elementor/modules/checkout/templates/cart-shipping.php:76
 msgid "Shipping options will be updated during checkout."
-msgstr ""
-
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:133
-#: includes/block-editor/blocks/checkout/templates/cart-shipping.php:82
-msgid "Shipping costs are calculated during checkout."
 msgstr ""
 
 #: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:135
 #: includes/block-editor/blocks/checkout/templates/cart-shipping.php:84
+#: includes/elementor/modules/checkout/templates/cart-shipping.php:84
+msgid "Shipping costs are calculated during checkout."
+msgstr ""
+
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:137
+#: includes/block-editor/blocks/checkout/templates/cart-shipping.php:86
+#: includes/elementor/modules/checkout/templates/cart-shipping.php:86
 msgid "Enter your address to view shipping options."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:139
-#: includes/block-editor/blocks/checkout/templates/cart-shipping.php:87
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:141
+#: includes/block-editor/blocks/checkout/templates/cart-shipping.php:89
+#: includes/elementor/modules/checkout/templates/cart-shipping.php:89
 msgid "There are no shipping options available. Please ensure that your address has been entered correctly, or contact us if you need any help."
 msgstr ""
 
 #. Translators: $s shipping destination.
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:143
-#: includes/block-editor/blocks/checkout/templates/cart-shipping.php:90
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:145
+#: includes/block-editor/blocks/checkout/templates/cart-shipping.php:92
+#: includes/elementor/modules/checkout/templates/cart-shipping.php:92
 #, php-format
 msgid "No shipping options were found for %s."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:144
-#: includes/block-editor/blocks/checkout/templates/cart-shipping.php:91
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:146
+#: includes/block-editor/blocks/checkout/templates/cart-shipping.php:93
+#: includes/elementor/modules/checkout/templates/cart-shipping.php:93
 msgid "Enter a different address"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:62
-#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:95
-#: includes/block-editor/blocks/checkout/templates/form-login.php:47
-#: includes/block-editor/blocks/checkout/templates/form-login.php:75
-#: includes/elementor/modules/checkout/templates/form-login.php:47
-#: includes/elementor/modules/checkout/templates/form-login.php:75
+#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:64
+#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:97
+#: includes/block-editor/blocks/checkout/templates/form-login.php:49
+#: includes/block-editor/blocks/checkout/templates/form-login.php:77
+#: includes/elementor/modules/checkout/templates/form-login.php:49
+#: includes/elementor/modules/checkout/templates/form-login.php:77
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: includes/block-editor/blocks/checkout/inner-blocks/contact-information/contact-information.js:54
 #: includes/block-editor/blocks/checkout/inner-blocks/contact-information/contact-information.js:59
 msgid "Email Address"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:100
-#: includes/block-editor/blocks/checkout/templates/form-login.php:80
-#: includes/elementor/modules/checkout/templates/form-login.php:80
+#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:106
+#: includes/block-editor/blocks/checkout/templates/form-login.php:86
+#: includes/elementor/modules/checkout/templates/form-login.php:86
 msgid "Email address is not valid."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:103
-#: includes/block-editor/blocks/checkout/templates/form-login.php:83
-#: includes/elementor/modules/checkout/templates/form-login.php:83
+#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:109
+#: includes/block-editor/blocks/checkout/templates/form-login.php:89
+#: includes/elementor/modules/checkout/templates/form-login.php:89
 msgid "Email address is empty."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:107
-#: includes/block-editor/blocks/checkout/templates/form-login.php:87
-#: includes/elementor/modules/checkout/templates/form-login.php:87
+#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:113
+#: includes/block-editor/blocks/checkout/templates/form-login.php:93
+#: includes/elementor/modules/checkout/templates/form-login.php:93
 msgid "Checking..."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:117
-#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:126
-#: includes/block-editor/blocks/checkout/templates/form-login.php:97
-#: includes/block-editor/blocks/checkout/templates/form-login.php:106
-#: includes/elementor/modules/checkout/templates/form-login.php:97
-#: includes/elementor/modules/checkout/templates/form-login.php:106
+#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:123
+#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:132
+#: includes/block-editor/blocks/checkout/templates/form-login.php:103
+#: includes/block-editor/blocks/checkout/templates/form-login.php:112
+#: includes/elementor/modules/checkout/templates/form-login.php:103
+#: includes/elementor/modules/checkout/templates/form-login.php:112
 msgid "Username"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:129
-#: includes/block-editor/blocks/checkout/templates/form-login.php:109
-#: includes/elementor/modules/checkout/templates/form-login.php:109
+#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:135
+#: includes/block-editor/blocks/checkout/templates/form-login.php:115
+#: includes/elementor/modules/checkout/templates/form-login.php:115
 msgid "An account is already registered with that username. Please choose another.."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:139
-#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:155
-#: includes/block-editor/blocks/checkout/templates/form-login.php:119
-#: includes/block-editor/blocks/checkout/templates/form-login.php:135
-#: includes/elementor/modules/checkout/templates/form-login.php:119
-#: includes/elementor/modules/checkout/templates/form-login.php:135
+#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:145
+#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:161
+#: includes/block-editor/blocks/checkout/templates/form-login.php:125
+#: includes/block-editor/blocks/checkout/templates/form-login.php:141
+#: includes/elementor/modules/checkout/templates/form-login.php:125
+#: includes/elementor/modules/checkout/templates/form-login.php:141
 msgid "Password"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:181
-#: includes/block-editor/blocks/checkout/templates/form-login.php:164
-#: includes/elementor/modules/checkout/templates/form-login.php:163
+#: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:187
+#: includes/block-editor/blocks/checkout/templates/form-login.php:170
+#: includes/elementor/modules/checkout/templates/form-login.php:169
 msgid "Login"
 msgstr ""
 
 #. translators: $1 and $2 opening and closing emphasis tags respectively
-#: includes/block-editor/blocks/checkout/inner-blocks/payment-continue/class.php:42
-#: includes/block-editor/blocks/checkout/templates/payment-continue.php:6
+#: includes/block-editor/blocks/checkout/inner-blocks/payment-continue/class.php:44
+#: includes/block-editor/blocks/checkout/templates/payment-continue.php:15
+#: includes/elementor/modules/checkout/templates/payment-continue.php:15
 #, php-format
 msgid "Since your browser does not support JavaScript, or it is disabled, please ensure you click the %1$sUpdate Totals%2$s button before placing your order. You may be charged more than the amount stated above if you fail to do so."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/payment-continue/class.php:45
-#: includes/block-editor/blocks/checkout/templates/payment-continue.php:9
+#: includes/block-editor/blocks/checkout/inner-blocks/payment-continue/class.php:47
+#: includes/block-editor/blocks/checkout/templates/payment-continue.php:18
+#: includes/elementor/modules/checkout/templates/payment-continue.php:18
 msgid "Update totals"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/payment/class.php:66
-#: includes/block-editor/blocks/checkout/templates/payment.php:47
+#: includes/block-editor/blocks/checkout/inner-blocks/payment/class.php:68
+#: includes/block-editor/blocks/checkout/templates/payment.php:49
+#: includes/elementor/modules/checkout/templates/payment.php:57
 msgid "Sorry, it seems that there are no available payment methods for your state. Please contact us if you require assistance or wish to make alternate arrangements."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/payment/class.php:66
-#: includes/block-editor/blocks/checkout/templates/payment.php:47
+#: includes/block-editor/blocks/checkout/inner-blocks/payment/class.php:68
+#: includes/block-editor/blocks/checkout/templates/payment.php:49
+#: includes/elementor/modules/checkout/templates/payment.php:57
 msgid "Please fill in your details above to see available payment methods."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/review-order/class.php:81
-#: includes/block-editor/blocks/checkout/inner-blocks/review-order/class.php:120
-#: includes/block-editor/blocks/checkout/templates/review-order.php:51
-#: includes/block-editor/blocks/checkout/templates/review-order.php:90
+#: includes/block-editor/blocks/checkout/inner-blocks/review-order/class.php:83
+#: includes/block-editor/blocks/checkout/inner-blocks/review-order/class.php:122
+#: includes/block-editor/blocks/checkout/templates/review-order.php:53
+#: includes/block-editor/blocks/checkout/templates/review-order.php:92
+#: includes/elementor/modules/checkout/templates/review-order.php:27
+#: includes/elementor/modules/checkout/templates/review-order.php:66
 #: includes/elementor/modules/checkout/widgets/style-controls.php:1216
 #: assets/dist/admin/sellkit.js:280
 #: assets/dist/blocks/checkout/inner-blocks.js:14
@@ -768,14 +818,15 @@ msgstr ""
 msgid "Subtotal"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/review-order/class.php:143
-#: includes/block-editor/blocks/checkout/templates/review-order.php:119
-#: includes/elementor/modules/checkout/templates/review-order.php:89
+#: includes/block-editor/blocks/checkout/inner-blocks/review-order/class.php:145
+#: includes/block-editor/blocks/checkout/templates/review-order.php:121
+#: includes/elementor/modules/checkout/templates/review-order.php:91
 msgid "Remove coupon"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/review-order/class.php:179
-#: includes/block-editor/blocks/checkout/templates/review-order.php:155
+#: includes/block-editor/blocks/checkout/inner-blocks/review-order/class.php:181
+#: includes/block-editor/blocks/checkout/templates/review-order.php:157
+#: includes/elementor/modules/checkout/templates/review-order.php:127
 #: includes/elementor/modules/checkout/widgets/style-controls.php:1250
 #: assets/dist/admin/sellkit.js:280
 #: assets/dist/blocks/checkout/inner-blocks.js:14
@@ -785,60 +836,64 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/templates/form-billing.php:26
+#: includes/block-editor/blocks/checkout/templates/form-billing.php:28
+#: includes/elementor/modules/checkout/templates/form-billing.php:24
 msgid "Billing details"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/templates/form-billing.php:30
-#: includes/elementor/modules/checkout/templates/form-billing.php:36
+#: includes/block-editor/blocks/checkout/templates/form-billing.php:32
+#: includes/elementor/modules/checkout/templates/form-billing.php:38
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:978
 msgid "Select the address that matches your card or payment method."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/templates/form-checkout.php:68
+#: includes/block-editor/blocks/checkout/templates/form-checkout.php:70
+#: includes/elementor/modules/checkout/templates/form-checkout.php:86
 msgid "Place Order"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/templates/form-checkout.php:83
+#: includes/block-editor/blocks/checkout/templates/form-checkout.php:85
+#: includes/elementor/modules/checkout/templates/form-checkout.php:105
 msgid "Your order"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/templates/form-login.php:31
-#: includes/block-editor/blocks/checkout/templates/form-login.php:60
-#: includes/elementor/modules/checkout/templates/form-login.php:31
-#: includes/elementor/modules/checkout/templates/form-login.php:60
+#: includes/block-editor/blocks/checkout/templates/form-login.php:33
+#: includes/block-editor/blocks/checkout/templates/form-login.php:62
+#: includes/elementor/modules/checkout/templates/form-login.php:33
+#: includes/elementor/modules/checkout/templates/form-login.php:62
 #: includes/elementor/modules/order-details/module.php:37
 #: assets/dist/admin/sellkit.js:280
 msgid "Contact Details"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/templates/form-login.php:153
+#: includes/block-editor/blocks/checkout/templates/form-login.php:159
 msgid "Create an account"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/templates/form-shipping.php:24
-#: includes/elementor/modules/checkout/templates/form-shipping.php:24
+#: includes/block-editor/blocks/checkout/templates/form-shipping.php:26
+#: includes/elementor/modules/checkout/templates/form-shipping.php:26
 msgid "Shipping address"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/templates/payment.php:27
+#: includes/block-editor/blocks/checkout/templates/payment.php:29
 #: includes/elementor/modules/checkout/classes/multi-step.php:287
 #: includes/elementor/modules/checkout/classes/multi-step.php:321
-#: includes/elementor/modules/checkout/templates/payment.php:30
-#: includes/elementor/modules/checkout/templates/payment.php:38
+#: includes/elementor/modules/checkout/templates/payment.php:32
+#: includes/elementor/modules/checkout/templates/payment.php:40
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: includes/block-editor/blocks/checkout/inner-blocks/payment/payment.js:8
 msgid "Payment"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/templates/payment.php:30
-#: includes/elementor/modules/checkout/templates/payment.php:32
-#: includes/elementor/modules/checkout/templates/payment.php:40
+#: includes/block-editor/blocks/checkout/templates/payment.php:32
+#: includes/elementor/modules/checkout/templates/payment.php:34
+#: includes/elementor/modules/checkout/templates/payment.php:42
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:969
 msgid "All transactions are secure and encrypted."
 msgstr ""
 
 #: includes/block-editor/blocks/checkout/templates/terms.php:31
+#: includes/elementor/modules/checkout/templates/terms.php:31
 msgid "required"
 msgstr ""
 
@@ -1133,14 +1188,14 @@ msgid "Phone number must be of type: "
 msgstr ""
 
 #: includes/block-editor/blocks/optin/index.php:98
-#: includes/block-editor/class.php:664
+#: includes/block-editor/class.php:667
 #: includes/elementor/modules/optin/fields/tel.php:84
 #: includes/elementor/modules/optin/module.php:294
 msgid "Fixed Line"
 msgstr ""
 
 #: includes/block-editor/blocks/optin/index.php:99
-#: includes/block-editor/class.php:665
+#: includes/block-editor/class.php:668
 #: includes/contact-segmentation/conditions/user-device.php:54
 #: includes/elementor/modules/optin/fields/tel.php:85
 #: includes/elementor/modules/optin/module.php:295
@@ -1148,69 +1203,70 @@ msgid "Mobile"
 msgstr ""
 
 #: includes/block-editor/blocks/optin/index.php:100
-#: includes/block-editor/class.php:666
+#: includes/block-editor/class.php:669
 #: includes/elementor/modules/optin/fields/tel.php:86
 #: includes/elementor/modules/optin/module.php:296
 msgid "Fixed Line or Mobile"
 msgstr ""
 
 #: includes/block-editor/blocks/optin/index.php:101
-#: includes/block-editor/class.php:667
+#: includes/block-editor/class.php:670
 #: includes/elementor/modules/optin/fields/tel.php:87
 #: includes/elementor/modules/optin/module.php:297
 msgid "Toll Free"
 msgstr ""
 
 #: includes/block-editor/blocks/optin/index.php:102
-#: includes/block-editor/class.php:668
+#: includes/block-editor/class.php:671
 #: includes/elementor/modules/optin/fields/tel.php:88
 #: includes/elementor/modules/optin/module.php:298
 msgid "Premium Rate"
 msgstr ""
 
 #: includes/block-editor/blocks/optin/index.php:103
-#: includes/block-editor/class.php:669
+#: includes/block-editor/class.php:672
 #: includes/elementor/modules/optin/fields/tel.php:89
 #: includes/elementor/modules/optin/module.php:299
 msgid "Shared Cost"
 msgstr ""
 
 #: includes/block-editor/blocks/optin/index.php:104
-#: includes/block-editor/class.php:670
+#: includes/block-editor/class.php:673
 #: includes/elementor/modules/optin/fields/tel.php:90
 #: includes/elementor/modules/optin/module.php:300
 msgid "VOIP"
 msgstr ""
 
 #: includes/block-editor/blocks/optin/index.php:105
-#: includes/block-editor/class.php:671
+#: includes/block-editor/class.php:674
 #: includes/elementor/modules/optin/fields/tel.php:91
 #: includes/elementor/modules/optin/module.php:301
 msgid "Personal Number"
 msgstr ""
 
 #: includes/block-editor/blocks/optin/index.php:106
-#: includes/block-editor/class.php:672
+#: includes/block-editor/class.php:675
 #: includes/elementor/modules/optin/fields/tel.php:92
 #: includes/elementor/modules/optin/module.php:302
 msgid "Pager"
 msgstr ""
 
 #: includes/block-editor/blocks/optin/index.php:107
-#: includes/block-editor/class.php:673
+#: includes/block-editor/class.php:676
 #: includes/elementor/modules/optin/fields/tel.php:93
 #: includes/elementor/modules/optin/module.php:303
 msgid "UAN"
 msgstr ""
 
 #: includes/block-editor/blocks/optin/index.php:108
-#: includes/block-editor/class.php:674
+#: includes/block-editor/class.php:677
 #: includes/elementor/modules/optin/fields/tel.php:94
 #: includes/elementor/modules/optin/module.php:304
 msgid "Voicemail"
 msgstr ""
 
 #: includes/block-editor/blocks/order-cart-details/inner-blocks/order-details/class.php:113
+#: includes/elementor/modules/order-cart-details/templates/order-details.php:89
 msgid "Note:"
 msgstr ""
 
@@ -1218,18 +1274,18 @@ msgstr ""
 msgid "sellkit"
 msgstr ""
 
-#: includes/block-editor/class.php:648
+#: includes/block-editor/class.php:651
 #: includes/elementor/modules/optin/controls/tab-content.php:85
 #: includes/elementor/modules/optin/module.php:64
 msgid "Text"
 msgstr ""
 
-#: includes/block-editor/class.php:649
+#: includes/block-editor/class.php:652
 #: includes/elementor/modules/optin/module.php:65
 msgid "Number"
 msgstr ""
 
-#: includes/block-editor/class.php:650
+#: includes/block-editor/class.php:653
 #: includes/block-editor/helper.php:129
 #: includes/block-editor/helper.php:163
 #: includes/block-editor/helper.php:246
@@ -1249,28 +1305,28 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: includes/block-editor/class.php:651
+#: includes/block-editor/class.php:654
 #: includes/elementor/modules/optin/module.php:67
 msgid "Tel"
 msgstr ""
 
-#: includes/block-editor/class.php:652
+#: includes/block-editor/class.php:655
 #: includes/elementor/modules/optin/module.php:68
 msgid "Textarea"
 msgstr ""
 
-#: includes/block-editor/class.php:653
+#: includes/block-editor/class.php:656
 #: includes/elementor/modules/optin/module.php:69
 #: assets/dist/admin/sellkit.js:266
 msgid "Date"
 msgstr ""
 
-#: includes/block-editor/class.php:654
+#: includes/block-editor/class.php:657
 #: includes/elementor/modules/optin/module.php:70
 msgid "Time"
 msgstr ""
 
-#: includes/block-editor/class.php:655
+#: includes/block-editor/class.php:658
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:348
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:658
 #: includes/elementor/modules/optin/controls/tab-style.php:464
@@ -1278,7 +1334,7 @@ msgstr ""
 msgid "Checkbox"
 msgstr ""
 
-#: includes/block-editor/class.php:656
+#: includes/block-editor/class.php:659
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:349
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:659
 #: includes/elementor/modules/optin/controls/tab-style.php:679
@@ -1286,31 +1342,32 @@ msgstr ""
 msgid "Radio"
 msgstr ""
 
-#: includes/block-editor/class.php:657
+#: includes/block-editor/class.php:660
 #: includes/elementor/modules/optin/controls/tab-style.php:381
 #: includes/elementor/modules/optin/module.php:73
 msgid "Select"
 msgstr ""
 
-#: includes/block-editor/class.php:658
+#: includes/block-editor/class.php:661
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:580
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:890
 #: includes/elementor/modules/optin/module.php:74
 msgid "Address"
 msgstr ""
 
-#: includes/block-editor/class.php:659
+#: includes/block-editor/class.php:662
 #: includes/elementor/modules/optin/module.php:75
 msgid "Acceptance"
 msgstr ""
 
-#: includes/block-editor/class.php:660
+#: includes/block-editor/class.php:663
 #: includes/elementor/modules/optin/module.php:76
 msgid "Hidden"
 msgstr ""
 
-#: includes/block-editor/class.php:663
+#: includes/block-editor/class.php:666
 #: includes/elementor/modules/optin/fields/tel.php:83
+#: assets/dist/admin/sellkit.js:280
 msgid "All"
 msgstr ""
 
@@ -1408,8 +1465,8 @@ msgstr ""
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:911
 #: includes/elementor/modules/optin/actions/drip.php:156
 #: assets/dist/blocks/checkout-external.js:1
-#: assets/dist/js/elementor-init.js:726
-#: assets/dist/js/elementor-init.js:794
+#: assets/dist/js/elementor-init.js:813
+#: assets/dist/js/elementor-init.js:881
 msgid "State"
 msgstr ""
 
@@ -2022,6 +2079,13 @@ msgstr ""
 msgid "Order Total"
 msgstr ""
 
+#: includes/elementor/class.php:79
+#: includes/funnel/homepage.php:141
+#: sellkit.php:435
+#: sellkit.php:487
+msgid "Sellkit"
+msgstr ""
+
 #: includes/elementor/controls/file-uploader.php:106
 msgid "Upload File"
 msgstr ""
@@ -2173,9 +2237,24 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
+#: includes/elementor/modules/accept-reject-button/widgets/accept-reject-button.php:115
+#: includes/elementor/modules/optin/controls/tab-content.php:102
+#: includes/elementor/modules/optin/controls/tab-style.php:389
+#: includes/elementor/modules/optin/controls/tab-style.php:1135
+#: includes/elementor/modules/order-details/widgets/order-details.php:75
+#: includes/elementor/modules/order-details/widgets/order-details.php:276
+msgid "Icon"
+msgstr ""
+
 #: includes/elementor/modules/accept-reject-button/widgets/accept-reject-button.php:126
 #: includes/elementor/modules/checkout/widgets/style-controls.php:494
 msgid "Icon Spacing"
+msgstr ""
+
+#: includes/elementor/modules/accept-reject-button/widgets/accept-reject-button.php:152
+#: includes/elementor/modules/checkout/widgets/style-controls.php:475
+#: includes/elementor/modules/checkout/widgets/style-controls.php:850
+msgid "Icon Size"
 msgstr ""
 
 #: includes/elementor/modules/accept-reject-button/widgets/accept-reject-button.php:179
@@ -2471,31 +2550,22 @@ msgstr ""
 msgid "%s is not a valid postcode."
 msgstr ""
 
-#: includes/elementor/modules/checkout/classes/local-hooks.php:490
-#: includes/elementor/modules/checkout/classes/local-hooks.php:652
+#: includes/elementor/modules/checkout/classes/local-hooks.php:491
+#: includes/elementor/modules/checkout/classes/local-hooks.php:653
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/cart-shipping.js:24
 msgid "Shipping Methods"
 msgstr ""
 
-#: includes/elementor/modules/checkout/classes/local-hooks.php:531
-#: includes/elementor/modules/checkout/widgets/settings-controls.php:167
-msgid "Express Checkout"
-msgstr ""
-
-#: includes/elementor/modules/checkout/classes/local-hooks.php:540
-msgid "OR"
-msgstr ""
-
-#: includes/elementor/modules/checkout/classes/local-hooks.php:771
+#: includes/elementor/modules/checkout/classes/local-hooks.php:772
 msgid "Have a coupon? Click here to enter your code"
 msgstr ""
 
-#: includes/elementor/modules/checkout/classes/local-hooks.php:778
+#: includes/elementor/modules/checkout/classes/local-hooks.php:779
 msgid "Enter Promo code"
 msgstr ""
 
-#: includes/elementor/modules/checkout/classes/local-hooks.php:783
+#: includes/elementor/modules/checkout/classes/local-hooks.php:784
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: includes/block-editor/blocks/checkout/inner-blocks/review-order/review-order.js:24
 msgid "Apply"
@@ -2520,7 +2590,7 @@ msgstr ""
 
 #: includes/elementor/modules/checkout/classes/multi-step.php:229
 #: assets/dist/blocks/checkout-external.js:1
-#: assets/dist/js/elementor-init.js:464
+#: assets/dist/js/elementor-init.js:547
 msgid "Hide order summary"
 msgstr ""
 
@@ -3052,7 +3122,7 @@ msgstr ""
 #: includes/elementor/modules/optin/controls/tab-content.php:263
 #: assets/dist/blocks/checkout.js:14
 #: assets/dist/blocks/optin.js:14
-#: includes/block-editor/blocks/checkout/edit.js:54
+#: includes/block-editor/blocks/checkout/edit.js:55
 #: includes/block-editor/blocks/optin/settings/messages.js:8
 msgid "Custom Messages"
 msgstr ""
@@ -3205,11 +3275,6 @@ msgstr ""
 msgid "Icon Color"
 msgstr ""
 
-#: includes/elementor/modules/checkout/widgets/style-controls.php:475
-#: includes/elementor/modules/checkout/widgets/style-controls.php:850
-msgid "Icon Size"
-msgstr ""
-
 #: includes/elementor/modules/checkout/widgets/style-controls.php:530
 msgid "Primary button"
 msgstr ""
@@ -3336,15 +3401,15 @@ msgstr ""
 msgid "Click here to show the available shortcodes"
 msgstr ""
 
-#: includes/elementor/modules/dynamic-keywords/template/modal.php:110
+#: includes/elementor/modules/dynamic-keywords/template/modal.php:112
 msgid "Keywords List"
 msgstr ""
 
-#: includes/elementor/modules/dynamic-keywords/template/modal.php:113
+#: includes/elementor/modules/dynamic-keywords/template/modal.php:115
 msgid "Keywords Name"
 msgstr ""
 
-#: includes/elementor/modules/dynamic-keywords/template/modal.php:114
+#: includes/elementor/modules/dynamic-keywords/template/modal.php:116
 msgid "Keywords Shortcode"
 msgstr ""
 
@@ -3406,7 +3471,8 @@ msgstr ""
 
 #: includes/elementor/modules/optin/actions/growmatik.php:34
 #: includes/elementor/modules/optin/module.php:114
-msgid "Growmatik"
+#: assets/dist/admin/sellkit.js:280
+msgid "ConvesioConvert"
 msgstr ""
 
 #: includes/elementor/modules/optin/actions/growmatik.php:60
@@ -3499,7 +3565,7 @@ msgstr ""
 
 #: includes/elementor/modules/optin/actions/utils/crm-trait.php:307
 #: includes/elementor/modules/order-details/widgets/order-details.php:87
-#: includes/global-checkout/class.php:346
+#: includes/global-checkout/class.php:367
 msgid "Default"
 msgstr ""
 
@@ -3614,14 +3680,6 @@ msgstr ""
 msgid "Sub Text"
 msgstr ""
 
-#: includes/elementor/modules/optin/controls/tab-content.php:102
-#: includes/elementor/modules/optin/controls/tab-style.php:389
-#: includes/elementor/modules/optin/controls/tab-style.php:1135
-#: includes/elementor/modules/order-details/widgets/order-details.php:75
-#: includes/elementor/modules/order-details/widgets/order-details.php:276
-msgid "Icon"
-msgstr ""
-
 #: includes/elementor/modules/optin/controls/tab-content.php:112
 #: includes/elementor/modules/optin/fields/field-base.php:358
 msgid "Column Width"
@@ -3630,8 +3688,8 @@ msgstr ""
 #: includes/elementor/modules/optin/controls/tab-content.php:137
 #: includes/elementor/modules/order-cart-details/widgets/order-cart-details.php:320
 #: includes/elementor/modules/order-details/widgets/order-details.php:126
-#: sellkit.php:476
-#: sellkit.php:477
+#: sellkit.php:487
+#: sellkit.php:488
 #: assets/dist/admin/sellkit.js:280
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: assets/dist/blocks/optin.js:14
@@ -3645,7 +3703,6 @@ msgid "Required Mark"
 msgstr ""
 
 #: includes/elementor/modules/optin/controls/tab-content.php:167
-#: assets/dist/admin/sellkit.js:280
 #: assets/dist/blocks/optin.js:14
 #: includes/block-editor/blocks/optin/edit.js:377
 msgid "CRM Integrations"
@@ -4085,6 +4142,18 @@ msgstr ""
 msgid "Shipping Address"
 msgstr ""
 
+#: includes/elementor/modules/order-details/templates/thankyou.php:37
+msgid "Unfortunately your order cannot be processed as the originating bank/merchant has declined your transaction. Please attempt your purchase again."
+msgstr ""
+
+#: includes/elementor/modules/order-details/templates/thankyou.php:40
+msgid "Pay"
+msgstr ""
+
+#: includes/elementor/modules/order-details/templates/thankyou.php:42
+msgid "My account"
+msgstr ""
+
 #: includes/elementor/modules/order-details/widgets/order-details.php:24
 #: assets/dist/blocks/order-cart-details/inner-blocks.js:14
 #: includes/block-editor/blocks/order-cart-details/inner-blocks/order-details/order-details.js:7
@@ -4181,15 +4250,15 @@ msgstr ""
 msgid "HTML Tag"
 msgstr ""
 
-#: includes/funnel/class.php:380
+#: includes/funnel/class.php:394
 msgid "Sellkit Upsell"
 msgstr ""
 
-#: includes/funnel/class.php:399
+#: includes/funnel/class.php:413
 msgid "SellKit Parent Order"
 msgstr ""
 
-#: includes/funnel/class.php:409
+#: includes/funnel/class.php:423
 msgid "SellKit Upsell Order"
 msgstr ""
 
@@ -4202,25 +4271,26 @@ msgstr ""
 msgid "Each upsell needs a main order."
 msgstr ""
 
-#: includes/global-checkout/class.php:385
 #: includes/global-checkout/class.php:407
-#: includes/global-checkout/class.php:411
+#: includes/global-checkout/class.php:430
+#: includes/global-checkout/class.php:434
 #: assets/dist/admin/sellkit.js:280
 msgid "Search..."
-msgstr ""
-
-#: sellkit.php:437
-#: assets/dist/admin/sellkit.js:280
-msgid "Dashboard"
 msgstr ""
 
 #: sellkit.php:438
 #: assets/dist/admin/sellkit.js:266
 #: assets/dist/admin/sellkit.js:280
-msgid "Funnels"
+msgid "Dashboard"
 msgstr ""
 
 #: sellkit.php:439
+#: assets/dist/admin/sellkit.js:266
+#: assets/dist/admin/sellkit.js:280
+msgid "Funnels"
+msgstr ""
+
+#: sellkit.php:440
 #: assets/dist/admin/sellkit.js:280
 msgid "Global Checkout"
 msgstr ""
@@ -4251,6 +4321,14 @@ msgid "Loading..."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:266
+msgid "Today"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:266
+msgid "This week"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:266
 #: assets/dist/admin/sellkit.js:280
 msgid "Last 7 days"
 msgstr ""
@@ -4258,6 +4336,22 @@ msgstr ""
 #: assets/dist/admin/sellkit.js:266
 #: assets/dist/admin/sellkit.js:280
 msgid "Last 30 days"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:266
+msgid "This month"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:266
+msgid "Last 90 days"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:266
+msgid "This quarter"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:266
+msgid "This year"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:266
@@ -4333,36 +4427,54 @@ msgid "Converted"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:266
-msgid "Welcome to SellKit! 👋"
+msgid "Loading…"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:266
+#, js-format
+msgid "%1$d total · %2$d drafts"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:266
+msgid "Track funnel performance, engagement, and sales in one place. Adjust the date range to compare recent activity."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:266
 #: assets/dist/admin/sellkit.js:280
-msgid "Date Range"
+msgid "Date range"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:266
+msgid "Active funnels"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:266
+msgid "Funnel steps"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:266
+msgid "Smart coupons"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:266
+msgid "Dynamic discounts"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:266
+msgid "Smart notices"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:266
 #: assets/dist/admin/sellkit.js:280
-msgid "Funnel Engagement"
+msgid "Analytics"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:266
-#: assets/dist/admin/sellkit.js:280
-msgid "Funnel Sales"
+msgid "Funnel engagement"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:266
-#: assets/dist/admin/sellkit.js:280
-msgid "Smart Coupons"
-msgstr ""
-
-#: assets/dist/admin/sellkit.js:266
-msgid "Dynamic Discounts"
-msgstr ""
-
-#: assets/dist/admin/sellkit.js:266
-#: assets/dist/admin/sellkit.js:280
-msgid "Smart Notices"
+msgid "Funnel sales"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:266
@@ -4389,6 +4501,47 @@ msgstr ""
 
 #: assets/dist/admin/sellkit.js:266
 msgid "OK"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "View"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Edit"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Duplicate"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Export"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Deactivate"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Activate"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+#: assets/dist/blocks/checkout/inner-blocks.js:14
+#: assets/dist/blocks/optin.js:14
+#: includes/block-editor/blocks/checkout/inner-blocks/billing-details/billing-details.js:229
+#: includes/block-editor/blocks/checkout/inner-blocks/form-shipping/form-shipping.js:225
+#: includes/block-editor/blocks/optin/edit.js:265
+msgid "Remove"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Import"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Export all"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -4420,15 +4573,7 @@ msgid "Import Flow"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Import"
-msgstr ""
-
-#: assets/dist/admin/sellkit.js:280
-msgid "Export all"
-msgstr ""
-
-#: assets/dist/admin/sellkit.js:280
-msgid "Actions"
+msgid "Active"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -4436,36 +4581,19 @@ msgid "Inactive"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "View"
+msgid "Published"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Edit"
+msgid "Last modified"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Duplicate"
+msgid "No items match this filter."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Deactivate"
-msgstr ""
-
-#: assets/dist/admin/sellkit.js:280
-msgid "Activate"
-msgstr ""
-
-#: assets/dist/admin/sellkit.js:280
-msgid "Export"
-msgstr ""
-
-#: assets/dist/admin/sellkit.js:280
-#: assets/dist/blocks/checkout/inner-blocks.js:14
-#: assets/dist/blocks/optin.js:14
-#: includes/block-editor/blocks/checkout/inner-blocks/billing-details/billing-details.js:229
-#: includes/block-editor/blocks/checkout/inner-blocks/form-shipping/form-shipping.js:225
-#: includes/block-editor/blocks/optin/edit.js:265
-msgid "Remove"
+msgid "Pagination"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -4474,6 +4602,26 @@ msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
 msgid "Are you sure you want to remove this item? This action can’t be undone."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Deactivate funnel"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Activate funnel"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Are you sure you want to deactivate this funnel? Visitors will not use it until you activate it again."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Are you sure you want to activate this funnel?"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Create and manage sales funnels, checkout flows, and steps from one place."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -4539,7 +4687,16 @@ msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
 #, js-format
+msgid "Sellkit Pro is installed. Connect your license to add %s."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+#, js-format
 msgid "Upgrade to <strong>Sellkit Pro</strong> to add %s."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Connect your license to use premium templates."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -4547,7 +4704,15 @@ msgid "Upgrade to <strong>Sellkit Pro</strong> to use premium templates."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
+msgid "Your Sellkit Pro license is not connected to this site."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
 msgid "You are using a free version of Sellkit."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Connect license"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -4572,6 +4737,14 @@ msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
 msgid "Select a pre-designed template or create one from scratch"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Funnel Engagement"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Funnel Sales"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -4680,6 +4853,10 @@ msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
 msgid "Reset Previous Cart Items"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "If disabled, the products previously added by the customer will be appended to the products selected above."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -4945,6 +5122,18 @@ msgid "Please remove the child nodes before removing a parent node."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
+msgid "Zoom"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Zoom in"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Zoom out"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
 msgid "Select product that you want to offer to your customers to include in their orders as additional items."
 msgstr ""
 
@@ -4993,6 +5182,10 @@ msgid "First add a landing page using the button above."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
+msgid "View Funnel"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
 msgid "Save Changes"
 msgstr ""
 
@@ -5013,7 +5206,55 @@ msgid "Contacts"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Analytics"
+msgid "Exit fullscreen"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Expand flow"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Could not export Global Checkout. Please try again."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Deactivate Global Checkout"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Activate Global Checkout"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Global Checkout is now active."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Global Checkout is now inactive."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Could not update Global Checkout status. Please try again."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Are you sure you want to deactivate Global Checkout? Your store will use the default WooCommerce checkout until you activate it again."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Are you sure you want to activate Global Checkout? Your designed checkout funnel will be used for checkout where applicable."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Remove Global Checkout"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Could not remove Global Checkout. Please try again."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Are you sure you want to remove Global Checkout? This action can’t be undone."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -5025,7 +5266,7 @@ msgid "Get Funnel"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Find API credentials in your "
+msgid "You can find these credentials in your "
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -5033,7 +5274,31 @@ msgid " account."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "ConvesioConvert"
+msgid "Connect your ActiveCampaign account to send subscribers from SellKit forms and opt-ins."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Add your ConvertKit API key to connect SellKit with your subscriber lists and automations."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Use Drip credentials to capture leads and sync subscribers from SellKit flows."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Connect GetResponse so new leads from SellKit can flow into your email campaigns."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Connect ConvesioConvert to use its API credentials with SellKit automations."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Add your MailChimp API key to connect signup forms with your audiences."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Connect MailerLite to send subscribers from SellKit forms into your email lists."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -5045,31 +5310,68 @@ msgid "Block Editor"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Choose Page Builder"
+msgid "Checkout & Funnel Settings"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "BETA"
+msgid "Control the default builder, cart flow behaviour, empty cart experience, and permalink structure from one place."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Empty Cart Template"
+msgid "Page builder"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "This template will replace the default WooCommerce empty cart page content."
+msgid "Choose the default builder SellKit should use when creating and editing funnels."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Skip Cart Page"
+msgid "Empty cart template"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "If enabled, the cart page will be disabled and customer will be redirected to the checkout page. it reduces the steps for faster conversion, therefore reducing abandoned carts."
+msgid "This template replaces the default WooCommerce empty cart content."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Disallow search engine from indexing flows"
+msgid "Type to search"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Skip cart page"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "If enabled, shoppers skip the cart step and go directly to checkout for a shorter purchase flow."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Search indexing"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Prevent search engines from indexing SellKit flows."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Funnel permalink base"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Set the base slug used for SellKit funnel URLs."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+#, js-format
+msgid "You will need to save the permalink settings (no change required) from <a href=\"%s\" target=\"_blank\">WordPress Permalink Settings</a> after changing the Funnel Permalink Base."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Tracking & Analytics"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Turn on each integration below, then add your ID and choose which events to send."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -5077,11 +5379,19 @@ msgid "Facebook Pixel"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Facebook pixel ID"
+msgid "Send checkout and purchase events from your SellKit funnels to Meta."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Facebook Pixel Events"
+msgid "Enable Facebook Pixel"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Pixel ID"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Tracked events"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -5101,11 +5411,15 @@ msgid "Google Analytics"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Google Analytics ID"
+msgid "Measure checkout steps and purchases in your Google Analytics property."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Google Analytics Events"
+msgid "Enable Google Analytics"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Analytics ID"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -5121,19 +5435,31 @@ msgid "Purchase"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Geolocation Account ID"
+msgid "MaxMind Geolocation"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Geolocation Licence Key"
+msgid "Add your MaxMind account details to use geolocation-based targeting inside SellKit."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Use GeoLite Services"
+msgid "Account ID"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Geolocation API Key (Deprecated)"
+msgid "License key"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Use GeoLite services"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Enable this if you want to use MaxMind’s GeoLite service instead of a paid database."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Deprecated API key"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -5145,7 +5471,7 @@ msgid "MaxMind"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid " with SellKit to precisely target your visitors based on their city and country location within SellKit."
+msgid " with SellKit to precisely target your visitors based on their city and country location within SellKit. "
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -5153,19 +5479,51 @@ msgid "Create a MaxMind account"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Google API Key"
+msgid "Google Address Autocomplete"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Google API key is used by Checkout form Address Autocomplete feature. Obtain your API key through "
+msgid "Add a Google API key to enable address autocomplete in your checkout experience."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Google Cloud Platform Console."
+msgid "Google API key"
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
-msgid "Delete plugin data on plugin deletion"
+msgid "Google API key is used by the checkout form address autocomplete feature. Obtain your API key through "
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Google Cloud Platform Console"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Store Experience & Maintenance"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Configure customer-facing enhancements and control what happens to SellKit data over time."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Variation swatches"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Let customers choose product variations with a more visual and polished UI."
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Learn more"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Delete plugin data on uninstall"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "If enabled, SellKit options, database tables, and related data will be removed permanently when the plugin is deleted."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -5182,27 +5540,6 @@ msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
 msgid "Type DELETE"
-msgstr ""
-
-#: assets/dist/admin/sellkit.js:280
-msgid "If you wish to altogether remove Sellkit data from your site (options, database, tables, etc), enable this option and save settings. On plugin deletion, the sellkit data also gets deleted permanently."
-msgstr ""
-
-#: assets/dist/admin/sellkit.js:280
-msgid " Variation Swatches"
-msgstr ""
-
-#: assets/dist/admin/sellkit.js:280
-msgid "Variation swatches allow your customers to choose different variations of products in a delicate visual experience. "
-msgstr ""
-
-#: assets/dist/admin/sellkit.js:280
-msgid "Funnel Permalink Base"
-msgstr ""
-
-#: assets/dist/admin/sellkit.js:280
-#, js-format
-msgid " You will need to save the permalink settings (no change required) from <a href=\"%s\" target=\"_blank\" >WordPress Permalink Settings</a> after changing the Funnel Permalink Base."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -5224,6 +5561,10 @@ msgstr ""
 #: assets/dist/admin/sellkit.js:280
 #, js-format
 msgid "Add %s"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Connect your Sellkit Pro license to use this feature."
 msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
@@ -5257,6 +5598,14 @@ msgstr ""
 
 #: assets/dist/admin/sellkit.js:280
 msgid "Dynamic Discount"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Smart Coupons"
+msgstr ""
+
+#: assets/dist/admin/sellkit.js:280
+msgid "Smart Notices"
 msgstr ""
 
 #: assets/dist/blocks/accept-reject-button.js:19
@@ -5304,18 +5653,28 @@ msgid "Inset"
 msgstr ""
 
 #: assets/dist/blocks/checkout-external.js:1
-#: assets/dist/js/elementor-init.js:366
+#: assets/dist/js/elementor-init.js:402
 msgid "Both Field required."
 msgstr ""
 
 #: assets/dist/blocks/checkout-external.js:1
-#: assets/dist/js/elementor-init.js:459
+#: assets/dist/js/elementor-init.js:542
 msgid "Show order summary"
 msgstr ""
 
 #: assets/dist/blocks/checkout.js:14
-#: includes/block-editor/blocks/checkout/edit.js:56
+#: includes/block-editor/blocks/checkout/edit.js:57
 msgid "Empty Shopping Cart"
+msgstr ""
+
+#: assets/dist/blocks/checkout.js:14
+#: includes/block-editor/blocks/checkout/edit.js:69
+msgid "Show supported express checkout buttons above the checkout form."
+msgstr ""
+
+#: assets/dist/blocks/checkout.js:14
+#: includes/block-editor/blocks/checkout/edit.js:70
+msgid "This feature requires Sellkit Pro."
 msgstr ""
 
 #: assets/dist/blocks/checkout/inner-blocks.js:14
@@ -5788,19 +6147,19 @@ msgstr ""
 msgid "Error! nonce mismatch"
 msgstr ""
 
-#: assets/dist/js/elementor-init.js:549
+#: assets/dist/js/elementor-init.js:632
 msgid "Please select a country."
 msgstr ""
 
-#: assets/dist/js/elementor-init.js:944
+#: assets/dist/js/elementor-init.js:1031
 msgid "Postcode is not valid."
 msgstr ""
 
-#: assets/dist/js/elementor-init.js:970
+#: assets/dist/js/elementor-init.js:1057
 msgid "Phone number is not valid."
 msgstr ""
 
-#: assets/dist/js/elementor-init.js:1780
+#: assets/dist/js/elementor-init.js:1871
 msgid "Following messages are visible only for admin users."
 msgstr ""
 

@@ -53,8 +53,8 @@ class On extends Operator_Base {
 	 * @param mixed $condition_value  The value of condition input.
 	 */
 	public function is_valid( $value, $condition_value ) {
-		$start_date_time = strtotime( date( 'Y-m-d 00:00:00', $condition_value ) );
-		$end_date_time   = strtotime( date( 'Y-m-d 24:00:00', $condition_value ) );
+		$start_date_time = strtotime( gmdate( 'Y-m-d 00:00:00', $condition_value ) );
+		$end_date_time   = strtotime( gmdate( 'Y-m-d 24:00:00', $condition_value ) );
 
 		if ( $value > $start_date_time && $value < $end_date_time ) {
 			return true;

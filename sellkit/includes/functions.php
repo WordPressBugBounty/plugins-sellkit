@@ -1,4 +1,6 @@
 <?php
+defined( 'ABSPATH' ) || exit;
+
 if ( ! function_exists( 'sellkit_update_option' ) ) {
 	/**
 	 * Update option from options storage.
@@ -68,6 +70,22 @@ if ( ! function_exists( 'sellkit_htmlspecialchars' ) ) {
 		}
 
 		return $value;
+	}
+}
+
+if ( ! function_exists( 'sellkit_decode_entity_title' ) ) {
+	/**
+	 * Decode HTML entities in titles for JSON/React (fixes literal &#8211; etc. in chart headers).
+	 *
+	 * @param string $title Title string.
+	 * @return string
+	 */
+	function sellkit_decode_entity_title( $title ) {
+		if ( ! is_string( $title ) || '' === $title ) {
+			return $title;
+		}
+
+		return html_entity_decode( $title, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 	}
 }
 

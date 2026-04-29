@@ -17,6 +17,8 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- WooCommerce/Elementor template; variables mirror core docs.
+
 
 $shipping_destination = get_option( 'woocommerce_ship_to_destination', true );
 

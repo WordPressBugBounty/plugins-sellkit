@@ -16,6 +16,8 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- WooCommerce/Elementor template; variables mirror core docs.
+
 
 if ( ! wp_doing_ajax() ) {
 	do_action( 'woocommerce_review_order_before_payment' );

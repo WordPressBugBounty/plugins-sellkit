@@ -1281,7 +1281,7 @@ class Global_Hooks {
 		$funnel->next_step_data['type'] = (array) $funnel->next_step_data['type'];
 
 		if ( 'decision' === $funnel->next_step_data['type']['key'] ) {
-			$page_id = isset( $funnel->next_step_data['page_id'] ) ? apply_filters( 'wpml_object_id', $funnel->next_step_data['page_id'], 'sellkit_step', true ) : 0;
+			$page_id = isset( $funnel->next_step_data['page_id'] ) ? apply_filters( 'wpml_object_id', $funnel->next_step_data['page_id'], 'sellkit_step', true ) : 0; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 
 			$this->helper_id = $step;
 			$this->take_care_of_decision_step( $page_id, $funnel->funnel_id );
@@ -1290,7 +1290,7 @@ class Global_Hooks {
 
 		if ( in_array( $funnel->next_step_data['type']['key'], $popups, true ) ) {
 			wp_send_json_success( [
-				'next_id'   => apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ),
+				'next_id'   => apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 				'next_type' => $next_step['type']['key'],
 			] );
 		}
@@ -1321,13 +1321,13 @@ class Global_Hooks {
 		$next_step['type'] = (array) $next_step['type'];
 
 		if ( 'decision' === $next_step['type']['key'] ) {
-			$this->take_care_of_decision_step( apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ) );
+			$this->take_care_of_decision_step( apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 
 			return;
 		}
 
 		wp_send_json_success( [
-			'next_id'   => apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ),
+			'next_id'   => apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 			'next_type' => $next_step['type']['key'],
 		] );
 	}
@@ -1352,7 +1352,7 @@ class Global_Hooks {
 		}
 
 		wp_send_json_success( [
-			'next_id'   => apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ),
+			'next_id'   => apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 			'next_type' => $next_step['type']['key'],
 		] );
 	}
@@ -1442,7 +1442,7 @@ class Global_Hooks {
 		}
 
 		$response = [
-			'next_id'   => apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ),
+			'next_id'   => apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 			'next_type' => $next_step['type']['key'],
 			'upsell_prices' => wp_json_encode( self::$sellkit_upsell_products ),
 		];
@@ -1485,7 +1485,7 @@ class Global_Hooks {
 		}
 
 		$response = [
-			'next_id'   => apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ),
+			'next_id'   => apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 			'next_type' => $next_step['type']['key'],
 		];
 

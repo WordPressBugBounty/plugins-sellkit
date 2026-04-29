@@ -31,11 +31,11 @@ class Sellkit_Elementor_Optin_Action_Growmatik extends Sellkit_Elementor_Optin_A
 	}
 
 	public function get_title() {
-		return esc_html__( 'Growmatik', 'sellkit' );
+		return esc_html__( 'ConvesioConvert', 'sellkit' );
 	}
 
 	protected function get_base_url() {
-		return 'https://api.growmatik.ai/public/v1/';
+		return 'https://api.convert.convesio.com/public/v1/';
 	}
 
 	protected function get_headers() {

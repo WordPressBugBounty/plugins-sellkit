@@ -88,9 +88,9 @@ class Rating extends Notice_Base {
 			'date_query' => [
 				[
 					'before'    => [
-						'year'  => intval( date( 'Y', $time ) ),
-						'month' => intval( date( 'm', $time ) ),
-						'day'   => intval( date( 'd', $time ) ),
+						'year'  => intval( gmdate( 'Y', $time ) ),
+						'month' => intval( gmdate( 'm', $time ) ),
+						'day'   => intval( gmdate( 'd', $time ) ),
 					],
 					'inclusive' => false,
 				],

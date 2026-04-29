@@ -15,10 +15,12 @@
  * @version 5.2.0
  */
 
-defined( 'ABSPATH' ) || exit; ?>
+defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- WooCommerce/Elementor template; variables mirror core docs.
+ ?>
 
 <?php
-if ( ! function_exists( 'checkout_order_hidden_quantity_review_order' ) ) {
+if ( ! function_exists( 'sellkit_checkout_order_hidden_quantity_review_order' ) ) {
 	/**
 	 * Hide checkout order product quantity input and show raw quantity.
 	 *
@@ -29,7 +31,7 @@ if ( ! function_exists( 'checkout_order_hidden_quantity_review_order' ) ) {
 	 *
 	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
-	function checkout_order_hidden_quantity_review_order( $input_html, $quantity ) {
+	function sellkit_checkout_order_hidden_quantity_review_order( $input_html, $quantity ) {
 		$html = $input_html;
 		echo sprintf(
 			/** Translators: %s: product quantity */
@@ -40,7 +42,7 @@ if ( ! function_exists( 'checkout_order_hidden_quantity_review_order' ) ) {
 }
 
 if ( isset( $review_order_attributes['disableCartEditing'] ) && $review_order_attributes['disableCartEditing'] ) {
-	add_filter( 'sellkit-checkout-block-disable-quantity', 'checkout_order_hidden_quantity_review_order', 10, 2 );
+	add_filter( 'sellkit-checkout-block-disable-quantity', 'sellkit_checkout_order_hidden_quantity_review_order', 10, 2 );
 }
 ?>
 <table class="shop_table woocommerce-checkout-review-order-table" cellspacing="0">

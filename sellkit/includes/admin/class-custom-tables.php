@@ -60,8 +60,22 @@ class Sellkit_Custom_Tables {
 	public function get_applied_discounts() {
 		check_ajax_referer( 'sellkit', 'nonce' );
 
-		$page = sellkit_htmlspecialchars( INPUT_GET, 'page' );
-		$id   = sellkit_htmlspecialchars( INPUT_GET, 'id' );
+		// Prefer `paged` — `page` can collide with other WP query usage; accept both GET/POST for ajax.
+		$page = sellkit_htmlspecialchars( INPUT_GET, 'paged' );
+		if ( empty( $page ) ) {
+			$page = sellkit_htmlspecialchars( INPUT_POST, 'paged' );
+		}
+		if ( empty( $page ) ) {
+			$page = sellkit_htmlspecialchars( INPUT_GET, 'page' );
+		}
+		if ( empty( $page ) ) {
+			$page = sellkit_htmlspecialchars( INPUT_POST, 'page' );
+		}
+
+		$id = sellkit_htmlspecialchars( INPUT_GET, 'id' );
+		if ( empty( $id ) ) {
+			$id = sellkit_htmlspecialchars( INPUT_POST, 'id' );
+		}
 
 		if ( empty( $page ) ) {
 			$page = 1;
@@ -96,7 +110,7 @@ class Sellkit_Custom_Tables {
 			$prepared_total_query,
 			ARRAY_A );
 
-		$total_discount_num = ! empty( $total[0]['total_discounts'] ) ? $total[0]['total_discounts'] : '';
+		$total_discount_num = ! empty( $total[0]['total_discounts'] ) ? (int) $total[0]['total_discounts'] : 0;
 		// phpcs:enable
 
 		wp_send_json_success( [
@@ -200,8 +214,14 @@ class Sellkit_Custom_Tables {
 				group by ct.user_id
 				order by ct.id desc limit %d , %d;", $funnel_id, $page_index, $limit ), ARRAY_A );
 
+		// Must match the grouped list query (one row per user), not raw row count.
 		$total_contacts = $wpdb->get_results(
-			$wpdb->prepare( "SELECT count(*) as total_contacts FROM {$contact_table} where funnel_id = %d;", $funnel_id ), ARRAY_A );
+			$wpdb->prepare(
+				"SELECT COUNT(*) AS total_contacts FROM ( SELECT user_id FROM {$contact_table} WHERE funnel_id = %d GROUP BY user_id ) AS grouped_contacts",
+				$funnel_id
+			),
+			ARRAY_A
+		);
 		$total_contacts_num = ! empty( $total_contacts[0]['total_contacts'] ) ? $total_contacts[0]['total_contacts'] : '';
 		// phpcs:enable
 
@@ -250,7 +270,7 @@ class Sellkit_Custom_Tables {
 				order by ct.id desc limit %d , %d;", $funnel_id, $user_id, $page_index, $limit ), ARRAY_A );
 
 		$total_contacts = $wpdb->get_results(
-			$wpdb->prepare( "SELECT count(*) as total_contacts FROM {$contact_table} where funnel_id = %d;", $funnel_id ), ARRAY_A );
+			$wpdb->prepare( "SELECT count(*) as total_contacts FROM {$contact_table} WHERE funnel_id = %d AND user_id = %d;", $funnel_id, $user_id ), ARRAY_A );
 		$total_contacts_num = ! empty( $total_contacts[0]['total_contacts'] ) ? $total_contacts[0]['total_contacts'] : '';
 		// phpcs:enable
 

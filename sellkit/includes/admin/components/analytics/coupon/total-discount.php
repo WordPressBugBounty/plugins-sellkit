@@ -66,7 +66,7 @@ class Total_Discount extends Analytics_Base {
 
 		for ( $i = Analytics::$date_range; $i >= 0; $i-- ) {
 			$time = strtotime( "-{$i} days" );
-			$date = date( 'M_d', $time );
+			$date = gmdate( 'M_d', $time );
 
 			$chart_data[] = [
 				'date' => str_replace( '_', ' ', $date ),

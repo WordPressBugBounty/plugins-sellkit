@@ -24,7 +24,7 @@ class Sellkit_Elementor_Optin_Field_Acceptance extends Sellkit_Elementor_Optin_F
 		?>
 		<div class="sellkit-field-subgroup">
 			<span class="sellkit-field-option sellkit-field-option-checkbox">
-				<input <?php echo $this->widget->get_render_attribute_string( 'field-' . esc_attr( $this->get_id() ) ); ?>>
+				<input <?php echo $this->widget->get_render_attribute_string( 'field-' . esc_attr( $this->get_id() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor-generated attributes. ?>>
 				<label
 					for="optin-field-<?php echo esc_attr( $this->get_id() ); ?>"
 					class="sellkit-field-label">

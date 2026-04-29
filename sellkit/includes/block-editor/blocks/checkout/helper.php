@@ -490,6 +490,12 @@ class Helper {
 
 		$shipping_attributes = $this->get_inner_block_attributes( 'checkout', 'checkout-form-shipping', $post_id );
 		$billing_attributes  = $this->get_inner_block_attributes( 'checkout', 'checkout-billing-details', $post_id );
+		$billing_roles       = array_map( function( $field ) {
+			return $field['role'];
+		}, $billing_attributes['locations'] ?? [] );
+		$shipping_roles      = array_map( function( $field ) {
+			return $field['role'];
+		}, $shipping_attributes['locations'] ?? [] );
 
 		if ( ! isset( $shipping_attributes['locations'] ) ) {
 			$this->checkout_fields_validation( null, $billing_attributes['locations'] );
@@ -497,16 +503,20 @@ class Helper {
 			$this->checkout_fields_validation( $shipping_attributes['locations'], $billing_attributes['locations'] );
 		}
 
-		add_filter( 'woocommerce_checkout_fields', function( $default_fields ) {
+		add_filter( 'woocommerce_checkout_fields', function( $default_fields ) use ( $billing_roles, $shipping_roles ) {
 			unset( $default_fields['billing']['billing_email'] );
 
-			// Set all fields to optional by default.
-			foreach ( $default_fields['billing'] as $field_key => $field ) {
-				$default_fields['billing'][ $field_key ]['required'] = false;
+			// Let Sellkit validate configured block fields while leaving third-party billing fields untouched.
+			foreach ( $billing_roles as $field_key ) {
+				if ( isset( $default_fields['billing'][ $field_key ] ) ) {
+					$default_fields['billing'][ $field_key ]['required'] = false;
+				}
 			}
 
-			foreach ( $default_fields['shipping'] as $field_key => $field ) {
-				$default_fields['billing'][ $field_key ]['required'] = false;
+			foreach ( $shipping_roles as $field_key ) {
+				if ( isset( $default_fields['shipping'][ $field_key ] ) ) {
+					$default_fields['shipping'][ $field_key ]['required'] = false;
+				}
 			}
 
 			return $default_fields;
@@ -2179,13 +2189,27 @@ class Helper {
 			return $default_fields;
 		}
 
+		$core_billing_fields = [
+			'billing_first_name',
+			'billing_last_name',
+			'billing_company',
+			'billing_address_1',
+			'billing_address_2',
+			'billing_city',
+			'billing_postcode',
+			'billing_country',
+			'billing_state',
+			'billing_email',
+			'billing_phone',
+		];
+
 		// Unset unnecessary fields.
 		$valid_roles = array_map( function( $field ) {
 			return $field['role'];
 		}, $block_fields );
 
 		foreach ( $default_fields as $key => $value ) {
-			if ( ! in_array( $key, $valid_roles, true ) ) {
+			if ( in_array( $key, $core_billing_fields, true ) && ! in_array( $key, $valid_roles, true ) ) {
 				unset( $default_fields[ $key ] );
 			}
 		}

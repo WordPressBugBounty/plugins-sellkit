@@ -291,6 +291,20 @@ class Sellkit_Funnel {
 			return $page_id;
 		}
 
+		// Stripe Express Checkout (and similar express flows) POST to wc-ajax=checkout
+		// without SellKit's hidden fields. Fall back to the checkout step id stored in
+		// the WC session when the user first landed on the funnel checkout page so we
+		// can still resolve the funnel context on the server side. The stored value is
+		// only trusted when recent, to avoid reusing stale ids from older visits.
+		if ( wp_doing_ajax() && function_exists( 'WC' ) && is_object( WC()->session ) ) {
+			$session_page_id = (int) WC()->session->get( 'sellkit_current_page_id' );
+			$session_time    = (int) WC()->session->get( 'sellkit_current_page_id_time' );
+
+			if ( $session_page_id > 0 && ( time() - $session_time ) < HOUR_IN_SECONDS ) {
+				return $session_page_id;
+			}
+		}
+
 		$current_url = esc_url_raw( remove_query_arg( 'order-key' ) );
 
 		if ( ! empty( $structure ) ) {

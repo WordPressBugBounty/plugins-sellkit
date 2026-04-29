@@ -205,7 +205,7 @@ abstract class Sellkit_Elementor_Optin_Field_Base {
 		$this->add_field_group_render_attribute();
 
 		?>
-		<div <?php echo $this->widget->get_render_attribute_string( 'field-group-' . esc_attr( $this->get_id() ) ); ?>>
+		<div <?php echo $this->widget->get_render_attribute_string( 'field-group-' . esc_attr( $this->get_id() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor-generated attributes. ?>>
 			<?php
 			$this->render_label();
 			$this->render_content();

@@ -1,4 +1,6 @@
 <?php
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Modal template
  *
@@ -114,7 +116,7 @@
 				<h4><?php echo esc_html__( 'Keywords Shortcode', 'sellkit' ); ?></h4>
 			</li>
 			<?php
-			get_tags_title();
+			sellkit_get_tags_title();
 			?>
 		</ul>
 	</div>

@@ -3,11 +3,11 @@ Contributors: artbees
 Donate link: https://getsellkit.com/
 Tags: checkout optimizer, optimized checkout, sales funnel, smart coupon, checkout alert
 Requires at least: 5.6
-Tested up to: 6.8
-Stable tag: 2.4.0
+Tested up to: 6.9
+Stable tag: 2.5.0
 Requires PHP: 7.0
-License: GPLv3
-License URI: https://www.gnu.org/licenses/gpl-3.0.html
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Sellkit helps WooCommerce websites drive more sales with sales funnels.
 
@@ -274,11 +274,27 @@ Main functionalities are only compatible with Elementor and Gutenberg at the mom
 1. Install using the WordPress built-in Plugin installer, or Extract the zip file and drop the contents in the `wp-content/plugins/` directory of your WordPress installation.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
+
+== Changelog ==
+= 2.5.0 - 2026-04-29 =
+* Feature: Refreshed admin UI for a better user experience.
+* Feature: Added zoom and expand controls for funnels and improved funnel builder performance.
+* Feature: Added Express checkout support in the Block Editor.
+* Feature: Added VAT validation to Sellkit.
+* Bug Fix: Fixed Sellkit license activation on multisite installations.
+* Bug Fix: Fixed Add to Cart button visibility when applying a filter with the Sellkit Product Filter widget.
+* Bug Fix: Fixed a Stripe payment conflict that removed cart items after placing an order.
+* Bug Fix: Fixed the checkout email field on iPhone.
+* Bug Fix: Fixed a conflict between Sellkit Express Checkout and the WooCommerce Stripe Gateway plugin.
+* Bug Fix: Fixed multiple issues related to the global checkout feature.
+
+
+
 == Changelog ==
 = 2.4.0 - 2025-11-27 =
-* Added promotion banner system.
-* Fixed warning related to billing field when field role is empty.
-* Fixed displaying Order Details widget on thank you page when loaded by Order Received Page condition.
+* Feature: Added a global admin promotion banner system for highlighting time-limited campaigns in the WordPress dashboard.
+* Bug Fix: Fixed PHP warning that occurred when a billing field role was empty in checkout forms.
+* Bug Fix: Fixed the Order Details widget not displaying on the thank you page when it is loaded via the Order Received Page condition.
 
 = 2.3.6 - 2025-10-3 =
 * Bug Fix: Fixed issue related to get_price.

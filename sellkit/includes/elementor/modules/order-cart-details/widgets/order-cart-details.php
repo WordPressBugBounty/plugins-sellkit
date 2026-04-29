@@ -63,7 +63,7 @@ class Sellkit_Elementor_Order_Cart_Details_Widget extends Sellkit_Elementor_Base
 			[
 				'name' => 'box_border',
 				'placeholder' => '1px',
-				'exclude' => [ 'color' ],
+				'exclude' => [ 'color' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- Elementor control keys, not WP_Query.
 				'fields_options' => [
 					'width' => [
 						'label' => __( 'Border Width', 'sellkit' ),
@@ -226,7 +226,7 @@ class Sellkit_Elementor_Order_Cart_Details_Widget extends Sellkit_Elementor_Base
 			[
 				'name' => 'thumbnail_border',
 				'placeholder' => '1px',
-				'exclude' => [ 'color' ],
+				'exclude' => [ 'color' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- Elementor control keys, not WP_Query.
 				'fields_options' => [
 					'width' => [
 						'label' => __( 'Border Width', 'sellkit' ),
@@ -263,7 +263,7 @@ class Sellkit_Elementor_Order_Cart_Details_Widget extends Sellkit_Elementor_Base
 			'typography',
 			[
 				'name' => 'product_name_typography',
-				'exclude' => [ 'line_height' ],
+				'exclude' => [ 'line_height' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- Elementor control keys, not WP_Query.
 				'selector' => '{{WRAPPER}} .sellkit-order-cart-detail-items-product-title',
 				'scheme' => '1',
 			]
@@ -293,7 +293,7 @@ class Sellkit_Elementor_Order_Cart_Details_Widget extends Sellkit_Elementor_Base
 			'typography',
 			[
 				'name' => 'product_price_typography',
-				'exclude' => [ 'line_height' ],
+				'exclude' => [ 'line_height' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- Elementor control keys, not WP_Query.
 				'selector' => '{{WRAPPER}} .sellkit-order-cart-detail-items-price',
 				'scheme' => '1',
 			]

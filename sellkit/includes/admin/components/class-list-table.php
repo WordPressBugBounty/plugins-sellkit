@@ -62,6 +62,10 @@ class Sellkit_Admin_List_Table {
 		$posts_per_page = filter_input( INPUT_POST, 'posts_per_page', FILTER_SANITIZE_NUMBER_INT );
 		$search_args    = filter_input( INPUT_POST, 'args', FILTER_DEFAULT, FILTER_FORCE_ARRAY );
 		$page           = filter_input( INPUT_POST, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		$list_status    = isset( $_POST['list_status'] ) ? sanitize_text_field( wp_unslash( $_POST['list_status'] ) ) : 'all';
+		if ( ! in_array( $list_status, [ 'all', 'publish', 'draft' ], true ) ) {
+			$list_status = 'all';
+		}
 
 		/**
 		 * Filter List Table query arguments.
@@ -84,9 +88,18 @@ class Sellkit_Admin_List_Table {
 			}
 		}
 
-		if ( 'checkout' !== $page ) {
-			$global_checkout_id   = get_option( Checkout::SELLKIT_GLOBAL_CHECKOUT_OPTION, 0 );
-			$args['post__not_in'] = [ $global_checkout_id ];
+		$not_in = $this->get_list_table_post__not_in( $post_type, $page );
+		if ( ! empty( $not_in ) ) {
+			// phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in -- Exclude global checkout funnel from list.
+			$args['post__not_in'] = $not_in;
+		}
+
+		if ( 'publish' === $list_status ) {
+			$args['post_status'] = 'publish';
+		} elseif ( 'draft' === $list_status ) {
+			$args['post_status'] = 'draft';
+		} else {
+			$args['post_status'] = [ 'publish', 'draft', 'pending', 'private', 'future' ];
 		}
 
 		// Query.
@@ -100,6 +113,7 @@ class Sellkit_Admin_List_Table {
 		 * @param array $args The taxonomy arguments.
 		 */
 		$posts = apply_filters( "sellkit_list_table_{$post_type}_posts", $query->posts );
+		$posts = $this->prepare_posts_for_list_table( $posts );
 
 		/**
 		 * Filter List Table columns.
@@ -113,12 +127,104 @@ class Sellkit_Admin_List_Table {
 			'values' => [],
 		], $posts );
 
+		$list_counts = $this->get_list_status_counts( $post_type, $page );
+
 		// Send response.
 		wp_send_json_success( [
 			'posts' => $posts,
 			'max_num_pages' => $query->max_num_pages,
 			'columns' => $columns,
+			'list_counts' => $list_counts,
 		] );
+	}
+
+	/**
+	 * Post IDs excluded from list queries (e.g. global checkout funnel).
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param string $post_type Post type.
+	 * @param string $page      Admin page slug context.
+	 * @return int[]
+	 */
+	private function get_list_table_post__not_in( $post_type, $page ) {
+		if ( 'sellkit-funnels' === $post_type && 'checkout' !== $page ) {
+			$global_checkout_id = (int) get_option( Checkout::SELLKIT_GLOBAL_CHECKOUT_OPTION, 0 );
+			if ( $global_checkout_id > 0 ) {
+				return [ $global_checkout_id ];
+			}
+		}
+		return [];
+	}
+
+	/**
+	 * Counts for All / Active / Inactive list filters (respects post__not_in).
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param string $post_type Post type.
+	 * @param string $page      Admin page slug context.
+	 * @return array{all:int,publish:int,draft:int}
+	 */
+	private function get_list_status_counts( $post_type, $page ) {
+		$not_in = $this->get_list_table_post__not_in( $post_type, $page );
+		$base   = [
+			'post_type'      => $post_type,
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+			'no_found_rows'  => false,
+		];
+		if ( ! empty( $not_in ) ) {
+			// phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in
+			$base['post__not_in'] = $not_in;
+		}
+
+		$statuses_all = [ 'publish', 'draft', 'pending', 'private', 'future' ];
+		$q_all        = new \WP_Query( array_merge( $base, [ 'post_status' => $statuses_all ] ) );
+		$q_pub        = new \WP_Query( array_merge( $base, [ 'post_status' => 'publish' ] ) );
+		$q_dra        = new \WP_Query( array_merge( $base, [ 'post_status' => 'draft' ] ) );
+
+		return [
+			'all'     => (int) $q_all->found_posts,
+			'publish' => (int) $q_pub->found_posts,
+			'draft'   => (int) $q_dra->found_posts,
+		];
+	}
+
+	/**
+	 * Add formatted published / modified dates for list table rows (JSON).
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param array $posts Posts from WP_Query.
+	 * @return array
+	 */
+	private function prepare_posts_for_list_table( $posts ) {
+		if ( empty( $posts ) || ! is_array( $posts ) ) {
+			return $posts;
+		}
+
+		$date_time_format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+
+		foreach ( $posts as $key => $post ) {
+			if ( ! $post instanceof \WP_Post ) {
+				continue;
+			}
+
+			$row = array_merge(
+				$post->to_array(),
+				[
+					'custom_date'                    => get_the_date( 'M d, Y', $post ),
+					'custom_date_with_time'          => mysql2date( $date_time_format, $post->post_date ),
+					'custom_modified_date'           => get_the_modified_date( 'M d, Y', $post ),
+					'custom_modified_date_with_time' => mysql2date( $date_time_format, $post->post_modified ),
+				]
+			);
+
+			$posts[ $key ] = (object) $row;
+		}
+
+		return $posts;
 	}
 
 	/**

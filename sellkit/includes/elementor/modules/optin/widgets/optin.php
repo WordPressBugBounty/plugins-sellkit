@@ -61,7 +61,7 @@ class Sellkit_Elementor_Optin_Widget extends Sellkit_Elementor_Base_Widget {
 			}
 
 			?>
-			<div <?php echo $this->button_wrapper_attributes( $settings ); ?>>
+			<div <?php echo $this->button_wrapper_attributes( $settings ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor-generated attributes. ?>>
 				<button type="submit" class="sellkit-submit-button">
 					<?php Module::render_icon( $settings['submit_button_icon'] ); ?>
 					<div class="sellkit-submit-button-texts">

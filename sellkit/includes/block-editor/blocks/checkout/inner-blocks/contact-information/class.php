@@ -1,6 +1,8 @@
 <?php
 namespace Sellkit\Blocks\Inner_Block;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Contact Information class.
  *
@@ -93,7 +95,11 @@ class Checkout_Contact_Information {
 								id="billing_email"
 								class="login-mail validate-email"
 								placeholder="<?php echo esc_html__( 'Email Address', 'sellkit' ); ?>"
-								autocomplete=""
+								autocomplete="email"
+								autocapitalize="none"
+								autocorrect="off"
+								spellcheck="false"
+								inputmode="email"
 							>
 						</span>
 						<span class="sellkit-checkout-widget-email-error login-section-error">

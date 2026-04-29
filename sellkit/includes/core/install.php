@@ -77,7 +77,13 @@ class Install {
 		$current_db_version = $this->get_current_database_version();
 		$current_db_version = ! empty( $current_db_version ) ? $current_db_version : 0;
 		self::$updater      = new Db_Updater();
-		$has_new_update     = false;
+
+		// Avoid stacking duplicate batches (e.g. admin refreshes) or colliding with an in-flight run.
+		if ( self::$updater->has_pending_migrations() ) {
+			return;
+		}
+
+		$has_new_update = false;
 
 		foreach ( self::$updates as $version => $update_callbacks ) {
 			if ( version_compare( $current_db_version, $version, '<' ) ) {
@@ -93,6 +99,7 @@ class Install {
 		}
 
 		if ( $has_new_update ) {
+			self::$updater->gate_multisite_initial_loopback = true;
 			self::$updater->save()->dispatch();
 		}
 	}

@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- Sellkit canvas template scope.
+
 $is_global_checkout = apply_filters( 'sellkit_global_checkout_activated', false );
 
 if ( $is_global_checkout ) {

@@ -18,6 +18,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- WooCommerce template scope.
 ?>
 
 <?php foreach ( $item_data as $key => $data ) : ?>

@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name: Sellkit
+ * Plugin Name: SellKit - Funnel builder and checkout optimizer for WooCommerce to sell more, faster
  * Plugin URI: https://getsellkit.com/
  * Description: Build unlimited sales funnels, one-click order bumps and upsells, custom thank you pages, and more. The free version of SellKit also offers a huge round of features to optimize your WooCommerce store: build and style single or multi-step checkout pages with advanced styling options. Add, remove & reorder form fields. Fasten the form submission process with pre-populated form data, Instant form validation, and removing cart page. All this and more is 100% free and for an unlimited number of sites.
- * Version: 2.4.0
+ * Version: 2.5.0
  * Author: Artbees
  * Author URI: https://artbees.net
  * Text Domain: sellkit
- * License: GPL2
+ * License: GPLv2 or later
  *
  * @package Sellkit
  */
@@ -302,13 +302,14 @@ if ( ! class_exists( 'Sellkit' ) ) {
 		}
 
 		/**
-		 * Adding sellkit class to body.
+		 * Adds `sellkit` on the admin body so `.sellkit …` Bootstrap/Reboot selectors apply.
+		 * wp-admin sidebar chrome is toned down in `src/style.scss` where Reboot bleeds through.
 		 *
-		 * @param string $classes Sellkit the sellkit class.
+		 * @param string $classes Existing body classes.
 		 * @return string
 		 */
 		public function sellkit_admin_body_class( $classes ) {
-			return "{$classes} sellkit";
+			return "{$classes} sellkit sellkit-admin-screen";
 		}
 
 		/**
@@ -367,7 +368,7 @@ if ( ! class_exists( 'Sellkit' ) ) {
 				] );
 			}
 
-			load_plugin_textdomain( 'sellkit', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+			// Translations load automatically (WP 4.6+) from wp-content/languages/plugins/ and this plugin's languages directory.
 		}
 
 		/**
@@ -441,7 +442,17 @@ if ( ! class_exists( 'Sellkit' ) ) {
 
 			$submenu = apply_filters( 'sellkit_sub_menu', $submenu );
 
-			$svg_file = wp_remote_get( self::plugin_url() . 'assets/img/icons/sellkit-dashboard.svg' );
+			// Load SVG from disk. wp_remote_get() to the plugin URL often fails on local/SSL sites and yields an empty icon.
+			$icon_path = sellkit()->plugin_dir() . 'assets/img/icons/sellkit-dashboard.svg';
+			$menu_icon = 'dashicons-cart';
+
+			if ( is_readable( $icon_path ) ) {
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading a bundled asset from the filesystem.
+				$svg_contents = file_get_contents( $icon_path );
+				if ( false !== $svg_contents && '' !== $svg_contents ) {
+					$menu_icon = 'data:image/svg+xml;base64,' . base64_encode( $svg_contents );
+				}
+			}
 
 			add_menu_page(
 				$menu_name,
@@ -449,7 +460,7 @@ if ( ! class_exists( 'Sellkit' ) ) {
 				'manage_options',
 				$initial_page,
 				[ $this, 'register_admin_menu_callback' ],
-				'data:image/svg+xml;base64,' . base64_encode( wp_remote_retrieve_body( $svg_file ) ),
+				$menu_icon,
 				'58.1'
 			);
 
@@ -543,6 +554,10 @@ if ( ! class_exists( 'Sellkit' ) ) {
 				'funnelsTemplateSource' => Funnel::SELLKIT_FUNNELS_TEMPLATE_SOURCE,
 				'removedContentBoxes' => Sellkit_Admin_Settings::get_removed_content_box(),
 				'sellkitProIsActive' => $this->has_pro,
+				'sellkitProPluginInstalled' => class_exists( 'Sellkit_Pro' ) && function_exists( 'sellkit_pro' ),
+				'sellkitLicensePageUrl' => ( class_exists( 'Sellkit_Pro' ) && function_exists( 'sellkit_pro' ) )
+					? ( is_multisite() ? network_admin_url( 'admin.php?page=sellkit-license' ) : admin_url( 'admin.php?page=sellkit-license' ) )
+					: '',
 				'wcIsActivated' => $this->has_valid_dependencies(),
 				'activeTheme' => wp_get_theme()->get( 'Name' ),
 				'pageBuilder' => $this->page_builder(),

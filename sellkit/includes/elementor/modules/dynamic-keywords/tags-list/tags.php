@@ -1,10 +1,12 @@
 <?php
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Gets all tags.
  *
  * @since 1.1.0
  */
-function get_tags_title() {
+function sellkit_get_tags_title() {
 	$dynamic_tags = new Sellkit_Dynamic_Keywords();
 
 	$dynamic_tags_item = '';

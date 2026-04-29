@@ -112,7 +112,7 @@ class Sellkit_Elementor_Accept_Reject_Button_Widget extends Sellkit_Elementor_Up
 		$this->add_control(
 			'selected_icon',
 			[
-				'label' => __( 'Icon', 'elementor' ),
+				'label' => __( 'Icon', 'sellkit' ),
 				'type' => 'icons',
 				'fa4compatibility' => 'icon',
 				'skin' => 'inline',
@@ -149,7 +149,7 @@ class Sellkit_Elementor_Accept_Reject_Button_Widget extends Sellkit_Elementor_Up
 		$this->add_responsive_control(
 			'icon_size',
 			[
-				'label' => esc_html__( 'Icon Size', 'jupiterx-core' ),
+				'label' => esc_html__( 'Icon Size', 'sellkit' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
 				'range' => [

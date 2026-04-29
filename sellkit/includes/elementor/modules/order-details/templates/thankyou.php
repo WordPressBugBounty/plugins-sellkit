@@ -18,6 +18,8 @@
 use JupiterX_Core\sellkit\Modules\Order_Details\Module;
 
 defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- WooCommerce/Elementor template; variables mirror core docs.
+
 
 ?>
 
@@ -32,18 +34,18 @@ defined( 'ABSPATH' ) || exit;
 
 		<?php if ( $order && $order->has_status( 'failed' ) ) : ?>
 
-			<p class="woocommerce-notice woocommerce-notice--error woocommerce-thankyou-order-failed"><?php esc_html_e( 'Unfortunately your order cannot be processed as the originating bank/merchant has declined your transaction. Please attempt your purchase again.', 'woocommerce' ); ?></p>
+			<p class="woocommerce-notice woocommerce-notice--error woocommerce-thankyou-order-failed"><?php esc_html_e( 'Unfortunately your order cannot be processed as the originating bank/merchant has declined your transaction. Please attempt your purchase again.', 'sellkit' ); ?></p>
 
 			<p class="woocommerce-notice woocommerce-notice--error woocommerce-thankyou-order-failed-actions">
-				<a href="<?php echo esc_url( $order->get_checkout_payment_url() ); ?>" class="button pay"><?php esc_html_e( 'Pay', 'woocommerce' ); ?></a>
+				<a href="<?php echo esc_url( $order->get_checkout_payment_url() ); ?>" class="button pay"><?php esc_html_e( 'Pay', 'sellkit' ); ?></a>
 				<?php if ( is_user_logged_in() ) : ?>
-					<a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="button pay"><?php esc_html_e( 'My account', 'woocommerce' ); ?></a>
+					<a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="button pay"><?php esc_html_e( 'My account', 'sellkit' ); ?></a>
 				<?php endif; ?>
 			</p>
 
 		<?php else : ?>
 
-			<ul <?php echo $this->get_render_attribute_string( 'details-order-content' ); ?> >
+			<ul <?php echo $this->get_render_attribute_string( 'details-order-content' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor-generated attributes. ?> >
 				<?php
 					add_filter( 'sellkit_global_thankyou', '__return_true' );
 					foreach ( $fields as $field ) {

@@ -137,7 +137,7 @@ class Sellkit_Elementor_Product_Quantity_Widget extends Sellkit_Elementor_Upsell
 	}
 
 	protected function render() {
-		global $product;
+		global $product; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WooCommerce template pattern.
 
 		$product = $this->get_product_object();
 

@@ -17,9 +17,11 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- WooCommerce/Elementor template; variables mirror core docs.
+
 
 $shipping_destination = get_option( 'woocommerce_ship_to_destination', true );
-$section_title        = esc_html__( 'Billing details', 'woocommerce' );
+$section_title        = esc_html__( 'Billing details', 'sellkit' );
 $border_top           = '';
 
 if ( 'billing_only' === $shipping_destination ) {

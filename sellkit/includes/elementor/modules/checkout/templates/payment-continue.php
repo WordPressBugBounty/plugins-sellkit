@@ -1,12 +1,21 @@
+<?php
+/**
+ * Payment continue (place order) template.
+ *
+ * @package Sellkit
+ */
+
+defined( 'ABSPATH' ) || exit;
+?>
 <section class="place-order sellkit-one-page-checkout-place-order">
 	<noscript>
 		<?php
 		//phpcs:disable
 		/* translators: $1 and $2 opening and closing emphasis tags respectively */
-		printf( esc_html__( 'Since your browser does not support JavaScript, or it is disabled, please ensure you click the %1$sUpdate Totals%2$s button before placing your order. You may be charged more than the amount stated above if you fail to do so.', 'woocommerce' ), '<em>', '</em>' );
+		printf( esc_html__( 'Since your browser does not support JavaScript, or it is disabled, please ensure you click the %1$sUpdate Totals%2$s button before placing your order. You may be charged more than the amount stated above if you fail to do so.', 'sellkit' ), '<em>', '</em>' );
 		//phpcs:enable
 		?>
-		<br/><button type="submit" class="button alt sellkit-checkout-widget-primary-button" name="woocommerce_checkout_update_totals" value="<?php esc_attr_e( 'Update totals', 'woocommerce' ); ?>"><?php esc_html_e( 'Update totals', 'woocommerce' ); ?></button>
+		<br/><button type="submit" class="button alt sellkit-checkout-widget-primary-button" name="woocommerce_checkout_update_totals" value="<?php esc_attr_e( 'Update totals', 'sellkit' ); ?>"><?php esc_html_e( 'Update totals', 'sellkit' ); ?></button>
 	</noscript>
 
 	<?php do_action( 'woocommerce_review_order_before_submit' ); ?>

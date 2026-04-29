@@ -184,7 +184,7 @@ class Sellkit_Elementor_Order_Details_Widget extends Sellkit_Elementor_Base_Widg
 			'box-shadow',
 			[
 				'name' => 'order_details_box_box_shadow',
-				'exclude' => [
+				'exclude' => [ // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- Elementor control keys, not WP_Query.
 					'box_shadow_position',
 				],
 				'separator' => 'before',

@@ -188,7 +188,8 @@ class Contact_Data_Updater {
 			return $value;
 		}
 
-		$data = array_change_key_case( $_GET, CASE_LOWER ); //phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Public UTM/analytics query parameters.
+		$data = array_change_key_case( $_GET, CASE_LOWER );
 
 		if ( empty( $data[ $utm ] ) ) {
 			return $value;
@@ -468,7 +469,8 @@ class Contact_Data_Updater {
 		$valid_vars = [];
 		$new_vars   = [];
 
-		$query_vars = $_GET; //phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Merging stored URL query keys with current request for segmentation.
+		$query_vars = $_GET;
 
 		if ( ! isset( $old_vars['url_query_string'] ) ) {
 			$old_vars['url_query_string'] = [];

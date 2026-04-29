@@ -158,15 +158,13 @@ class Sellkit_Steps {
 			session_start();
 		}
 
-		if ( array_key_exists( 'sellkit_viewed_funnels', $_SESSION ) && in_array( $this->funnel->funnel_id, $_SESSION['sellkit_viewed_funnels'] ) ) { // phpcs:ignore
+		$viewed_funnel_ids = isset( $_SESSION['sellkit_viewed_funnels'] ) ? array_map( 'absint', (array) $_SESSION['sellkit_viewed_funnels'] ) : [];
+
+		if ( in_array( absint( $this->funnel->funnel_id ), $viewed_funnel_ids, true ) ) {
 			return;
 		}
 
-		if ( empty( $_SESSION['sellkit_viewed_funnels'] ) ) {
-			$_SESSION['sellkit_viewed_funnels'] = [];
-		}
-
-		$_SESSION['sellkit_viewed_funnels'] = array_merge( $_SESSION['sellkit_viewed_funnels'], [ $this->funnel->funnel_id ] );
+		$_SESSION['sellkit_viewed_funnels'] = array_merge( $viewed_funnel_ids, [ absint( $this->funnel->funnel_id ) ] );
 
 		add_action( 'init', function () {
 			$this->analytics_updater->add_new_visit( true );

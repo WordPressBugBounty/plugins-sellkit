@@ -361,10 +361,11 @@ class Local_Hooks {
 	public function customize_billing_field( $default_fields ) {
 		$widget_billing_fields = $this->settings['billing_list'];
 		$widget_field_slug     = Helper::instance()->get_user_defined_fields_slug( $widget_billing_fields, 'billing_list_field' );
+		$core_billing_fields   = array_keys( Helper::instance()->billing_fields() );
 
 		// Unset default fields.
 		foreach ( $default_fields as $key => $field ) {
-			if ( ! in_array( $key, $widget_field_slug, true ) && 'billing_email' !== $field ) {
+			if ( in_array( $key, $core_billing_fields, true ) && ! in_array( $key, $widget_field_slug, true ) && 'billing_email' !== $key ) {
 				unset( $default_fields[ $key ] );
 			}
 		}
@@ -1254,11 +1255,11 @@ class Local_Hooks {
 
 		foreach ( $upsell_data as $data ) {
 			$id    = 'sellkit_funnel_upsell_popup_' . $i;
-			$class = 'sellkit_funnel_upsell_popup sellkit_funnel_upsell_popup_' . apply_filters( 'wpml_object_id', $data['page_id'], 'sellkit_step', true );
+			$class = 'sellkit_funnel_upsell_popup sellkit_funnel_upsell_popup_' . apply_filters( 'wpml_object_id', $data['page_id'], 'sellkit_step', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 			?>
 				<div class="<?php echo esc_attr( $class ); ?>" id="<?php echo esc_attr( $id ); ?>">
-					<?php echo Elementor::instance()->frontend->get_builder_content_for_display( apply_filters( 'wpml_object_id', $data['page_id'], 'sellkit_step', true ) ); ?>
-					<input type="hidden" class="identify" value="<?php echo esc_attr( apply_filters( 'wpml_object_id', $data['page_id'], 'sellkit_step', true ) ); ?>" >
+					<?php echo wp_kses_post( Elementor::instance()->frontend->get_builder_content_for_display( apply_filters( 'wpml_object_id', $data['page_id'], 'sellkit_step', true ) ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API. ?>
+					<input type="hidden" class="identify" value="<?php echo esc_attr( apply_filters( 'wpml_object_id', $data['page_id'], 'sellkit_step', true ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API. ?>" >
 				</div>
 			<?php
 			$i++;

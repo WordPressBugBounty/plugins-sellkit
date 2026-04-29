@@ -4,6 +4,9 @@
 /**
  * WP Background Process
  *
+ * Multisite: queue batches and process locks use per-blog options/transients (not network
+ * sitemeta). SellKit tables live in each site's $wpdb->prefix; DB version is per-site in the
+ * sellkit option — a network-wide queue caused cross-site contention and duplicate migrations.
  *
  * @package WP-Background-Processing
  */
@@ -106,7 +109,7 @@ if ( ! class_exists( 'WP_Background_Process' ) ) :
 			$key = $this->generate_key();
 
 			if ( ! empty( $this->data ) ) {
-				update_site_option( $key, $this->data );
+				update_option( $key, $this->data, false );
 			}
 
 			return $this;
@@ -122,7 +125,7 @@ if ( ! class_exists( 'WP_Background_Process' ) ) :
 		 */
 		public function update( $key, $data ) {
 			if ( ! empty( $data ) ) {
-				update_site_option( $key, $data );
+				update_option( $key, $data, false );
 			}
 
 			return $this;
@@ -136,7 +139,7 @@ if ( ! class_exists( 'WP_Background_Process' ) ) :
 		 * @return $this
 		 */
 		public function delete( $key ) {
-			delete_site_option( $key );
+			delete_option( $key );
 
 			return $this;
 		}
@@ -196,11 +199,6 @@ if ( ! class_exists( 'WP_Background_Process' ) ) :
 			$table  = $wpdb->options;
 			$column = 'option_name';
 
-			if ( is_multisite() ) {
-				$table  = $wpdb->sitemeta;
-				$column = 'meta_key';
-			}
-
 			$key = $wpdb->esc_like( $this->identifier . '_batch_' ) . '%';
 
 			$count = $wpdb->get_var( $wpdb->prepare( "
@@ -219,7 +217,7 @@ if ( ! class_exists( 'WP_Background_Process' ) ) :
 		 * in a background process.
 		 */
 		protected function is_process_running() {
-			if ( get_site_transient( $this->identifier . '_process_lock' ) ) {
+			if ( get_transient( $this->identifier . '_process_lock' ) ) {
 				// Process already running.
 				return true;
 			}
@@ -240,7 +238,7 @@ if ( ! class_exists( 'WP_Background_Process' ) ) :
 			$lock_duration = ( property_exists( $this, 'queue_lock_time' ) ) ? $this->queue_lock_time : 60; // 1 minute
 			$lock_duration = apply_filters( $this->identifier . '_queue_lock_time', $lock_duration );
 
-			set_site_transient( $this->identifier . '_process_lock', microtime(), $lock_duration );
+			set_transient( $this->identifier . '_process_lock', microtime(), $lock_duration );
 		}
 
 		/**
@@ -251,7 +249,7 @@ if ( ! class_exists( 'WP_Background_Process' ) ) :
 		 * @return $this
 		 */
 		protected function unlock_process() {
-			delete_site_transient( $this->identifier . '_process_lock' );
+			delete_transient( $this->identifier . '_process_lock' );
 
 			return $this;
 		}
@@ -269,13 +267,6 @@ if ( ! class_exists( 'WP_Background_Process' ) ) :
 			$key_column   = 'option_id';
 			$value_column = 'option_value';
 
-			if ( is_multisite() ) {
-				$table        = $wpdb->sitemeta;
-				$column       = 'meta_key';
-				$key_column   = 'meta_id';
-				$value_column = 'meta_value';
-			}
-
 			$key = $wpdb->esc_like( $this->identifier . '_batch_' ) . '%';
 
 			$query = $wpdb->get_row( $wpdb->prepare( "
@@ -286,7 +277,14 @@ if ( ! class_exists( 'WP_Background_Process' ) ) :
 				LIMIT 1
 			", $key ) );
 
-			$batch       = new stdClass();
+			$batch = new stdClass();
+
+			if ( ! $query ) {
+				$batch->key  = '';
+				$batch->data = array();
+				return $batch;
+			}
+
 			$batch->key  = $query->$column;
 			$batch->data = maybe_unserialize( $query->$value_column );
 
@@ -304,6 +302,10 @@ if ( ! class_exists( 'WP_Background_Process' ) ) :
 
 			do {
 				$batch = $this->get_batch();
+
+				if ( empty( $batch->key ) ) {
+					break;
+				}
 
 				foreach ( $batch->data as $key => $value ) {
 					$task = $this->task( $value );

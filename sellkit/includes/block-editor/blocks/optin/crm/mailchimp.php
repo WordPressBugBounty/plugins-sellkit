@@ -119,7 +119,7 @@ class Mailchimp {
 			}
 
 			if ( 'BIRTHDAY' === $index && ! empty( $fields[ $value ] ) ) {
-				$birthday_formatted = date( 'Y/m/d', strtotime( $fields[ $value ] ) );
+				$birthday_formatted = gmdate( 'Y/m/d', strtotime( $fields[ $value ] ) );
 
 				$subscriber_data['merge_fields'][ $index ] = $birthday_formatted;
 			}

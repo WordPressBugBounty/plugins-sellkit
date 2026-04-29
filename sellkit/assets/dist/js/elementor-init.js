@@ -64,6 +64,14 @@ var _checkoutSettings = _interopRequireDefault(require("./checkout-settings"));
 // Temporary turned off no undefined variable for localStorage
 var $ = jQuery;
 var wcCountries = JSON.parse(wc_country_select_params.countries);
+/**
+ * When batching "same as shipping" billing sync, skip duplicate sellkit address AJAX
+ * (avoids racing update_checkout / fragment refresh against hidden country/state fields).
+ *
+ * @type {boolean}
+ */
+
+window.sellkitSuppressBillingAddressAjax = false;
 
 function _default($scope) {
   new _checkoutSettings["default"]({
@@ -253,11 +261,23 @@ var emailProcess = function emailProcess() {
   var loginBtn = $('.login-wrapper');
   var createBox = $('.create-desc');
   var createCheck = $('#createaccount');
-  emailField.on('keyup', function () {
-    var _this = this;
+  var emailCheckTimer = null;
+  var usernameCheckTimer = null;
 
-    setTimeout(function () {
-      var emailAddress = $(_this).val();
+  var getCurrentEmailValue = function getCurrentEmailValue() {
+    return $('#billing_email').val();
+  };
+
+  var getCurrentUsernameValue = function getCurrentUsernameValue() {
+    return $('.sellkit-checkout-widget-username-field').find('input').val();
+  }; // Use input/change (not keyup): iOS Safari soft keyboard often omits or mishandles keyup.
+
+
+  emailField.on('input change', function () {
+    var inputEl = this;
+    clearTimeout(emailCheckTimer);
+    emailCheckTimer = setTimeout(function () {
+      var emailAddress = $(inputEl).val();
 
       if (_.isEmpty(emailAddress)) {
         emptyError.show().css('display', 'inline-block');
@@ -294,17 +314,25 @@ var emailProcess = function emailProcess() {
         dataType: 'json',
         nonce: sellkit_elementor.nonce
       }).done(function () {
+        if (emailAddress !== getCurrentEmailValue()) {
+          return;
+        }
+
         successResultEmailCheck();
       }).fail(function () {
+        if (emailAddress !== getCurrentEmailValue()) {
+          return;
+        }
+
         errorResultEmailCheck();
       });
     }, 500);
   });
-  usernameField.on('keyup', function () {
-    var _this2 = this;
-
-    setTimeout(function () {
-      var userValue = $(_this2).val();
+  usernameField.on('input change', function () {
+    var inputEl = this;
+    clearTimeout(usernameCheckTimer);
+    usernameCheckTimer = setTimeout(function () {
+      var userValue = $(inputEl).val();
       wp.ajax.post({
         action: 'sellkit_checkout_ajax_handler',
         sub_action: 'search_for_username',
@@ -312,8 +340,16 @@ var emailProcess = function emailProcess() {
         dataType: 'json',
         nonce: sellkit_elementor.nonce
       }).done(function () {
+        if (userValue !== getCurrentUsernameValue()) {
+          return;
+        }
+
         $('.sellkit-checkout-widget-username-error').hide();
       }).fail(function () {
+        if (userValue !== getCurrentUsernameValue()) {
+          return;
+        }
+
         $('.sellkit-checkout-widget-username-error').show();
       });
     }, 500);
@@ -416,32 +452,79 @@ var secondStepHeader = function secondStepHeader() {
 };
 
 var manageBillingMethod = function manageBillingMethod() {
-  var billingWrap = $('.sellkit-one-page-checkout-billing');
-  var methodA = billingWrap.find('.method-a');
-  var methodB = billingWrap.find('.method-b'); // Get shipping values.
+  // Hide outer #wrapper-billing_* rows — not inner #billing_*_field <p> tags. Labels (.mini-title) sit
+  // outside those <p> tags; hiding only the <p> left floating labels with no inputs.
+  var mirroredSelectors = '#wrapper-billing_first_name, #wrapper-billing_last_name, #wrapper-billing_address_1, #wrapper-billing_address_2, #wrapper-billing_country, #wrapper-billing_state, #wrapper-billing_postcode, #wrapper-billing_city, #wrapper-billing_phone';
+  /**
+   * Always re-query the DOM. Checkout fragments replace nodes after update_checkout;
+   * cached jQuery sets would point at detached elements and .hide() would not affect the live form.
+   */
 
-  var name = $('#shipping_first_name');
-  var last = $('#shipping_last_name');
-  var addressA = $('#shipping_address_1');
-  var addressB = $('#shipping_address_2');
-  var country = $('#shipping_country');
-  var state = $('#sellkit-shipping_state');
-  var postcode = $('#shipping_postcode');
-  var city = $('#shipping_city');
-  methodA.on('click', function () {
-    billingWrap.find('.woocommerce-billing-fields__field-wrapper').hide();
-    $('#billing_first_name').val(name.val());
-    $('#billing_last_name').val(last.val());
-    $('#billing_address_1').val(addressA.val());
-    $('#billing_address_2').val(addressB.val());
-    $('#billing_country').val(country.val()).trigger('change');
-    $('#sellkit-billing_state').val(state.val()).trigger('change');
-    $('#billing_postcode').val(postcode.val());
-    $('#billing_city').val(city.val());
+  var toggleBillingFields = function toggleBillingFields(shouldUseShippingAddress) {
+    var billingWrap = $('.sellkit-one-page-checkout-billing');
+
+    if (!billingWrap.length) {
+      return;
+    }
+
+    var billingFieldWrapper = billingWrap.find('.woocommerce-billing-fields__field-wrapper');
+    var mirroredBillingFields = billingFieldWrapper.find(mirroredSelectors);
+    var billingOnlyFields = billingFieldWrapper.children().not(mirroredBillingFields);
+
+    if (shouldUseShippingAddress) {
+      mirroredBillingFields.hide();
+
+      if (billingOnlyFields.length) {
+        billingOnlyFields.show();
+        billingFieldWrapper.show().css('display', 'inline-table');
+      } else {
+        billingFieldWrapper.hide();
+      }
+
+      return;
+    }
+
+    billingFieldWrapper.show().css('display', 'inline-table');
+    mirroredBillingFields.show();
+    billingOnlyFields.show();
+  };
+
+  var syncBillingFieldsFromShipping = function syncBillingFieldsFromShipping() {
+    window.sellkitSuppressBillingAddressAjax = true;
+    $('#billing_first_name').val($('#shipping_first_name').val());
+    $('#billing_last_name').val($('#shipping_last_name').val());
+    $('#billing_address_1').val($('#shipping_address_1').val());
+    $('#billing_address_2').val($('#shipping_address_2').val());
+    $('#billing_country').val($('#shipping_country').val()).trigger('change');
+    $('#sellkit-billing_state').val($('#sellkit-shipping_state').val()).trigger('change');
+    $('#billing_postcode').val($('#shipping_postcode').val());
+    $('#billing_city').val($('#shipping_city').val());
+
+    if ($('#billing_phone').length && $('#shipping_phone').length) {
+      $('#billing_phone').val($('#shipping_phone').val());
+    }
+
+    window.sellkitSuppressBillingAddressAjax = false;
+  }; // Delegated: billing markup can be replaced by WooCommerce checkout AJAX.
+
+
+  $(document.body).off('click.sellkitBillMethod', '.sellkit-one-page-checkout-billing .method-a').on('click.sellkitBillMethod', '.sellkit-one-page-checkout-billing .method-a', function () {
+    syncBillingFieldsFromShipping();
+    toggleBillingFields(true);
+    sellkitSetAddressDetails();
   });
-  methodB.on('click', function () {
+  $(document.body).off('click.sellkitBillMethodDiff', '.sellkit-one-page-checkout-billing .method-b').on('click.sellkitBillMethodDiff', '.sellkit-one-page-checkout-billing .method-b', function () {
     $('.inner_wrapper').css('height', 'auto');
-    billingWrap.find('.woocommerce-billing-fields__field-wrapper').css('display', 'inline-table');
+    toggleBillingFields(false);
+  }); // After fragments refresh, re-apply hide/show — otherwise mirrored rows show again and layout breaks.
+
+  $(document.body).off('updated_checkout.sellkitBillingVis').on('updated_checkout.sellkitBillingVis', function () {
+    if (!$('.sellkit-one-page-checkout-billing').length) {
+      return;
+    }
+
+    var useSame = $('.sellkit-one-page-checkout-billing input[name="billing-method"]:checked').val() === 'same';
+    toggleBillingFields(useSame);
   });
 };
 
@@ -475,7 +558,7 @@ var mobileSummary = function mobileSummary() {
 var fieldFocus = function fieldFocus() {
   var $fields = $('.sellkit-checkout-local-fields').find('input, select, hidden, textarea, #sellkit-billing_state ,#sellkit-shipping_state, .validate-email');
   $fields.each(function () {
-    var _this3 = this;
+    var _this = this;
 
     var miniTitle = $(this).parent().parent().parent().find('.mini-title');
     var $thisValue = $(this).val(); // On load.
@@ -489,32 +572,32 @@ var fieldFocus = function fieldFocus() {
 
 
     $(this).on('change input focusout', function (e) {
-      var changedValue = $(_this3).val();
+      var changedValue = $(_this).val();
 
-      if (changedValue || $(_this3).find('option').length) {
-        $(_this3).addClass('filled');
-        $(_this3).removeClass('empty');
-        $(_this3).parents('.sellkit-widget-checkout-fields').find('.mini-title').css('display', 'flex');
+      if (changedValue || $(_this).find('option').length) {
+        $(_this).addClass('filled');
+        $(_this).removeClass('empty');
+        $(_this).parents('.sellkit-widget-checkout-fields').find('.mini-title').css('display', 'flex');
       } else {
-        $(_this3).addClass('empty');
-        $(_this3).removeClass('filled');
-        $(_this3).parents('.sellkit-widget-checkout-fields').find('.mini-title').hide();
+        $(_this).addClass('empty');
+        $(_this).removeClass('filled');
+        $(_this).parents('.sellkit-widget-checkout-fields').find('.mini-title').hide();
       } // On focusout validate fields.
 
 
       if ('focusout' === e.type) {
-        FieldsMiniTitles($(_this3), 'focusout');
-        var parent = $(_this3).parent().parent().parent(); // Required validation. return if required field rule is not followed.
+        FieldsMiniTitles($(_this), 'focusout');
+        var parent = $(_this).parent().parent().parent(); // Required validation. return if required field rule is not followed.
 
         if (parent.hasClass('validate-required')) {
-          if ('INPUT' === _this3.nodeName && 'checkbox' === $(_this3).attr('type')) {
-            if (!_this3.checked) {
+          if ('INPUT' === _this.nodeName && 'checkbox' === $(_this).attr('type')) {
+            if (!_this.checked) {
               parent.find('.sellkit-required-validation').css('display', 'inline-flex');
               return;
             }
           }
 
-          if (_.isEmpty($(_this3).val())) {
+          if (_.isEmpty($(_this).val())) {
             parent.find('.sellkit-required-validation').css('display', 'inline-flex');
             return;
           }
@@ -524,14 +607,14 @@ var fieldFocus = function fieldFocus() {
 
 
         if (parent.hasClass('sellkit-checkout-fields-validation-postcode')) {
-          var postcodeVal = $(_this3).val();
+          var postcodeVal = $(_this).val();
 
           if (_.isEmpty(postcodeVal)) {
             return;
           } // Check field type to get related country value. we can't validate without country code.
 
 
-          var postcodeName = $(_this3).attr('name');
+          var postcodeName = $(_this).attr('name');
           var postcodeCountry = $('#billing_country');
 
           if (postcodeName.includes('shipping')) {
@@ -554,34 +637,38 @@ var fieldFocus = function fieldFocus() {
           }
 
           parent.find('.sellkit-checkout-field-global-errors').hide().text('');
-          postcodeValidation(postcodeVal, countryCode, $(_this3));
+          postcodeValidation(postcodeVal, countryCode, $(_this));
         } // Phone validation using woocommerce way.
 
 
         if (parent.hasClass('sellkit-checkout-fields-validation-phone')) {
-          var phone = $(_this3).val();
+          var phone = $(_this).val();
 
           if (_.isEmpty(phone)) {
             return;
           }
 
-          phoneNumberValidation(phone, $(_this3));
+          phoneNumberValidation(phone, $(_this));
         }
       }
 
-      if ('change' === e.type && ('billing_country' === $(_this3).attr('id') || 'shipping_country' === $(_this3).attr('id'))) {
-        var _countryCode = $(_this3).val();
+      if ('change' === e.type && ('billing_country' === $(_this).attr('id') || 'shipping_country' === $(_this).attr('id'))) {
+        var _countryCode = $(_this).val();
 
         var states = wcCountries[_countryCode];
         var state = 'sellkit-shipping_state';
 
-        if ('billing_country' === $(_this3).attr('id')) {
+        if ('billing_country' === $(_this).attr('id')) {
           state = 'sellkit-billing_state';
         }
 
         var stateField = document.getElementById(state);
 
         if (_.isNull(stateField)) {
+          return;
+        }
+
+        if (!_.isObject(states)) {
           return;
         }
 
@@ -1134,6 +1221,10 @@ var fixClientCountryOnReload = function fixClientCountryOnReload() {
 
 
 var sellkitSetAddressDetails = function sellkitSetAddressDetails() {
+  if (window.sellkitSuppressBillingAddressAjax) {
+    return;
+  }
+
   wp.ajax.post({
     action: 'sellkit_checkout_ajax_handler',
     sub_action: 'set_customer_details_ajax',

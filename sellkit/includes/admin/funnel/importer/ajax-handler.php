@@ -71,7 +71,7 @@ class Ajax_Handler {
 
 		sleep( 3 );
 
-		wp_send_json_success( esc_html__( 'The data has been imported successfully.' ) );
+		wp_send_json_success( esc_html__( 'The data has been imported successfully.', 'sellkit' ) );
 	}
 
 	/**

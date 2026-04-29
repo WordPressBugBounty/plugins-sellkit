@@ -13,10 +13,10 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 // Include file of Database Class.
 require_once dirname( __FILE__ ) . '/includes/db.php';
 
-$options                 = get_option( 'sellkit', [] );
-$multisite_delete_switch = is_multisite() ? get_site_option( 'delete_data' ) : false;
+$sellkit_options                 = get_option( 'sellkit', [] );
+$sellkit_multisite_delete_switch = is_multisite() ? get_site_option( 'delete_data' ) : false;
 
-if ( '1' === $options['delete_data'] || '1' === $multisite_delete_switch ) {
+if ( '1' === $sellkit_options['delete_data'] || '1' === $sellkit_multisite_delete_switch ) {
 	// Drop Sellkit admin tables.
 	Sellkit\Database::drop_all_tables();
 

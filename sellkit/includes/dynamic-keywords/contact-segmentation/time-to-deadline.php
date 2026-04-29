@@ -60,7 +60,7 @@ class Time_To_Deadline extends Contact_Segmentation_Base {
 
 		$result = [];
 
-		if ( ! in_array( strtolower( date( 'l' ) ), $values['day_deadline'], true ) ) {
+		if ( ! in_array( strtolower( gmdate( 'l' ) ), $values['day_deadline'], true ) ) {
 			return;
 		}
 
@@ -70,10 +70,10 @@ class Time_To_Deadline extends Contact_Segmentation_Base {
 
 		date_default_timezone_set( 'UTC' ); // phpcs:ignore
 
-		$remain_hour = date( 'H', $time_deadline ) - date( 'H', $current_time );
+		$remain_hour = gmdate( 'H', $time_deadline ) - gmdate( 'H', $current_time );
 		$hour_string = 1 === $remain_hour ? esc_html__( 'Hour', 'sellkit' ) : esc_html__( 'Hours', 'sellkit' );
 
-		$remain_mins = date( 'i', $time_deadline ) - date( 'i', $current_time );
+		$remain_mins = gmdate( 'i', $time_deadline ) - gmdate( 'i', $current_time );
 		$mins_string = 1 === $remain_mins ? esc_html__( 'Minute', 'sellkit' ) : esc_html__( 'Minutes', 'sellkit' );
 
 		if ( $remain_mins < 0 ) {

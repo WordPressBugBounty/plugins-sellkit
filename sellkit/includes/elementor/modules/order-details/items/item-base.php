@@ -203,7 +203,7 @@ abstract class Item_Base {
 			);
 		}
 		?>
-		<li <?php echo $this->widget->get_render_attribute_string( 'item-group-' . esc_attr( $this->get_id() ) ); ?>>
+		<li <?php echo $this->widget->get_render_attribute_string( 'item-group-' . esc_attr( $this->get_id() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor-generated attributes. ?>>
 			<div class="order-details-heading-group">
 			<?php
 			$this->render_icon();

@@ -14,7 +14,7 @@ class Sellkit_Elementor_Optin_Field_Address extends Sellkit_Elementor_Optin_Fiel
 
 	public function render_content() {
 		?>
-		<input <?php echo $this->widget->get_render_attribute_string( 'field-' . esc_attr( $this->get_id() ) ); ?>>
+		<input <?php echo $this->widget->get_render_attribute_string( 'field-' . esc_attr( $this->get_id() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor-generated attributes. ?>>
 		<?php
 
 		$attributes = [
@@ -27,7 +27,7 @@ class Sellkit_Elementor_Optin_Field_Address extends Sellkit_Elementor_Optin_Fiel
 
 		$this->widget->add_render_attribute( 'field-hidden-' . $this->get_id(), $attributes );
 		?>
-		<input <?php echo $this->widget->get_render_attribute_string( 'field-hidden-' . $this->get_id() ); ?>>
+		<input <?php echo $this->widget->get_render_attribute_string( 'field-hidden-' . $this->get_id() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor-generated attributes. ?>>
 		<?php
 	}
 

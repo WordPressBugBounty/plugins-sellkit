@@ -41,7 +41,7 @@ class Sellkit_Elementor_Optin_Field_Select extends Sellkit_Elementor_Optin_Field
 					<?php Module::render_icon( $this->widget->get_settings_for_display()['select_arrow_icon'] ); ?>
 				</div>
 			<?php endif ?>
-			<select <?php echo $this->widget->get_render_attribute_string( 'field-' . esc_attr( $this->get_id() ) ); ?>>
+			<select <?php echo $this->widget->get_render_attribute_string( 'field-' . esc_attr( $this->get_id() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor-generated attributes. ?>>
 				<?php $this->render_options( $options ); ?>
 			</select>
 		</div>
@@ -67,7 +67,7 @@ class Sellkit_Elementor_Optin_Field_Select extends Sellkit_Elementor_Optin_Field
 			$this->widget->add_render_attribute( $option_id, $option_args );
 
 			?>
-			<option <?php echo $this->widget->get_render_attribute_string( $option_id ); ?>>
+			<option <?php echo $this->widget->get_render_attribute_string( $option_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor-generated attributes. ?>>
 				<?php echo esc_html( $option_label ); ?>
 			</option>
 			<?php

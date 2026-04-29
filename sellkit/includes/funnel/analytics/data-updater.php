@@ -40,7 +40,7 @@ class Data_Updater {
 	 * @since 1.1.0
 	 */
 	public function __construct() {
-		$this->today_min_time = strtotime( date( 'Y-m-d 0:0:0' ) );
+		$this->today_min_time = strtotime( gmdate( 'Y-m-d 0:0:0' ) );
 	}
 
 	/**

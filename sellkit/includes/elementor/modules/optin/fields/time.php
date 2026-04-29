@@ -38,7 +38,7 @@ class Sellkit_Elementor_Optin_Field_Time extends Sellkit_Elementor_Optin_Field_B
 
 	public function render_content() {
 		?>
-		<input <?php echo $this->widget->get_render_attribute_string( 'field-' . esc_attr( $this->get_id() ) ); ?>>
+		<input <?php echo $this->widget->get_render_attribute_string( 'field-' . esc_attr( $this->get_id() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor-generated attributes. ?>>
 		<?php
 	}
 

@@ -114,6 +114,6 @@ class summary {
 			$this->data['conversion_rate'] = round( $this->data['conversion_rate'], 2 );
 		}
 
-		$this->data['target_title'] = get_the_title( $discount_id );
+		$this->data['target_title'] = sellkit_decode_entity_title( get_the_title( $discount_id ) );
 	}
 }

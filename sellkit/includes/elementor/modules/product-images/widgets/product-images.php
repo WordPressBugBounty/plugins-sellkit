@@ -367,7 +367,7 @@ class Sellkit_Elementor_Product_Images_Widget extends Sellkit_Elementor_Upsell_B
 	}
 
 	protected function render() {
-		global $product;
+		global $product; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WooCommerce template pattern.
 
 		$settings     = $this->get_settings_for_display();
 		$product      = $this->get_product_object();

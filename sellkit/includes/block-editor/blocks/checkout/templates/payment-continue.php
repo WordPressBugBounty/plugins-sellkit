@@ -1,3 +1,12 @@
+<?php
+/**
+ * Payment continue (place order) template — block checkout.
+ *
+ * @package Sellkit
+ */
+
+defined( 'ABSPATH' ) || exit;
+?>
 <section class="place-order sellkit-one-page-checkout-place-order">
 	<noscript>
 		<?php

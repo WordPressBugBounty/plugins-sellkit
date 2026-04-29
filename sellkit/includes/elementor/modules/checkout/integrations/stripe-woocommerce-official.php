@@ -21,6 +21,14 @@ class Stripe_Woocommerce_Official extends Integration {
 	private $parent;
 
 	/**
+	 * Stripe express integration type.
+	 *
+	 * @since 1.1.0
+	 * @var string
+	 */
+	private $integration_type = '';
+
+	/**
 	 * Check requirement to enable gateway in sellkit checkout widget.
 	 *
 	 * @return bool
@@ -32,13 +40,21 @@ class Stripe_Woocommerce_Official extends Integration {
 			return false;
 		}
 
-		if ( ! class_exists( 'WC_Stripe_Payment_Request' ) ) {
-			return false;
+		if ( class_exists( 'WC_Stripe_Express_Checkout_Element' ) ) {
+			$this->parent           = \WC_Stripe_Express_Checkout_Element::instance();
+			$this->integration_type = 'express_checkout_element';
+
+			return true;
 		}
 
-		$this->parent = \WC_Stripe_Payment_Request::instance();
+		if ( class_exists( 'WC_Stripe_Payment_Request' ) ) {
+			$this->parent           = \WC_Stripe_Payment_Request::instance();
+			$this->integration_type = 'payment_request';
 
-		return true;
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -50,7 +66,17 @@ class Stripe_Woocommerce_Official extends Integration {
 	public function content() {
 		?>
 			<div class="sellkit-stripe-woocommerce-official-integration" >
-				<?php $this->parent->display_payment_request_button_html(); ?>
+				<?php
+				if ( method_exists( $this->parent, 'display_express_checkout_button_html' ) ) {
+					ob_start();
+					$this->parent->display_express_checkout_button_html();
+					$button_html = ob_get_clean();
+					$button_html = preg_replace( '/<p id="wc-stripe-express-checkout-button-separator"[^>]*>.*?<\/p>/is', '', $button_html );
+					echo wp_kses_post( $button_html );
+				} elseif ( method_exists( $this->parent, 'display_payment_request_button_html' ) ) {
+					$this->parent->display_payment_request_button_html();
+				}
+				?>
 			</div>
 		<?php
 	}
@@ -62,7 +88,29 @@ class Stripe_Woocommerce_Official extends Integration {
 	 * @since 1.1.0
 	 */
 	public function hooks() {
-		remove_action( 'woocommerce_checkout_before_customer_details', [ 'WC_Stripe_Payment_Request', 'display_payment_request_button_html' ], 1 );
-		remove_action( 'woocommerce_checkout_before_customer_details', [ 'WC_Stripe_Payment_Request', 'display_payment_request_button_separator_html' ], 2 );
+		$callbacks = [];
+
+		if ( 'express_checkout_element' === $this->integration_type ) {
+			$callbacks = [
+				[ $this->parent, 'display_express_checkout_button_html' ],
+				[ $this->parent, 'display_express_checkout_button_separator_html' ],
+				[ 'WC_Stripe_Express_Checkout_Element', 'display_express_checkout_button_html' ],
+				[ 'WC_Stripe_Express_Checkout_Element', 'display_express_checkout_button_separator_html' ],
+			];
+		}
+
+		if ( 'payment_request' === $this->integration_type ) {
+			$callbacks = [
+				[ $this->parent, 'display_payment_request_button_html' ],
+				[ $this->parent, 'display_payment_request_button_separator_html' ],
+				[ 'WC_Stripe_Payment_Request', 'display_payment_request_button_html' ],
+				[ 'WC_Stripe_Payment_Request', 'display_payment_request_button_separator_html' ],
+			];
+		}
+
+		foreach ( $callbacks as $callback ) {
+			remove_action( 'woocommerce_checkout_before_customer_details', $callback, 1 );
+			remove_action( 'woocommerce_checkout_before_customer_details', $callback, 2 );
+		}
 	}
 }

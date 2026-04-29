@@ -91,8 +91,10 @@ class Base_Contacts {
 			return;
 		}
 
+		$contact_id = absint( $_SESSION['entered_funnel_id'] );
+
 		// Getting old data.
-		$result = $database->get( 'funnel_contact', [ 'id' => isset( $_SESSION['entered_funnel_id'] ) ? $_SESSION['entered_funnel_id'] : '' ] );
+		$result = $database->get( 'funnel_contact', [ 'id' => $contact_id ] );
 
 		if ( ! empty( $result[0][ $type ] ) ) {
 			$old_values = unserialize( $result[ 0 ][ $type ] ); // phpcs:ignore
@@ -103,7 +105,7 @@ class Base_Contacts {
 		$database->update(
 			'funnel_contact',
 			[ $funnel->current_step_data['type']['key'] => $new_values ],
-			[ 'id' => isset( $_SESSION['entered_funnel_id'] ) ? $_SESSION['entered_funnel_id'] : '' ]
+			[ 'id' => $contact_id ]
 		);
 	}
 
@@ -119,7 +121,9 @@ class Base_Contacts {
 			return;
 		}
 
-		$result = $database->get( 'funnel_contact', [ 'id' => $_SESSION['entered_funnel_id'] ] );
+		$contact_id = absint( $_SESSION['entered_funnel_id'] );
+
+		$result = $database->get( 'funnel_contact', [ 'id' => $contact_id ] );
 
 		$old_values = [];
 
@@ -132,7 +136,7 @@ class Base_Contacts {
 		$database->update(
 			'funnel_contact',
 			[ $upsell_downsell_data['key'] => $new_values ],
-			[ 'id' => $_SESSION['entered_funnel_id'] ]
+			[ 'id' => $contact_id ]
 		);
 	}
 
@@ -145,7 +149,7 @@ class Base_Contacts {
 	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function add_total_spent( $price, $funnel_id ) {
-		$contact_id = isset( $_SESSION['entered_funnel_id'] ) ? $_SESSION['entered_funnel_id'] : 0;
+		$contact_id = isset( $_SESSION['entered_funnel_id'] ) ? absint( $_SESSION['entered_funnel_id'] ) : 0;
 
 		// Getting old data.
 		$result    = $this->db->get( 'funnel_contact', [ 'id' => $contact_id ] );

@@ -77,6 +77,6 @@ class Summary {
 		$this->data['click']      = ! empty( $query_result[0]['click'] ) ? $query_result[0]['click'] : 0;
 		// phpcs:enable
 
-		$this->data['target_title'] = get_the_title( $rule_id );
+		$this->data['target_title'] = sellkit_decode_entity_title( get_the_title( $rule_id ) );
 	}
 }
