@@ -56,6 +56,10 @@ class Contact_Data {
 
 		$this->data = array_merge( $this->data, self::$historical_data );
 
+		if ( ! class_exists( 'Contact_Data_Updater' ) ) {
+			require_once __DIR__ . '/contact-data-updater.php';
+		}
+
 		Contact_Data_Updater::get_instance();
 	}
 

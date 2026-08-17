@@ -88,10 +88,16 @@ class Order_Products {
 	 */
 	private function get_items( $id, $item ) {
 		$qty_display        = $this->get_qty( $id, $item );
-		$get_post_thumbnail = get_the_post_thumbnail( $item['product_id'] );
+		$product_id         = $item['variation_id'] > 0 ? $item['variation_id'] : $item['product_id'];
+		$get_post_thumbnail = get_the_post_thumbnail( $product_id );
+
+		// Get product image if variation image not found.
+		if ( $item['variation_id'] > 0 && empty( $get_post_thumbnail ) ) {
+			$get_post_thumbnail = get_the_post_thumbnail( $item['product_id'] );
+		}
 
 		if ( empty( $get_post_thumbnail ) ) {
-			$get_post_thumbnail = wc_placeholder_img_src();
+			$get_post_thumbnail = wc_placeholder_img( 'thumbnail' );
 		}
 
 		$qty = '';

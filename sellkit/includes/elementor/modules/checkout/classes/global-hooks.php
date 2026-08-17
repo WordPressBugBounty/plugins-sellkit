@@ -1289,11 +1289,45 @@ class Global_Hooks {
 		}
 
 		if ( in_array( $funnel->next_step_data['type']['key'], $popups, true ) ) {
+
+			$next_step = $this->is_set_upsell_product( $next_step );
+
 			wp_send_json_success( [
 				'next_id'   => apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 				'next_type' => $next_step['type']['key'],
 			] );
 		}
+	}
+
+	/**
+	 * Check the upsell or downsell have product or not, ignore upsell/downsell step if product doesn't set.
+	 *
+	 * @param array $next_step Next step data.
+	 * @since 2.6.0
+	 */
+	private function is_set_upsell_product( $next_step ) {
+		if ( isset( $next_step['type']['key'] ) && ! in_array( $next_step['type']['key'], [ 'upsell', 'downsell' ], true ) ) {
+			return $next_step;
+		}
+
+		$products = isset( $next_step['data'] ) ? $next_step['data']['products'] : [];
+		$list     = isset( $products['list'] ) ? $products['list'] : [];
+
+		if ( empty( $list ) ) {
+			$funnel    = isset( $next_step['page_id'] ) ? new Sellkit_Funnel( $next_step['page_id'] ) : null;
+			$next_step = ! empty( $funnel ) ? $funnel->next_no_step_data : [];
+
+			if ( empty( $next_step ) && ! empty( $funnel ) ) {
+				return $funnel->end_node_step_data;
+			}
+
+			if ( isset( $next_step['type']['key'] ) && in_array( $next_step['type']['key'], [ 'upsell', 'downsell' ], true ) ) {
+
+				$next_step = $this->is_set_upsell_product( $next_step );
+			}
+		}
+
+		return $next_step;
 	}
 
 	/**
@@ -1318,6 +1352,7 @@ class Global_Hooks {
 			$next_step = $funnel->next_step_data;
 		}
 
+		$next_step         = $this->is_set_upsell_product( $next_step );
 		$next_step['type'] = (array) $next_step['type'];
 
 		if ( 'decision' === $next_step['type']['key'] ) {
@@ -1350,6 +1385,8 @@ class Global_Hooks {
 		if ( $is_valid ) {
 			$next_step = $next_yes;
 		}
+
+		$next_step = $this->is_set_upsell_product( $next_step );
 
 		wp_send_json_success( [
 			'next_id'   => apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
@@ -1408,6 +1445,7 @@ class Global_Hooks {
 		// Response.
 		$funnel            = new Sellkit_Funnel( $upsell_id );
 		$next_step         = $funnel->next_step_data;
+		$next_step         = $this->is_set_upsell_product( $next_step );
 		$next_step['type'] = ! empty( $next_step['type'] ) ? (array) $next_step['type'] : null;
 
 		if ( 'upsell' === $funnel->current_step_data['type']['key'] && isset( WC()->cart->cart_contents[ $added_product_hash ] ) ) {
@@ -1464,6 +1502,7 @@ class Global_Hooks {
 
 		$funnel    = new Sellkit_Funnel( $upsell_id );
 		$next_step = $funnel->next_no_step_data;
+		$next_step = $this->is_set_upsell_product( $next_step );
 
 		if ( $next_step ) {
 			$next_step['type'] = (array) $next_step['type'];

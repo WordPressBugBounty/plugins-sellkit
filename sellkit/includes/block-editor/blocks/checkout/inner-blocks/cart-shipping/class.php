@@ -52,6 +52,13 @@ class Checkout_Cart_Shipping {
 	 */
 	public function checkout_cart_shipping( $content, $attributes ) {
 		$packages = WC()->shipping()->get_packages();
+
+		// Fix the rendering of shipping method on global checkout.
+		if ( empty( $packages ) && WC()->cart ) {
+			WC()->cart->calculate_totals();
+			$packages = WC()->shipping()->get_packages();
+		}
+
 		ob_start();
 
 		foreach ( $packages as $index => $package ) {

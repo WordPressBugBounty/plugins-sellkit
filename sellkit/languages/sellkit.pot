@@ -1,14 +1,14 @@
 # Copyright (c) 2026 SellKit.
 msgid ""
 msgstr ""
-"Project-Id-Version: SellKit - Funnel builder and checkout optimizer for WooCommerce to sell more, faster 2.5.0\n"
+"Project-Id-Version: SellKit - Funnel builder and checkout optimizer for WooCommerce to sell more, faster 2.6.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sellkit\n"
 "Last-Translator: Artbees Team <info@artbees.net>\n"
 "Language-Team: Artbees Team <info@artbees.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-04-29T03:38:34+00:00\n"
+"POT-Creation-Date: 2026-08-17T07:35:04+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: sellkit\n"
@@ -494,8 +494,8 @@ msgstr ""
 msgid "Select a state…"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:310
-#: includes/block-editor/blocks/checkout/helper.php:1467
+#: includes/block-editor/blocks/checkout/helper.php:311
+#: includes/block-editor/blocks/checkout/helper.php:1508
 #: includes/elementor/modules/checkout/classes/global-hooks.php:318
 #: includes/elementor/modules/checkout/classes/helper.php:272
 #: includes/elementor/modules/checkout/classes/multi-step.php:283
@@ -507,32 +507,32 @@ msgstr ""
 msgid "Shipping"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:466
+#: includes/block-editor/blocks/checkout/helper.php:467
 #: includes/elementor/modules/checkout/classes/global-hooks.php:516
 msgid "Email or password field is not valid."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:790
+#: includes/block-editor/blocks/checkout/helper.php:791
 #: includes/elementor/modules/checkout/classes/global-hooks.php:902
 msgid "Oh do not be tricky."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1334
-#: includes/block-editor/blocks/checkout/helper.php:1424
-#: includes/elementor/modules/checkout/classes/global-hooks.php:1372
-#: includes/elementor/modules/checkout/classes/global-hooks.php:1462
+#: includes/block-editor/blocks/checkout/helper.php:1373
+#: includes/block-editor/blocks/checkout/helper.php:1464
+#: includes/elementor/modules/checkout/classes/global-hooks.php:1409
+#: includes/elementor/modules/checkout/classes/global-hooks.php:1500
 msgid "Empty Upsell ID."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1340
-#: includes/elementor/modules/checkout/classes/global-hooks.php:1378
+#: includes/block-editor/blocks/checkout/helper.php:1379
+#: includes/elementor/modules/checkout/classes/global-hooks.php:1415
 msgid "Empty Step Data."
 msgstr ""
 
 #. translators: %s field_name.
-#: includes/block-editor/blocks/checkout/helper.php:1480
-#: includes/block-editor/blocks/checkout/helper.php:1499
-#: includes/block-editor/blocks/checkout/helper.php:1511
+#: includes/block-editor/blocks/checkout/helper.php:1521
+#: includes/block-editor/blocks/checkout/helper.php:1540
+#: includes/block-editor/blocks/checkout/helper.php:1552
 #: includes/elementor/modules/checkout/classes/helper.php:282
 #: includes/elementor/modules/checkout/classes/helper.php:317
 #: includes/elementor/modules/checkout/classes/helper.php:333
@@ -540,14 +540,14 @@ msgstr ""
 msgid "%s is a required field."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1486
+#: includes/block-editor/blocks/checkout/helper.php:1527
 #: includes/elementor/modules/checkout/classes/helper.php:307
 msgid "Billing"
 msgstr ""
 
 #. translators: %s field_name.
-#: includes/block-editor/blocks/checkout/helper.php:1511
-#: includes/block-editor/blocks/checkout/helper.php:1517
+#: includes/block-editor/blocks/checkout/helper.php:1552
+#: includes/block-editor/blocks/checkout/helper.php:1558
 #: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:53
 #: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:87
 #: includes/block-editor/blocks/checkout/templates/form-login.php:38
@@ -560,25 +560,25 @@ msgid "Email address"
 msgstr ""
 
 #. translators: %s field_name.
-#: includes/block-editor/blocks/checkout/helper.php:1517
+#: includes/block-editor/blocks/checkout/helper.php:1558
 #: includes/elementor/modules/checkout/classes/helper.php:339
 #, php-format
 msgid "%s is not a valid email."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1541
+#: includes/block-editor/blocks/checkout/helper.php:1582
 #: includes/elementor/modules/checkout/classes/local-hooks.php:1289
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: includes/block-editor/blocks/checkout/inner-blocks/payment/payment.js:98
 msgid "Add a note to your order"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2054
+#: includes/block-editor/blocks/checkout/helper.php:2095
 #: includes/elementor/modules/checkout/classes/local-hooks.php:852
 msgid "Your Products"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2058
+#: includes/block-editor/blocks/checkout/helper.php:2099
 #: includes/block-editor/blocks/checkout/inner-blocks/review-order/class.php:82
 #: includes/block-editor/blocks/checkout/templates/review-order.php:52
 #: includes/elementor/modules/checkout/classes/local-hooks.php:856
@@ -588,24 +588,39 @@ msgstr ""
 msgid "Product"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2059
+#: includes/block-editor/blocks/checkout/helper.php:2100
 #: includes/elementor/modules/checkout/classes/local-hooks.php:857
 #: assets/dist/admin/sellkit.js:280
 msgid "Quantity"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2060
+#: includes/block-editor/blocks/checkout/helper.php:2101
 #: includes/elementor/modules/checkout/classes/local-hooks.php:858
 #: assets/dist/admin/sellkit.js:280
 msgid "Price"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2219
+#: includes/block-editor/blocks/checkout/helper.php:2260
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: includes/block-editor/blocks/checkout/inner-blocks/billing-details/billing-details.js:272
 #: includes/block-editor/blocks/checkout/inner-blocks/form-shipping/form-shipping.js:268
 #: includes/block-editor/blocks/checkout/inner-blocks/payment/payment.js:103
 msgid "(optional)"
+msgstr ""
+
+#. Translators: %d is the shipping package number.
+#: includes/block-editor/blocks/checkout/helper.php:2353
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:77
+#, php-format
+msgctxt "shipping packages"
+msgid "Shipping %d"
+msgstr ""
+
+#. Translators: %d is the shipping package number.
+#: includes/block-editor/blocks/checkout/helper.php:2354
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:77
+msgctxt "shipping packages"
+msgid "Shipping"
 msgstr ""
 
 #: includes/block-editor/blocks/checkout/index.php:156
@@ -652,66 +667,53 @@ msgstr ""
 msgid "Use a different billing address"
 msgstr ""
 
-#. Translators: %d is the shipping package number.
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:70
-#, php-format
-msgctxt "shipping packages"
-msgid "Shipping %d"
-msgstr ""
-
-#. Translators: %d is the shipping package number.
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:70
-msgctxt "shipping packages"
-msgid "Shipping"
-msgstr ""
-
 #. Translators: $s shipping destination.
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:124
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:131
 #: includes/block-editor/blocks/checkout/templates/cart-shipping.php:73
 #: includes/elementor/modules/checkout/templates/cart-shipping.php:73
 #, php-format
 msgid "Shipping to %s."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:125
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:132
 #: includes/block-editor/blocks/checkout/templates/cart-shipping.php:74
 #: includes/elementor/modules/checkout/templates/cart-shipping.php:74
 msgid "Change address"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:127
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:134
 #: includes/block-editor/blocks/checkout/templates/cart-shipping.php:76
 #: includes/elementor/modules/checkout/templates/cart-shipping.php:76
 msgid "Shipping options will be updated during checkout."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:135
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:142
 #: includes/block-editor/blocks/checkout/templates/cart-shipping.php:84
 #: includes/elementor/modules/checkout/templates/cart-shipping.php:84
 msgid "Shipping costs are calculated during checkout."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:137
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:144
 #: includes/block-editor/blocks/checkout/templates/cart-shipping.php:86
 #: includes/elementor/modules/checkout/templates/cart-shipping.php:86
 msgid "Enter your address to view shipping options."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:141
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:148
 #: includes/block-editor/blocks/checkout/templates/cart-shipping.php:89
 #: includes/elementor/modules/checkout/templates/cart-shipping.php:89
 msgid "There are no shipping options available. Please ensure that your address has been entered correctly, or contact us if you need any help."
 msgstr ""
 
 #. Translators: $s shipping destination.
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:145
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:152
 #: includes/block-editor/blocks/checkout/templates/cart-shipping.php:92
 #: includes/elementor/modules/checkout/templates/cart-shipping.php:92
 #, php-format
 msgid "No shipping options were found for %s."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:146
+#: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:153
 #: includes/block-editor/blocks/checkout/templates/cart-shipping.php:93
 #: includes/elementor/modules/checkout/templates/cart-shipping.php:93
 msgid "Enter a different address"
@@ -1465,8 +1467,8 @@ msgstr ""
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:911
 #: includes/elementor/modules/optin/actions/drip.php:156
 #: assets/dist/blocks/checkout-external.js:1
-#: assets/dist/js/elementor-init.js:813
-#: assets/dist/js/elementor-init.js:881
+#: assets/dist/js/elementor-init.js:819
+#: assets/dist/js/elementor-init.js:887
 msgid "State"
 msgstr ""
 
@@ -1642,11 +1644,11 @@ msgstr ""
 msgid "Sellkit Order Details: Items Label"
 msgstr ""
 
-#: includes/contact-segmentation/conditions.php:138
+#: includes/contact-segmentation/conditions.php:142
 msgid "Condition has no value"
 msgstr ""
 
-#: includes/contact-segmentation/conditions.php:163
+#: includes/contact-segmentation/conditions.php:167
 msgid "Please send a condition name"
 msgstr ""
 
@@ -1798,7 +1800,7 @@ msgstr ""
 msgid "Visitor's Local Language"
 msgstr ""
 
-#: includes/contact-segmentation/contact-data.php:161
+#: includes/contact-segmentation/contact-data.php:165
 #: includes/contact-segmentation/rfm/class.php:82
 #: includes/contact-segmentation/rfm/updater.php:66
 msgid "Somethings went wrong"
@@ -2590,7 +2592,7 @@ msgstr ""
 
 #: includes/elementor/modules/checkout/classes/multi-step.php:229
 #: assets/dist/blocks/checkout-external.js:1
-#: assets/dist/js/elementor-init.js:547
+#: assets/dist/js/elementor-init.js:553
 msgid "Hide order summary"
 msgstr ""
 
@@ -5653,12 +5655,12 @@ msgid "Inset"
 msgstr ""
 
 #: assets/dist/blocks/checkout-external.js:1
-#: assets/dist/js/elementor-init.js:402
+#: assets/dist/js/elementor-init.js:405
 msgid "Both Field required."
 msgstr ""
 
 #: assets/dist/blocks/checkout-external.js:1
-#: assets/dist/js/elementor-init.js:542
+#: assets/dist/js/elementor-init.js:548
 msgid "Show order summary"
 msgstr ""
 
@@ -6147,19 +6149,19 @@ msgstr ""
 msgid "Error! nonce mismatch"
 msgstr ""
 
-#: assets/dist/js/elementor-init.js:632
+#: assets/dist/js/elementor-init.js:638
 msgid "Please select a country."
 msgstr ""
 
-#: assets/dist/js/elementor-init.js:1031
+#: assets/dist/js/elementor-init.js:1059
 msgid "Postcode is not valid."
 msgstr ""
 
-#: assets/dist/js/elementor-init.js:1057
+#: assets/dist/js/elementor-init.js:1085
 msgid "Phone number is not valid."
 msgstr ""
 
-#: assets/dist/js/elementor-init.js:1871
+#: assets/dist/js/elementor-init.js:1899
 msgid "Following messages are visible only for admin users."
 msgstr ""
 

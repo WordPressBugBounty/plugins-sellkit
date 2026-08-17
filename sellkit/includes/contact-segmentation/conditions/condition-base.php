@@ -35,6 +35,9 @@ abstract class Condition_Base {
 	 * @since 1.1.0
 	 */
 	public function __construct() {
+		if ( ! class_exists( 'Contact_Data' ) ) {
+			require_once __DIR__ . '/../contact-data.php';
+		}
 		$contact_data = Contact_Data::get_instance();
 
 		$this->data = $contact_data->get_data();

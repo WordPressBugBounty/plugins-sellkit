@@ -37,14 +37,6 @@ class Base_Contacts {
 	 * @since 1.5.0
 	 */
 	public function __construct() {
-		if ( headers_sent() ) {
-			return;
-		}
-
-		if ( ! session_id() ) {
-			session_start();
-		}
-
 		$this->sellkit_funnel = Sellkit_Funnel::get_instance();
 		$this->db             = new Database();
 	}
@@ -62,7 +54,11 @@ class Base_Contacts {
 			'created_at' => time(),
 		] );
 
+		self::start_session();
+
 		$_SESSION['entered_funnel_id'] = $analytics_id;
+
+		self::end_session();
 	}
 
 	/**
@@ -72,6 +68,8 @@ class Base_Contacts {
 	 * @since 1.5.0
 	 */
 	public static function step_is_passed( $upsell_downsell_data = [] ) {
+		self::start_session();
+
 		$database = new Database();
 		$funnel   = Sellkit_Funnel::get_instance();
 
@@ -81,6 +79,7 @@ class Base_Contacts {
 		}
 
 		if ( empty( $funnel->funnel_id ) ) {
+			self::end_session();
 			return;
 		}
 
@@ -88,10 +87,13 @@ class Base_Contacts {
 		$old_values = [];
 
 		if ( ! isset( $_SESSION['entered_funnel_id'] ) ) {
+			self::end_session();
 			return;
 		}
 
 		$contact_id = absint( $_SESSION['entered_funnel_id'] );
+
+		self::end_session();
 
 		// Getting old data.
 		$result = $database->get( 'funnel_contact', [ 'id' => $contact_id ] );
@@ -117,11 +119,16 @@ class Base_Contacts {
 	 * @since 1.9.2
 	 */
 	public static function handle_contact_data_on_upsell_donwsell( $upsell_downsell_data, $database ) {
+		self::start_session();
+
 		if ( ! isset( $_SESSION['entered_funnel_id'] ) ) {
+			self::end_session();
 			return;
 		}
 
 		$contact_id = absint( $_SESSION['entered_funnel_id'] );
+
+		self::end_session();
 
 		$result = $database->get( 'funnel_contact', [ 'id' => $contact_id ] );
 
@@ -149,7 +156,11 @@ class Base_Contacts {
 	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function add_total_spent( $price, $funnel_id ) {
+		self::start_session();
+
 		$contact_id = isset( $_SESSION['entered_funnel_id'] ) ? absint( $_SESSION['entered_funnel_id'] ) : 0;
+
+		self::end_session();
 
 		// Getting old data.
 		$result    = $this->db->get( 'funnel_contact', [ 'id' => $contact_id ] );
@@ -162,5 +173,27 @@ class Base_Contacts {
 			[ 'total_spent' => $new_spent ],
 			[ 'id' => $contact_id ]
 		);
+	}
+
+	/**
+	 * Starts a session if not already started.
+	 *
+	 * @since 2.6.0
+	 */
+	public static function start_session() {
+		if ( ! headers_sent() && session_status() !== PHP_SESSION_ACTIVE ) {
+			session_start();
+		}
+	}
+
+	/**
+	 * Ends the session if it is active.
+	 *
+	 * @since 2.6.0
+	 */
+	public static function end_session() {
+		if ( session_status() === PHP_SESSION_ACTIVE ) {
+			session_write_close();
+		}
 	}
 }

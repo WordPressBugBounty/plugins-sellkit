@@ -130,6 +130,10 @@ class Conditions {
 			return;
 		}
 
+		if ( ! class_exists( 'Operators' ) ) {
+			require_once __DIR__ . '/operators.php';
+		}
+
 		$condition       = self::$conditions[ $condition_name ];
 		$operator        = Operators::$operators[ $operator_name ];
 		$extracted_value = $condition->get_value();

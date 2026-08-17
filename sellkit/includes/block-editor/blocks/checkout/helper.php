@@ -185,6 +185,7 @@ class Helper {
 
 		$response['.woocommerce-checkout-review-order-table'] = $order_review;
 		$response['.woocommerce-checkout-payment']            = $payment;
+		$response['.sellkit-shipping-methods-one-page']       = $this->shipping_methods();
 
 		return $response;
 	}
@@ -1249,11 +1250,46 @@ class Helper {
 		}
 
 		if ( in_array( $funnel->next_step_data['type']['key'], $popups, true ) ) {
+
+			$next_step = $this->is_set_upsell_product( $next_step );
+
 			wp_send_json_success( [
 				'next_id'   => $next_step['page_id'],
 				'next_type' => $next_step['type']['key'],
 			] );
 		}
+	}
+
+	/**
+	 * Check the upsell or downsell have product or not, ignore upsell/downsell step if product doesn't set.
+	 *
+	 * @param array $next_step Next step data.
+	 * @since 2.6.0
+	 * @SuppressWarnings(PHPMD.NPathComplexity)
+	 */
+	private function is_set_upsell_product( $next_step ) {
+		if ( isset( $next_step['type']['key'] ) && ! in_array( $next_step['type']['key'], [ 'upsell', 'downsell' ], true ) ) {
+			return $next_step;
+		}
+
+		$products = isset( $next_step['data'] ) ? $next_step['data']['products'] : [];
+		$list     = isset( $products['list'] ) ? $products['list'] : [];
+
+		if ( empty( $list ) ) {
+			$funnel    = isset( $next_step['page_id'] ) ? new Sellkit_Funnel( $next_step['page_id'] ) : null;
+			$next_step = ! empty( $funnel ) ? $funnel->next_no_step_data : [];
+
+			if ( empty( $next_step ) && ! empty( $funnel ) ) {
+				return $funnel->end_node_step_data;
+			}
+
+			if ( isset( $next_step['type']['key'] ) && in_array( $next_step['type']['key'], [ 'upsell', 'downsell' ], true ) ) {
+
+				$next_step = $this->is_set_upsell_product( $next_step );
+			}
+		}
+
+		return $next_step;
 	}
 
 	/**
@@ -1278,6 +1314,7 @@ class Helper {
 			$next_step = $funnel->next_step_data;
 		}
 
+		$next_step         = $this->is_set_upsell_product( $next_step );
 		$next_step['type'] = (array) $next_step['type'];
 
 		if ( 'decision' === $next_step['type']['key'] ) {
@@ -1310,6 +1347,8 @@ class Helper {
 		if ( $is_valid ) {
 			$next_step = $next_yes;
 		}
+
+		$next_step = $this->is_set_upsell_product( $next_step );
 
 		wp_send_json_success( [
 			'next_id'   => $next_step['page_id'],
@@ -1370,6 +1409,7 @@ class Helper {
 		// Response.
 		$funnel            = new Sellkit_Funnel( $upsell_id );
 		$next_step         = $funnel->next_step_data;
+		$next_step         = $this->is_set_upsell_product( $next_step );
 		$next_step['type'] = ! empty( $next_step['type'] ) ? (array) $next_step['type'] : null;
 
 		if ( 'upsell' === $funnel->current_step_data['type']['key'] && isset( WC()->cart->cart_contents[ $added_product_hash ] ) ) {
@@ -1426,6 +1466,7 @@ class Helper {
 
 		$funnel    = new Sellkit_Funnel( $upsell_id );
 		$next_step = $funnel->next_no_step_data;
+		$next_step = $this->is_set_upsell_product( $next_step );
 
 		if ( isset( $next_step['type'] ) && false !== $next_step['type'] ) {
 			$next_step['type'] = (array) $next_step['type'];
@@ -2286,5 +2327,104 @@ class Helper {
 		$new_class->register_block_meta();
 
 		$this->is_accept_reject_button_registered = true;
+	}
+
+	/**
+	 * Render shipping methods.
+	 *
+	 * @since 2.6.0
+	 */
+	private function shipping_methods() {
+		$packages = WC()->shipping()->get_packages();
+
+		ob_start();
+
+		foreach ( $packages as $index => $package ) {
+			$chosen_method = isset( WC()->session->chosen_shipping_methods[ $index ] )
+				? WC()->session->chosen_shipping_methods[ $index ]
+				: '';
+
+			$chosen_method_2 = apply_filters( 'sellkit-block-shipping-methods-choosen-method', $chosen_method );
+
+			$package_name = apply_filters(
+				'woocommerce_shipping_package_name',
+				( ( $index + 1 ) > 1 )
+					// Translators: %d is the shipping package number.
+					? sprintf( _x( 'Shipping %d', 'shipping packages', 'sellkit' ), $index + 1 )
+					: _x( 'Shipping', 'shipping packages', 'sellkit' ),
+				$index,
+				$package
+			);
+
+			$available_methods = $package['rates'];
+
+			if ( $available_methods ) :
+				?>
+				<table id="shipping_method" class="woocommerce-shipping-methods sellkit-shipping-methods-one-page sellkit-checkout-widget-divider">
+					<?php foreach ( $available_methods as $method ) : ?>
+						<tr class="sellkit-checkout-widget-divider">
+							<td class="sellkit-shipping-method-t1 sellkit-checkout-widget-divider">
+								<label class="wrp">
+									<?php if ( count( $available_methods ) > 1 ) : ?>
+										<input
+											type="radio"
+											name="shipping_method[<?php echo esc_attr( $index ); ?>]"
+											data-index="<?php echo esc_attr( $index ); ?>"
+											id="shipping_method_<?php echo esc_attr( $index ); ?>_<?php echo esc_attr( sanitize_title( $method->id ) ); ?>"
+											value="<?php echo esc_attr( $method->id ); ?>"
+											class="shipping_method"
+											<?php checked( $method->id, $chosen_method ); ?>
+										/>
+									<?php else : ?>
+										<input
+											type="radio"
+											name="shipping_method[<?php echo esc_attr( $index ); ?>]"
+											data-index="<?php echo esc_attr( $index ); ?>"
+											id="shipping_method_<?php echo esc_attr( $index ); ?>_<?php echo esc_attr( sanitize_title( $method->id ) ); ?>"
+											value="<?php echo esc_attr( $method->id ); ?>"
+											class="shipping_method"
+										/>
+									<?php endif; ?>
+									<span class="checkmark"></span>
+									<span class="labels"><?php echo esc_html( $method->label ); ?></span>
+								</label>
+							</td>
+							<td class="sellkit-shipping-method-t3 sellkit-checkout-widget-divider">
+								<?php
+									add_filter( 'woocommerce_cart_shipping_method_full_label', array( $this, 'cart_shipping_method_full_label' ), 999, 2 );
+									echo wc_cart_totals_shipping_method_label( $method ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								?>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+				<?php if ( $chosen_method !== $chosen_method_2 || ( is_array( $available_methods ) && 1 === count( $available_methods ) ) ) : ?>
+				<script>
+					jQuery( document ).ready( function() {
+						jQuery( "input[value='<?php echo esc_js( $chosen_method_2 ); ?>']" ).prop( 'checked', true ).trigger( 'change' );
+					} );
+				</script>
+			<?php endif; ?>
+				<?php
+		endif;
+	}
+		return ob_get_clean();
+}
+
+	/**
+	 * Filter shipping method label to include tax if applicable.
+	 *
+	 * @param string $label label of shipping method.
+	 * @param object $method shipping method.
+	 *
+	 * @since 2.6.0
+	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+	 */
+	public function cart_shipping_method_full_label( $label, $method ) {
+		if ( WC()->cart->display_prices_including_tax() ) {
+			return wc_price( $method->cost + $method->get_shipping_tax() );
+		}
+
+		return wc_price( $method->cost );
 	}
 }

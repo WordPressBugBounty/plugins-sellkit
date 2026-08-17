@@ -278,6 +278,9 @@ class Contact_Data_Updater {
 	 * @since 1.1.0
 	 */
 	private function maybe_update_device() {
+		if ( ! class_exists( 'Mobile_Detect' ) ) {
+			require_once __DIR__ . '/libraries/mobile-detect.php';
+		}
 		$detector        = new Mobile_Detect();
 		$current_display = 'desktop';
 

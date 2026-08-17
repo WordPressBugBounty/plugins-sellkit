@@ -4,7 +4,7 @@ Donate link: https://getsellkit.com/
 Tags: checkout optimizer, optimized checkout, sales funnel, smart coupon, checkout alert
 Requires at least: 5.6
 Tested up to: 6.9
-Stable tag: 2.5.0
+Stable tag: 2.6.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -274,6 +274,13 @@ Main functionalities are only compatible with Elementor and Gutenberg at the mom
 1. Install using the WordPress built-in Plugin installer, or Extract the zip file and drop the contents in the `wp-content/plugins/` directory of your WordPress installation.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
+== Changelog ==
+= 2.6.0 - 2026-08-17 =
+* Fixed a save-settings issue on the Sellkit Settings page.
+* Fixed shipping method display issues in the Block Editor global checkout.
+* Fixed product thumbnail image issues in the order cart details widget.
+* Fixed an issue where a PHP session could start without being properly closed.
+* Updated the Shipping Method fragment in the Block Editor checkout after applying an Order Bump.
 
 == Changelog ==
 = 2.5.0 - 2026-04-29 =

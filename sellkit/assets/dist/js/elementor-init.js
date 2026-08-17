@@ -212,6 +212,7 @@ function _default($scope) {
     applyCoupon();
     couponToggle();
     fixGatewayListUi();
+    sellkitDetectShippingMethodChange();
   }); // Fix the payment gateways divider issue.
 
   fixGatewayListUi(); //Run when page loads.
@@ -236,7 +237,9 @@ function _default($scope) {
 
   sellkitAfterAjaxComplete(); // Load upsell steps with popup.
 
-  sellkitLoadUpsellSteps(); // Run some functions on page load when WooCommerce doing early ajax.
+  sellkitLoadUpsellSteps(); // send shipping method to backend after changed
+
+  sellkitDetectShippingMethodChange(); // Run some functions on page load when WooCommerce doing early ajax.
 
   window.sellkitCheckoutMakeSureJsWorks = function () {
     sellkitCheckoutUpdateCartItem();
@@ -458,6 +461,9 @@ var manageBillingMethod = function manageBillingMethod() {
   /**
    * Always re-query the DOM. Checkout fragments replace nodes after update_checkout;
    * cached jQuery sets would point at detached elements and .hide() would not affect the live form.
+   *
+   * @param {boolean} shouldUseShippingAddress - Whether to use shipping address for billing
+   *
    */
 
   var toggleBillingFields = function toggleBillingFields(shouldUseShippingAddress) {
@@ -967,6 +973,28 @@ var applyCoupon = function applyCoupon() {
       $('.jx-apply-coupon').css('opacity', 1);
     }).fail(function () {
       $('.jx-apply-coupon').css('opacity', 1);
+    });
+  });
+};
+/**
+ * Send shipping method id to backend
+ *
+ * The click event used because change event, send shipping method id on page load to backend and make an issue.
+ *
+ * @since 2.6.0
+ */
+
+
+var sellkitDetectShippingMethodChange = function sellkitDetectShippingMethodChange() {
+  $('input.shipping_method').off('click').on('click', function () {
+    var selectedMethod = $(this).val();
+    wp.ajax.post({
+      action: 'shipping_method_selected',
+      nonce: sellkit_elementor.nonce,
+      shipping_method: selectedMethod
+    }).fail(function (data) {
+      // eslint-disable-next-line
+      console.error(data);
     });
   });
 };

@@ -26,9 +26,20 @@ if ( $order && ! apply_filters( 'woocommerce_order_item_visible', true, $item ) 
 }
 
 if ( $order ) {
-	$product_thumbnail_url = get_the_post_thumbnail_url( $item['product_id'] );
+	$product_id            = $item['variation_id'] > 0 ? $item['variation_id'] : $item['product_id'];
+	$product_thumbnail_url = get_the_post_thumbnail_url( $product_id );
 	$qty                   = $item->get_quantity();
 	$refunded_qty          = $order->get_qty_refunded_for_item( $item_id );
+
+	// Get product image if variation image not found.
+	if ( $item['variation_id'] > 0 && empty( $product_thumbnail_url ) ) {
+		$product_thumbnail_url = get_the_post_thumbnail_url( $item['product_id'] );
+	}
+
+	// Get woocommerce image placeholder if image not found.
+	if ( empty( $product_thumbnail_url ) ) {
+		$product_thumbnail_url = wc_placeholder_img_src();
+	}
 
 	if ( $refunded_qty ) {
 		$qty_display = '<del>' . esc_html( $qty ) . '</del> <ins>' . esc_html( $qty - ( $refunded_qty * -1 ) ) . '</ins>';

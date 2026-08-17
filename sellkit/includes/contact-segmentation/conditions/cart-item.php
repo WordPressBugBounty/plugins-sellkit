@@ -48,6 +48,11 @@ class Cart_Item extends Condition_Base {
 	 * @since 1.1.0
 	 */
 	public function get_value() {
+
+		if ( ! class_exists( 'Contact_Data' ) ) {
+			require_once __DIR__ . '/../contact-data.php';
+		}
+
 		return Contact_Data::get_cart_items();
 	}
 

@@ -14,6 +14,10 @@ use Sellkit\Contact_Segmentation\Conditions;
 function sellkit_condition_match( $condition_name, $operator_name, $condition_value ) {
 	$condition_value = apply_filters( "sellkit_cs_conditions_value_{$condition_name}", $condition_value );
 
+	if ( ! class_exists( 'Conditions' ) ) {
+		require_once __DIR__ . '/conditions.php';
+		new Conditions();
+	}
 	return Conditions::match( $condition_name, $operator_name, $condition_value );
 }
 
