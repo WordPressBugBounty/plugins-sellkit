@@ -104,7 +104,7 @@ class Thankyou extends Base_Step {
 			}
 		}
 
-		$last_price = $order->get_total() - $order->get_total_discount() - $order->get_total_tax();
+		$last_price = $order->get_total();
 
 		$this->contacts->add_total_spent( $last_price, $funnel_id );
 
