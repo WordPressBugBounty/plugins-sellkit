@@ -4,7 +4,7 @@ Donate link: https://getsellkit.com/
 Tags: checkout optimizer, optimized checkout, sales funnel, smart coupon, checkout alert
 Requires at least: 5.6
 Tested up to: 6.9
-Stable tag: 2.7.0
+Stable tag: 2.8.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -273,6 +273,10 @@ Main functionalities are only compatible with Elementor and Gutenberg at the mom
 
 1. Install using the WordPress built-in Plugin installer, or Extract the zip file and drop the contents in the `wp-content/plugins/` directory of your WordPress installation.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
+
+== Changelog ==
+= 2.8.0 - 2026-10-05 =
+* Bug Fix: Fixed Security issue.
 
 == Changelog ==
 = 2.7.0 - 2026-09-14 =

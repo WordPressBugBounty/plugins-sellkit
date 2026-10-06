@@ -1,14 +1,14 @@
 # Copyright (c) 2026 SellKit.
 msgid ""
 msgstr ""
-"Project-Id-Version: SellKit - Funnel builder and checkout optimizer for WooCommerce to sell more, faster 2.7.0\n"
+"Project-Id-Version: SellKit - Funnel builder and checkout optimizer for WooCommerce to sell more, faster 2.8.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sellkit\n"
 "Last-Translator: Artbees Team <info@artbees.net>\n"
 "Language-Team: Artbees Team <info@artbees.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-19T04:50:18+00:00\n"
+"POT-Creation-Date: 2026-10-06T02:51:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: sellkit\n"
@@ -494,9 +494,9 @@ msgstr ""
 msgid "Select a state…"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:311
-#: includes/block-editor/blocks/checkout/helper.php:1508
-#: includes/elementor/modules/checkout/classes/global-hooks.php:318
+#: includes/block-editor/blocks/checkout/helper.php:304
+#: includes/block-editor/blocks/checkout/helper.php:1566
+#: includes/elementor/modules/checkout/classes/global-hooks.php:311
 #: includes/elementor/modules/checkout/classes/helper.php:272
 #: includes/elementor/modules/checkout/classes/multi-step.php:283
 #: includes/elementor/modules/checkout/classes/multi-step.php:317
@@ -507,32 +507,32 @@ msgstr ""
 msgid "Shipping"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:467
-#: includes/elementor/modules/checkout/classes/global-hooks.php:516
+#: includes/block-editor/blocks/checkout/helper.php:460
+#: includes/elementor/modules/checkout/classes/global-hooks.php:509
 msgid "Email or password field is not valid."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:791
-#: includes/elementor/modules/checkout/classes/global-hooks.php:902
+#: includes/block-editor/blocks/checkout/helper.php:784
+#: includes/elementor/modules/checkout/classes/global-hooks.php:895
 msgid "Oh do not be tricky."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1373
-#: includes/block-editor/blocks/checkout/helper.php:1464
-#: includes/elementor/modules/checkout/classes/global-hooks.php:1409
-#: includes/elementor/modules/checkout/classes/global-hooks.php:1500
+#: includes/block-editor/blocks/checkout/helper.php:1431
+#: includes/block-editor/blocks/checkout/helper.php:1522
+#: includes/elementor/modules/checkout/classes/global-hooks.php:1465
+#: includes/elementor/modules/checkout/classes/global-hooks.php:1556
 msgid "Empty Upsell ID."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1379
-#: includes/elementor/modules/checkout/classes/global-hooks.php:1415
+#: includes/block-editor/blocks/checkout/helper.php:1437
+#: includes/elementor/modules/checkout/classes/global-hooks.php:1471
 msgid "Empty Step Data."
 msgstr ""
 
 #. translators: %s field_name.
-#: includes/block-editor/blocks/checkout/helper.php:1521
-#: includes/block-editor/blocks/checkout/helper.php:1540
-#: includes/block-editor/blocks/checkout/helper.php:1552
+#: includes/block-editor/blocks/checkout/helper.php:1579
+#: includes/block-editor/blocks/checkout/helper.php:1598
+#: includes/block-editor/blocks/checkout/helper.php:1610
 #: includes/elementor/modules/checkout/classes/helper.php:282
 #: includes/elementor/modules/checkout/classes/helper.php:317
 #: includes/elementor/modules/checkout/classes/helper.php:333
@@ -540,14 +540,14 @@ msgstr ""
 msgid "%s is a required field."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1527
+#: includes/block-editor/blocks/checkout/helper.php:1585
 #: includes/elementor/modules/checkout/classes/helper.php:307
 msgid "Billing"
 msgstr ""
 
 #. translators: %s field_name.
-#: includes/block-editor/blocks/checkout/helper.php:1552
-#: includes/block-editor/blocks/checkout/helper.php:1558
+#: includes/block-editor/blocks/checkout/helper.php:1610
+#: includes/block-editor/blocks/checkout/helper.php:1616
 #: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:53
 #: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:87
 #: includes/block-editor/blocks/checkout/templates/form-login.php:38
@@ -560,25 +560,25 @@ msgid "Email address"
 msgstr ""
 
 #. translators: %s field_name.
-#: includes/block-editor/blocks/checkout/helper.php:1558
+#: includes/block-editor/blocks/checkout/helper.php:1616
 #: includes/elementor/modules/checkout/classes/helper.php:339
 #, php-format
 msgid "%s is not a valid email."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1582
+#: includes/block-editor/blocks/checkout/helper.php:1640
 #: includes/elementor/modules/checkout/classes/local-hooks.php:1289
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: includes/block-editor/blocks/checkout/inner-blocks/payment/payment.js:98
 msgid "Add a note to your order"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2095
+#: includes/block-editor/blocks/checkout/helper.php:2153
 #: includes/elementor/modules/checkout/classes/local-hooks.php:852
 msgid "Your Products"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2099
+#: includes/block-editor/blocks/checkout/helper.php:2157
 #: includes/block-editor/blocks/checkout/inner-blocks/review-order/class.php:82
 #: includes/block-editor/blocks/checkout/templates/review-order.php:52
 #: includes/elementor/modules/checkout/classes/local-hooks.php:856
@@ -588,19 +588,19 @@ msgstr ""
 msgid "Product"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2100
+#: includes/block-editor/blocks/checkout/helper.php:2158
 #: includes/elementor/modules/checkout/classes/local-hooks.php:857
 #: assets/dist/admin/sellkit.js:280
 msgid "Quantity"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2101
+#: includes/block-editor/blocks/checkout/helper.php:2159
 #: includes/elementor/modules/checkout/classes/local-hooks.php:858
 #: assets/dist/admin/sellkit.js:280
 msgid "Price"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2260
+#: includes/block-editor/blocks/checkout/helper.php:2318
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: includes/block-editor/blocks/checkout/inner-blocks/billing-details/billing-details.js:272
 #: includes/block-editor/blocks/checkout/inner-blocks/form-shipping/form-shipping.js:268
@@ -609,7 +609,7 @@ msgid "(optional)"
 msgstr ""
 
 #. Translators: %d is the shipping package number.
-#: includes/block-editor/blocks/checkout/helper.php:2353
+#: includes/block-editor/blocks/checkout/helper.php:2411
 #: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:77
 #, php-format
 msgctxt "shipping packages"
@@ -617,7 +617,7 @@ msgid "Shipping %d"
 msgstr ""
 
 #. Translators: %d is the shipping package number.
-#: includes/block-editor/blocks/checkout/helper.php:2354
+#: includes/block-editor/blocks/checkout/helper.php:2412
 #: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:77
 msgctxt "shipping packages"
 msgid "Shipping"
@@ -2432,11 +2432,11 @@ msgstr ""
 msgid "Padding"
 msgstr ""
 
-#: includes/elementor/modules/checkout/classes/global-hooks.php:830
+#: includes/elementor/modules/checkout/classes/global-hooks.php:823
 msgid "Not valid inputs"
 msgstr ""
 
-#: includes/elementor/modules/checkout/classes/global-hooks.php:836
+#: includes/elementor/modules/checkout/classes/global-hooks.php:829
 msgid "Server error."
 msgstr ""
 
@@ -6161,7 +6161,7 @@ msgstr ""
 msgid "Phone number is not valid."
 msgstr ""
 
-#: assets/dist/js/elementor-init.js:1899
+#: assets/dist/js/elementor-init.js:1897
 msgid "Following messages are visible only for admin users."
 msgstr ""
 

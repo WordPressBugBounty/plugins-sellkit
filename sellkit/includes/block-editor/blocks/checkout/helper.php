@@ -58,13 +58,6 @@ class Helper {
 	private $is_accept_reject_button_registered = false;
 
 	/**
-	 * List of upsell product with price
-	 *
-	 * @var array
-	 */
-	private static $sellkit_upsell_products;
-
-	/**
 	 * Class constructor.
 	 *
 	 * @since 2.3.0
@@ -913,11 +906,7 @@ class Helper {
 					$discount_type  = isset( $product_details['discountType'] ) ? $product_details['discountType'] : '';
 					$discount_value = isset( $product_details['discount'] ) ? $product_details['discount'] : '';
 
-					$price = $this->calculate_discount( $item_id, $discount_type, $discount_value );
-
-					if ( 'upsell' === $source ) {
-						self::$sellkit_upsell_products[ $product_id ] = $price;
-					}
+					$price = self::calculate_discount( $item_id, $discount_type, $discount_value );
 				}
 			}
 
@@ -1149,67 +1138,33 @@ class Helper {
 			return;
 		}
 
-		// Gather checkout id.
-		$checkout_id = get_queried_object_id();
+		$checkout_id = self::get_valid_checkout_id();
 
-		if ( wp_doing_ajax() ) {
-			// First try to catch id using our ajax call.
-			$checkout_id = filter_input( INPUT_POST, 'related_checkout', FILTER_SANITIZE_NUMBER_INT );
-
-			// Second try to catch id using woocommerce ajax.
-			if ( empty( $checkout_id ) ) {
-				$checkout_id = filter_input( INPUT_POST, 'sellkit_current_page_id', FILTER_SANITIZE_NUMBER_INT );
-			}
-
-			// Catch id after pressing place order button. none of above methods worked.
-			if ( empty( $checkout_id ) ) {
-				$data = filter_input( INPUT_POST, 'post_data', FILTER_DEFAULT );
-
-				if ( ! empty( $data ) ) {
-					parse_str( $data, $data );
-				}
-
-				if ( is_array( $data ) && array_key_exists( 'sellkit_current_page_id', $data ) ) {
-					$checkout_id = $data['sellkit_current_page_id'];
-				}
-			}
-		}
-
-		// Empty id ? no action.
-		if ( empty( $checkout_id ) ) {
+		if ( 0 === $checkout_id ) {
 			return;
 		}
-
-		$checkout_id = (int) $checkout_id;
 
 		// Apply funnel prices.
 		$this->apply_discounted_prices( wc()->cart, $checkout_id );
 		$this->apply_discounted_prices( wc()->cart, $checkout_id, 'bumps' );
 
 		// Apply upsell discount.
-		$sellkit_upsell_prices = null;
+		$sellkit_upsell_ids = null;
 		if ( isset( $_POST['woocommerce-process-checkout-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce-process-checkout-nonce'] ) ), 'woocommerce-process_checkout' ) ) {
-			$sellkit_upsell_prices = isset( $_POST['sellkit_product_prices'] ) ? sanitize_textarea_field( wp_unslash( $_POST['sellkit_product_prices'] ) ) : null;
-		}
-		$upsell_product_ids;
-
-		if ( isset( $sellkit_upsell_prices ) && ! empty( $sellkit_upsell_prices ) ) {
-			$sellkit_upsell_prices = json_decode( $sellkit_upsell_prices, true );
-			$upsell_product_ids    = array_keys( $sellkit_upsell_prices );
+			$sellkit_upsell_ids = isset( $_POST['sellkit_upsell_ids'] ) ? sanitize_textarea_field( wp_unslash( $_POST['sellkit_upsell_ids'] ) ) : null;
 		}
 
-		if ( isset( $upsell_product_ids ) ) {
-			foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
-				$product      = $cart_item['data'];
-				$product_name = $product->get_name();
-				$product_id   = $product->get_id();
+		if ( ! empty( $sellkit_upsell_ids ) ) {
+			$upsell_ids = explode( ',', $sellkit_upsell_ids );
+			$list       = self::upsell_downsell_ids_of_funnel( $checkout_id );
 
-				if ( in_array( $product_id, $upsell_product_ids, true ) ) {
-					$upsell_price = $sellkit_upsell_prices[ $product_id ];
-					$product->set_price( $upsell_price );
+			if ( ! empty( $list ) ) {
+				foreach ( $upsell_ids as $id ) {
+
+					if ( in_array( $id, $list, true ) ) {
+						self::applay_upsell_downsell_discount( $id );
+					}
 				}
-
-				$price = $product->get_price();
 			}
 		}
 
@@ -1225,6 +1180,109 @@ class Helper {
 
 			wc_clear_notices();
 		}
+	}
+
+	/**
+	 * Extract upsell and downsell ids from funnel.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param int $checkout_id id of checkout.
+	 *
+	 * @return array
+	 */
+	private static function upsell_downsell_ids_of_funnel( $checkout_id ) {
+		$step_data = get_post_meta( $checkout_id, 'step_data', true );
+		$funnel_id = $step_data['funnel_id'];
+		$nodes     = get_post_meta( $funnel_id, 'nodes', true );
+		$ids       = [];
+
+		foreach ( $nodes as $node ) {
+			if ( isset( $node['type'] ) && in_array( $node['type']['key'], [ 'upsell', 'downsell' ], true ) ) {
+				$ids[] = $node['page_id'];
+			}
+		}
+
+		return $ids;
+	}
+
+	/**
+	 * Apply discount to upsell or downsell.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param int $id id of upsell or downsell.
+	 */
+	private static function applay_upsell_downsell_discount( $id ) {
+		$upsell_data = get_post_meta( $id, 'step_data', true );
+		$product     = $upsell_data['data']['products']['list'];
+
+		foreach ( $product as $key => $value ) {
+			foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+				$product    = $cart_item['data'];
+				$product_id = $product->get_id();
+
+				if ( $key === $product_id ) {
+					$discount_type  = isset( $value['discountType'] ) ? $value['discountType'] : '';
+					$discount_value = isset( $value['discount'] ) ? $value['discount'] : '';
+
+					$price = self::calculate_discount( $product_id, $discount_type, $discount_value );
+					$product->set_price( $price );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Get the checkout step associated with the current visitor.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return int
+	 *
+	 * @SuppressWarnings(PHPMD.NPathComplexity)
+	 */
+	private static function get_valid_checkout_id() {
+		$checkout_id = get_queried_object_id();
+
+		if ( wp_doing_ajax() ) {
+			$checkout_id = filter_input( INPUT_POST, 'related_checkout', FILTER_SANITIZE_NUMBER_INT );
+
+			if ( empty( $checkout_id ) ) {
+				$checkout_id = filter_input( INPUT_POST, 'sellkit_current_page_id', FILTER_SANITIZE_NUMBER_INT );
+			}
+
+			if ( empty( $checkout_id ) ) {
+				$data = filter_input( INPUT_POST, 'post_data', FILTER_DEFAULT );
+
+				if ( ! empty( $data ) ) {
+					parse_str( $data, $data );
+				}
+
+				if ( is_array( $data ) && array_key_exists( 'sellkit_current_page_id', $data ) ) {
+					$checkout_id = $data['sellkit_current_page_id'];
+				}
+			}
+		}
+
+		$checkout_id = absint( $checkout_id );
+		$step_data   = get_post_meta( $checkout_id, 'step_data', true );
+
+		if (
+			0 === $checkout_id ||
+			'publish' !== get_post_status( $checkout_id ) ||
+			! is_array( $step_data ) ||
+			! isset( $step_data['type']['key'] ) ||
+			'checkout' !== $step_data['type']['key']
+		) {
+			return 0;
+		}
+
+		if ( wp_doing_ajax() && ! function_exists( 'WC' ) ) {
+			return 0;
+		}
+
+		return $checkout_id;
 	}
 
 	/**
@@ -1433,7 +1491,7 @@ class Helper {
 				[
 					'next_id'   => $funnel->end_node_step_data['page_id'],
 					'next_type' => $funnel->end_node_step_data['type']['key'],
-					'upsell_prices' => wp_json_encode( self::$sellkit_upsell_products ),
+					'upsell_ids' => $upsell_id,
 				]
 			);
 		}
@@ -1446,7 +1504,7 @@ class Helper {
 		$response = [
 			'next_id'   => $next_step['page_id'],
 			'next_type' => $next_step['type']['key'],
-			'upsell_prices' => wp_json_encode( self::$sellkit_upsell_products ),
+			'upsell_ids' => $upsell_id,
 		];
 
 		wp_send_json_success( $response );
@@ -1717,28 +1775,28 @@ class Helper {
 					<div class="sellkit-bump-order-right-header">
 						<span class="sellkit-checkout-order-bump-price">
 							<?php
-								$discounted_price = $this->calculate_discount( (int) $ids_string, $type, $discount );
+								$discounted_price = self::calculate_discount( (int) $ids_string, $type, $discount );
 								$sale_price       = $product->get_sale_price();
 								$regular_price    = $product->get_regular_price();
 								$main_price       = ( strpos( $type, 'sale' ) !== false ) ? $sale_price : $regular_price;
 
 								if ( floatval( $main_price ) > floatval( $discounted_price ) ) {
-									?>
+								?>
 										<del aria-hidden="true">
 											<span class="woocommerce-Price-amount amount">
 												<bdi>
 													<span class="woocommerce-Price-currencySymbol">
-														<?php echo wc_price( $main_price ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+								<?php echo wc_price( $main_price ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 													</span>
 												</bdi>
 											</span>
 										</del>
 										<bdi class="bump-price-bolded"><?php echo wc_price( $discounted_price ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></bdi>
-									<?php
+								<?php
 								} else {
-									?>
+								?>
 										<bdi><?php echo wc_price( $main_price ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></bdi>
-									<?php
+								<?php
 								}
 							?>
 						</span>
@@ -1788,7 +1846,7 @@ class Helper {
 	 * @return int|boolean
 	 * @since 2.3.0
 	 */
-	public function calculate_discount( $id, $type, $value ) {
+	public static function calculate_discount( $id, $type, $value ) {
 		if ( false === $type && false === $value ) {
 			return false;
 		}
@@ -1833,7 +1891,7 @@ class Helper {
 
 		echo '<input type="hidden" id="sellkit_funnel_has_upsell" value="upsell" >';
 		echo '<input type="hidden" id="sellkit_funnel_popup_step_id" value="0" >';
-		echo '<input type="hidden" id="sellkit_product_prices" autocomplete="off" name="sellkit_product_prices" value="0" >';
+		echo '<input type="hidden" id="sellkit_upsell_ids" autocomplete="off" name="sellkit_upsell_ids" value="0" >';
 	}
 
 	/**
@@ -2105,7 +2163,7 @@ class Helper {
 							<?php foreach ( $products as $cart_item_key => $cart_item ) : ?>
 								<?php
 									if ( in_array( $cart_item_key, $this->in_cart, true ) ) {
-										continue;
+									continue;
 									}
 
 									$_product  = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
@@ -2115,11 +2173,11 @@ class Helper {
 									$checked   = '';
 
 									if ( 'checkbox' === $fields_type ) {
-										$checked = 'checked';
+									$checked = 'checked';
 									}
 
 									if ( 'radio' === $fields_type && array_key_last( $products ) === $cart_item_key ) {
-										$checked = 'checked';
+									$checked = 'checked';
 									}
 								?>
 								<tr class="sellkit-checkout-bundled-products-item">

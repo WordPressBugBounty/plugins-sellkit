@@ -1580,7 +1580,7 @@ var sellkitCallUpsell = function sellkitCallUpsell() {
         $(document.body).trigger('update_checkout');
         parent.find('.sellkit-upsell-updating').removeClass('active');
         parent.find('.sellkit-upsell-accepted').addClass('active');
-        updateSellkitPriceField(data.upsell_prices);
+        updateSellkitUpsellField(data.upsell_ids);
         onSuccess(data);
       }).fail(function (data) {
         // eslint-disable-next-line no-console
@@ -1626,20 +1626,18 @@ var sellkitCallUpsell = function sellkitCallUpsell() {
   });
 };
 
-var updateSellkitPriceField = function updateSellkitPriceField(data) {
+var updateSellkitUpsellField = function updateSellkitUpsellField(data) {
   if (data === 'null' || data === null) {
     return;
   }
 
-  var current_val = $('input#sellkit_product_prices').val();
+  var current_val = $('input#sellkit_upsell_ids').val();
 
   if (!current_val || current_val === '0') {
-    $('input#sellkit_product_prices').val(data);
+    $('input#sellkit_upsell_ids').val(data);
   } else {
-    var oldVal = JSON.parse(current_val);
-    var newVal = JSON.parse(data);
-    var val = JSON.stringify(Object.assign({}, oldVal, newVal));
-    $('input#sellkit_product_prices').val(val);
+    var val = current_val + ',' + data;
+    $('input#sellkit_upsell_ids').val(val);
   }
 };
 /**

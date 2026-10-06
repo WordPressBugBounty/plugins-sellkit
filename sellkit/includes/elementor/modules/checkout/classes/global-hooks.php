@@ -29,13 +29,6 @@ class Global_Hooks {
 	private $helper_id = 0;
 
 	/**
-	 * List of upsell product with price
-	 *
-	 * @var array
-	 */
-	private static $sellkit_upsell_products;
-
-	/**
 	 * Create instance of class without construct.
 	 *
 	 * @since 1.1.0
@@ -1023,10 +1016,6 @@ class Global_Hooks {
 					$discount_value = isset( $product_details['discount'] ) ? $product_details['discount'] : '';
 
 					$price = Helper::calculate_discount( $item_id, $discount_type, $discount_value );
-
-					if ( 'upsell' === $source ) {
-						self::$sellkit_upsell_products[ $product_id ] = $price;
-					}
 				}
 			}
 
@@ -1177,67 +1166,33 @@ class Global_Hooks {
 			return;
 		}
 
-		// Gather checkout id.
-		$checkout_id = get_queried_object_id();
+		$checkout_id = self::get_valid_checkout_id();
 
-		if ( wp_doing_ajax() ) {
-			// First try to catch id using our ajax call.
-			$checkout_id = filter_input( INPUT_POST, 'related_checkout', FILTER_SANITIZE_NUMBER_INT );
-
-			// Second try to catch id using woocommerce ajax.
-			if ( empty( $checkout_id ) ) {
-				$checkout_id = filter_input( INPUT_POST, 'sellkit_current_page_id', FILTER_SANITIZE_NUMBER_INT );
-			}
-
-			// Catch id after pressing place order button. none of above methods worked.
-			if ( empty( $checkout_id ) ) {
-				$data = filter_input( INPUT_POST, 'post_data', FILTER_DEFAULT );
-
-				if ( ! empty( $data ) ) {
-					parse_str( $data, $data );
-				}
-
-				if ( is_array( $data ) && array_key_exists( 'sellkit_current_page_id', $data ) ) {
-					$checkout_id = $data['sellkit_current_page_id'];
-				}
-			}
-		}
-
-		// Empty id ? no action.
-		if ( empty( $checkout_id ) ) {
+		if ( 0 === $checkout_id ) {
 			return;
 		}
-
-		$checkout_id = (int) $checkout_id;
 
 		// Apply funnel prices.
 		self::apply_discounted_prices( wc()->cart, $checkout_id );
 		self::apply_discounted_prices( wc()->cart, $checkout_id, 'bumps' );
 
 		// Apply upsell discount.
-		$sellkit_upsell_prices = null;
+		$sellkit_upsell_ids = null;
 		if ( isset( $_POST['woocommerce-process-checkout-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce-process-checkout-nonce'] ) ), 'woocommerce-process_checkout' ) ) {
-			$sellkit_upsell_prices = isset( $_POST['sellkit_product_prices'] ) ? sanitize_textarea_field( wp_unslash( $_POST['sellkit_product_prices'] ) ) : null;
-		}
-		$upsell_product_ids;
-
-		if ( isset( $sellkit_upsell_prices ) && ! empty( $sellkit_upsell_prices ) ) {
-			$sellkit_upsell_prices = json_decode( $sellkit_upsell_prices, true );
-			$upsell_product_ids    = array_keys( $sellkit_upsell_prices );
+			$sellkit_upsell_ids = isset( $_POST['sellkit_upsell_ids'] ) ? sanitize_textarea_field( wp_unslash( $_POST['sellkit_upsell_ids'] ) ) : null;
 		}
 
-		if ( isset( $upsell_product_ids ) ) {
-			foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
-				$product      = $cart_item['data'];
-				$product_name = $product->get_name();
-				$product_id   = $product->get_id();
+		if ( ! empty( $sellkit_upsell_ids ) ) {
+			$upsell_ids = explode( ',', $sellkit_upsell_ids );
+			$list       = self::upsell_downsell_ids_of_funnel( $checkout_id );
 
-				if ( in_array( $product_id, $upsell_product_ids, true ) ) {
-					$upsell_price = $sellkit_upsell_prices[ $product_id ];
-					$product->set_price( $upsell_price );
+			if ( ! empty( $list ) ) {
+				foreach ( $upsell_ids as $id ) {
+
+					if ( in_array( $id, $list, true ) ) {
+						self::applay_upsell_downsell_discount( $id );
+					}
 				}
-
-				$price = $product->get_price();
 			}
 		}
 
@@ -1264,6 +1219,107 @@ class Global_Hooks {
 
 			wc_clear_notices();
 		}
+	}
+
+	/**
+	 * Extract upsell and downsell ides from funnel.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param int $checkout_id id of checkout.
+	 *
+	 * @return array
+	 */
+	private static function upsell_downsell_ids_of_funnel( $checkout_id ) {
+		$step_data = get_post_meta( $checkout_id, 'step_data', true );
+		$funnel_id = $step_data['funnel_id'];
+		$nodes     = get_post_meta( $funnel_id, 'nodes', true );
+		$ids       = [];
+
+		foreach ( $nodes as $node ) {
+			if ( isset( $node['type'] ) && in_array( $node['type']['key'], [ 'upsell', 'downsell' ], true ) ) {
+				$ids[] = $node['page_id'];
+			}
+		}
+
+		return $ids;
+	}
+
+	/**
+	 * Apply discount to upsell or downsell.
+	 *
+	 * @param int $id id of checkout.
+	 *
+	 * @since 2.8.0
+	 */
+	private static function applay_upsell_downsell_discount( $id ) {
+		$upsell_data = get_post_meta( $id, 'step_data', true );
+		$product     = $upsell_data['data']['products']['list'];
+
+		foreach ( $product as $key => $value ) {
+			foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+				$product    = $cart_item['data'];
+				$product_id = $product->get_id();
+
+				if ( $key === $product_id ) {
+					$discount_type  = isset( $value['discountType'] ) ? $value['discountType'] : '';
+					$discount_value = isset( $value['discount'] ) ? $value['discount'] : '';
+
+					$price = Helper::calculate_discount( $product_id, $discount_type, $discount_value );
+					$product->set_price( $price );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Get the checkout step associated with the current visitor.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return int
+	 */
+	private static function get_valid_checkout_id() {
+		$checkout_id = get_queried_object_id();
+
+		if ( wp_doing_ajax() ) {
+			$checkout_id = filter_input( INPUT_POST, 'related_checkout', FILTER_SANITIZE_NUMBER_INT );
+
+			if ( empty( $checkout_id ) ) {
+				$checkout_id = filter_input( INPUT_POST, 'sellkit_current_page_id', FILTER_SANITIZE_NUMBER_INT );
+			}
+
+			if ( empty( $checkout_id ) ) {
+				$data = filter_input( INPUT_POST, 'post_data', FILTER_DEFAULT );
+
+				if ( ! empty( $data ) ) {
+					parse_str( $data, $data );
+				}
+
+				if ( is_array( $data ) && array_key_exists( 'sellkit_current_page_id', $data ) ) {
+					$checkout_id = $data['sellkit_current_page_id'];
+				}
+			}
+		}
+
+		$checkout_id = absint( $checkout_id );
+		$step_data   = get_post_meta( $checkout_id, 'step_data', true );
+
+		if (
+			0 === $checkout_id ||
+			'publish' !== get_post_status( $checkout_id ) ||
+			! is_array( $step_data ) ||
+			! isset( $step_data['type']['key'] ) ||
+			'checkout' !== $step_data['type']['key']
+		) {
+			return 0;
+		}
+
+		if ( wp_doing_ajax() && ! function_exists( 'WC' ) ) {
+			return 0;
+		}
+
+		return $checkout_id;
 	}
 
 	/**
@@ -1469,7 +1525,7 @@ class Global_Hooks {
 				[
 					'next_id'   => $funnel->end_node_step_data['page_id'],
 					'next_type' => $funnel->end_node_step_data['type']['key'],
-					'upsell_prices' => wp_json_encode( self::$sellkit_upsell_products ),
+					'upsell_ids' => $upsell_id,
 				]
 			);
 		}
@@ -1482,7 +1538,7 @@ class Global_Hooks {
 		$response = [
 			'next_id'   => apply_filters( 'wpml_object_id', $next_step['page_id'], 'sellkit_step', true ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 			'next_type' => $next_step['type']['key'],
-			'upsell_prices' => wp_json_encode( self::$sellkit_upsell_products ),
+			'upsell_ids' => $upsell_id,
 		];
 
 		wp_send_json_success( $response );
