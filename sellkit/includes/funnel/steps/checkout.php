@@ -39,6 +39,7 @@ class Checkout {
 		}
 
 		add_action( 'woocommerce_checkout_create_order', [ $this, 'save_order_custom_meta_data' ], 10 );
+		add_action( 'woocommerce_checkout_order_created', [ $this, 'remember_funnel_order' ], 10 );
 		add_action( 'woocommerce_after_order_notes', [ $this, 'custom_checkout_hidden_fields' ], 10 );
 		add_action( 'wc_ajax_update_order_review', [ $this, 'do_actions' ] );
 
@@ -92,6 +93,16 @@ class Checkout {
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
 	 */
 	public function do_actions() {
+		// Only apply products/coupons of a published (or admin-previewed) checkout step.
+		if (
+			empty( $this->funnel ) ||
+			! $this->funnel->is_accessible() ||
+			empty( $this->funnel->current_step_data['type']['key'] ) ||
+			'checkout' !== $this->funnel->current_step_data['type']['key']
+		) {
+			return;
+		}
+
 		// These variables should be used in checkout builder widget.
 		$funnel_data       = $this->funnel->current_step_data;
 		$optimization_data = ! empty( $funnel_data['data']['optimization'] ) ? $funnel_data['data']['optimization'] : '';
@@ -217,7 +228,7 @@ class Checkout {
 	 * @param object $order Order object.
 	 */
 	public function save_order_custom_meta_data( $order ) {
-		if ( empty( $this->funnel->next_step_data ) ) {
+		if ( empty( $this->funnel->next_step_data ) || ! $this->funnel->is_accessible() ) {
 			return;
 		}
 
@@ -231,6 +242,21 @@ class Checkout {
 
 		$order->update_meta_data( 'sellkit_funnel_next_step_data', $this->funnel->next_step_data );
 		$order->update_meta_data( 'sellkit_funnel_id', $this->funnel->funnel_id );
+	}
+
+	/**
+	 * Remembers a funnel order in the visitor's WC session so the following upsell/downsell
+	 * steps can verify that the order belongs to this visitor.
+	 *
+	 * @since 2.8.1
+	 * @param \WC_Order $order Created order.
+	 */
+	public function remember_funnel_order( $order ) {
+		if ( ! $order instanceof \WC_Order || empty( $order->get_meta( 'sellkit_funnel_id' ) ) ) {
+			return;
+		}
+
+		Upsell::remember_order( $order->get_id() );
 	}
 
 	/**
@@ -429,8 +455,9 @@ class Checkout {
 
 		$result = $database->get( 'funnel_contact', [ 'id' => $contact_id ] );
 
-		if ( ! empty( $result[0]['order_bump'] ) ) {
-			$old_values = unserialize( $result[0]['order_bump'] ); // phpcs:ignore
+		if ( ! empty( $result[0]['order_bump'] ) && is_serialized( $result[0]['order_bump'] ) ) {
+			$old_values = unserialize( $result[0]['order_bump'], [ 'allowed_classes' => false ] ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize -- No objects allowed.
+			$old_values = is_array( $old_values ) ? $old_values : [];
 		}
 
 		$new_values = array_merge( $old_values, [ $this->funnel->current_step_data['page_id'] ] );

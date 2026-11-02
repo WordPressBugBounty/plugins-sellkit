@@ -55,14 +55,25 @@ class Viewed_Products extends Contact_Segmentation_Base {
 
 		$products = self::$contact_segmentation['viewed_product'];
 
-		if ( empty( $products ) ) {
+		if ( empty( $products ) || ! is_array( $products ) ) {
 			return $this->shortcode_content( $atts );
 		}
 
 		$result = [];
 
 		foreach ( $products as $product ) {
+			$product = absint( $product );
+
+			// Values may come from a visitor cookie: only show published, viewable products.
+			if ( empty( $product ) || 'product' !== get_post_type( $product ) || ! sellkit_is_post_publicly_accessible( $product ) ) {
+				continue;
+			}
+
 			$result[] = get_the_title( $product );
+		}
+
+		if ( empty( $result ) ) {
+			return $this->shortcode_content( $atts );
 		}
 
 		$result = $this->get_result( $result );

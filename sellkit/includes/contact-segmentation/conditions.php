@@ -159,11 +159,11 @@ class Conditions {
 	 * @since 1.1.0
 	 */
 	public function get_options() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$condition = sellkit_htmlspecialchars( INPUT_GET, 'condition' );
 
-		if ( empty( $condition ) ) {
+		if ( empty( $condition ) || ! isset( self::$conditions[ $condition ] ) ) {
 			wp_send_json_error( __( 'Please send a condition name', 'sellkit' ) );
 		}
 

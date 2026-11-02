@@ -118,6 +118,10 @@ class Woocommerce_Not_Installed extends Notice_Base {
 	public function installer() {
 		check_ajax_referer( 'sellkit_admin', 'nonce' );
 
+		if ( ! current_user_can( 'install_plugins' ) || ! current_user_can( 'activate_plugins' ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to do this action.', 'sellkit' ), 403 );
+		}
+
 		require_once ABSPATH . '/wp-load.php';
 		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 		require_once ABSPATH . 'wp-admin/includes/file.php';

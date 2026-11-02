@@ -111,7 +111,10 @@ class Contact_Data_Updater {
 		}
 
 		if ( ! is_user_logged_in() && is_array( self::$new_data ) ) {
-			setcookie( 'sellkit_contact_segmentation', wp_json_encode( array_merge( Contact_Data::$historical_data, self::$new_data ) ), 2147483647, '/' );
+			$cookie_json = wp_json_encode( array_merge( (array) Contact_Data::$historical_data, self::$new_data ) );
+
+			setcookie( Contact_Data::COOKIE_NAME, $cookie_json, 2147483647, '/' );
+			setcookie( Contact_Data::COOKIE_SIGNATURE_NAME, Contact_Data::sign_cookie_json( $cookie_json ), 2147483647, '/', '', is_ssl(), true );
 			return;
 		}
 
@@ -188,10 +191,9 @@ class Contact_Data_Updater {
 			return $value;
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Public UTM/analytics query parameters.
-		$data = array_change_key_case( $_GET, CASE_LOWER );
+		$data = array_change_key_case( wp_unslash( $_GET ), CASE_LOWER ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Public UTM tracking query parameters from external links (no nonce possible); the single value used is sanitized below.
 
-		if ( empty( $data[ $utm ] ) ) {
+		if ( empty( $data[ $utm ] ) || ! is_string( $data[ $utm ] ) ) {
 			return $value;
 		}
 
@@ -205,6 +207,10 @@ class Contact_Data_Updater {
 	 */
 	private function maybe_update_locations() {
 		$ip = sellkit_get_ip();
+
+		if ( empty( $ip ) ) {
+			return;
+		}
 
 		if ( ! empty( $this->data['ip'] ) && $ip === $this->data['ip'] && isset( $this->data['visitor_country'] ) && ! empty( $this->data['visitor_country'] ) ) {
 			return;
@@ -220,7 +226,7 @@ class Contact_Data_Updater {
 
 		$auth = base64_encode( $account_id . ':' . $api_key );
 
-		$response = wp_remote_get( $maxmind_api_url . $ip, [
+		$response = wp_remote_get( $maxmind_api_url . rawurlencode( $ip ), [
 			'timeout' => 10,
 			'headers' => [
 				'Authorization' => 'Basic ' . $auth,

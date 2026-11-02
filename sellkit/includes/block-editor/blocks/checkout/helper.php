@@ -101,6 +101,7 @@ class Helper {
 
 		// Modify discounted products.
 		add_action( 'woocommerce_before_calculate_totals', [ $this, 'before_cart_calculate' ], 999 );
+		add_action( 'woocommerce_cart_emptied', [ $this, 'clear_accepted_upsells' ] );
 
 		// Add order notes to checkout form to desired location.
 		add_action( 'sellkit_block_checkout_after_term_and_condition', [ $this, 'order_notes' ] );
@@ -135,7 +136,21 @@ class Helper {
 
 		$sub_action = filter_input( INPUT_POST, 'sub_action', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
-		if ( method_exists( $this, $sub_action ) ) {
+		// Only these methods may be invoked through the public ajax endpoint.
+		$allowed_sub_actions = [
+			'search_for_email',
+			'search_for_username',
+			'auth_user',
+			'change_cart_item_qty',
+			'apply_coupon',
+			'set_customer_details_ajax',
+			'sellkit_checkout_modify_cart_by_bundle_products',
+			'perform_upsell_accept_button',
+			'perform_upsell_reject_button',
+			'call_funnel_popups',
+		];
+
+		if ( in_array( $sub_action, $allowed_sub_actions, true ) && method_exists( $this, $sub_action ) ) {
 			call_user_func( [ $this, $sub_action ] );
 			return;
 		}
@@ -262,7 +277,7 @@ class Helper {
 	 * @param int $funnel_id funnel step id.
 	 */
 	public function make_changes_after_cart_item_edit( $funnel_id ) {
-		if ( empty( $funnel_id ) ) {
+		if ( empty( $funnel_id ) || ! self::is_valid_checkout_step( $funnel_id ) ) {
 			return;
 		}
 
@@ -453,24 +468,31 @@ class Helper {
 	 */
 	public function auth_user() {
 		$email  = filter_input( INPUT_POST, 'email', FILTER_SANITIZE_EMAIL );
-		$pass   = filter_input( INPUT_POST, 'pass', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		// Passwords must be used verbatim; sanitizing would alter valid characters. Nonce is verified in ajax_handler().
+		$pass   = isset( $_POST['pass'] ) ? wp_unslash( $_POST['pass'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing
 		$verify = filter_var( $email, FILTER_VALIDATE_EMAIL );
 
-		if ( ! $verify || empty( $email ) || empty( $pass ) ) {
+		if ( ! $verify || empty( $email ) || ! is_string( $pass ) || '' === $pass ) {
 			wp_send_json_error( esc_html__( 'Email or password field is not valid.', 'sellkit' ) );
 		}
 
-		$result = wp_authenticate( $email, $pass );
+		// wp_signon() fires the standard login hooks (wp_login, 2FA / security plugins).
+		$result = wp_signon(
+			[
+				'user_login'    => $email,
+				'user_password' => $pass,
+				'remember'      => true,
+			],
+			is_ssl()
+		);
 
 		if ( is_wp_error( $result ) ) {
-			wp_send_json_error( $result->get_error_message() );
+			wp_send_json_error( esc_html__( 'The email or password you entered is incorrect.', 'sellkit' ) );
 		}
 
-		wp_clear_auth_cookie();
 		wp_set_current_user( $result->ID );
-		wp_set_auth_cookie( $result->ID );
 
-		wp_send_json_success( $result );
+		wp_send_json_success();
 	}
 
 	/**
@@ -480,7 +502,7 @@ class Helper {
 	 * @since 2.3.0
 	 */
 	public function validate_user_defined_fields() {
-		$post_id = filter_input( INPUT_POST, 'sellkit_current_page_id', FILTER_DEFAULT, FILTER_SANITIZE_NUMBER_INT );
+		$post_id = absint( filter_input( INPUT_POST, 'sellkit_current_page_id', FILTER_SANITIZE_NUMBER_INT ) );
 
 		$shipping_attributes = $this->get_inner_block_attributes( 'checkout', 'checkout-form-shipping', $post_id );
 		$billing_attributes  = $this->get_inner_block_attributes( 'checkout', 'checkout-billing-details', $post_id );
@@ -841,7 +863,8 @@ class Helper {
 		$checkout_id = get_queried_object_id();
 
 		if ( wp_doing_ajax() ) {
-			$checkout_id = $checkout_id_ajax;
+			// Request-supplied id: only a published checkout step may supply discount prices.
+			$checkout_id = self::is_valid_checkout_step( $checkout_id_ajax ) ? absint( $checkout_id_ajax ) : 0;
 		}
 
 		if ( empty( $checkout_id ) ) {
@@ -1155,13 +1178,15 @@ class Helper {
 		}
 
 		if ( ! empty( $sellkit_upsell_ids ) ) {
-			$upsell_ids = explode( ',', $sellkit_upsell_ids );
-			$list       = self::upsell_downsell_ids_of_funnel( $checkout_id );
+			$upsell_ids = array_map( 'absint', explode( ',', $sellkit_upsell_ids ) );
+			$list       = array_map( 'absint', self::upsell_downsell_ids_of_funnel( $checkout_id ) );
+			$accepted   = self::get_accepted_upsells();
 
 			if ( ! empty( $list ) ) {
 				foreach ( $upsell_ids as $id ) {
 
-					if ( in_array( $id, $list, true ) ) {
+					// Only apply offers of this funnel that the visitor actually accepted in this session.
+					if ( in_array( $id, $list, true ) && in_array( $id, $accepted, true ) ) {
 						self::applay_upsell_downsell_discount( $id );
 					}
 				}
@@ -1183,6 +1208,54 @@ class Helper {
 	}
 
 	/**
+	 * Get upsell/downsell step ids the visitor accepted in the current WooCommerce session.
+	 *
+	 * @since 2.8.1
+	 *
+	 * @return array
+	 */
+	private static function get_accepted_upsells() {
+		if ( ! function_exists( 'WC' ) || ! isset( WC()->session ) ) {
+			return [];
+		}
+
+		$accepted = WC()->session->get( 'sellkit_accepted_upsells', [] );
+
+		return is_array( $accepted ) ? array_map( 'absint', $accepted ) : [];
+	}
+
+	/**
+	 * Record an accepted upsell/downsell step id in the current WooCommerce session.
+	 *
+	 * @since 2.8.1
+	 *
+	 * @param int $upsell_id id of upsell or downsell step.
+	 */
+	private static function add_accepted_upsell( $upsell_id ) {
+		if ( ! function_exists( 'WC' ) || ! isset( WC()->session ) ) {
+			return;
+		}
+
+		$accepted   = self::get_accepted_upsells();
+		$accepted[] = absint( $upsell_id );
+
+		WC()->session->set( 'sellkit_accepted_upsells', array_values( array_unique( $accepted ) ) );
+	}
+
+	/**
+	 * Clear accepted upsells once the cart is emptied after a successful order (keeps them for a retried payment).
+	 *
+	 * @since 2.8.1
+	 */
+	public function clear_accepted_upsells() {
+		if ( ! function_exists( 'WC' ) || ! isset( WC()->session ) ) {
+			return;
+		}
+
+		WC()->session->__unset( 'sellkit_accepted_upsells' );
+	}
+
+	/**
 	 * Extract upsell and downsell ids from funnel.
 	 *
 	 * @since 2.8.0
@@ -1193,17 +1266,22 @@ class Helper {
 	 */
 	private static function upsell_downsell_ids_of_funnel( $checkout_id ) {
 		$step_data = get_post_meta( $checkout_id, 'step_data', true );
-		$funnel_id = $step_data['funnel_id'];
+		$funnel_id = is_array( $step_data ) && isset( $step_data['funnel_id'] ) ? $step_data['funnel_id'] : 0;
 		$nodes     = get_post_meta( $funnel_id, 'nodes', true );
 		$ids       = [];
+
+		if ( ! is_array( $nodes ) ) {
+			return $ids;
+		}
 
 		foreach ( $nodes as $node ) {
 			if ( isset( $node['type'] ) && in_array( $node['type']['key'], [ 'upsell', 'downsell' ], true ) ) {
 				$ids[] = $node['page_id'];
+				$ids[] = apply_filters( 'wpml_object_id', $node['page_id'], 'sellkit_step', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML's own filter.
 			}
 		}
 
-		return $ids;
+		return array_values( array_unique( array_map( 'absint', $ids ) ) );
 	}
 
 	/**
@@ -1266,15 +1344,8 @@ class Helper {
 		}
 
 		$checkout_id = absint( $checkout_id );
-		$step_data   = get_post_meta( $checkout_id, 'step_data', true );
 
-		if (
-			0 === $checkout_id ||
-			'publish' !== get_post_status( $checkout_id ) ||
-			! is_array( $step_data ) ||
-			! isset( $step_data['type']['key'] ) ||
-			'checkout' !== $step_data['type']['key']
-		) {
+		if ( ! self::is_valid_checkout_step( $checkout_id ) ) {
 			return 0;
 		}
 
@@ -1283,6 +1354,31 @@ class Helper {
 		}
 
 		return $checkout_id;
+	}
+
+	/**
+	 * Whether the given id is a published SellKit checkout step.
+	 *
+	 * @since 2.8.1
+	 *
+	 * @param int $checkout_id step id.
+	 *
+	 * @return bool
+	 */
+	private static function is_valid_checkout_step( $checkout_id ) {
+		$checkout_id = absint( $checkout_id );
+
+		if (
+			0 === $checkout_id ||
+			'sellkit_step' !== get_post_type( $checkout_id ) ||
+			'publish' !== get_post_status( $checkout_id )
+		) {
+			return false;
+		}
+
+		$step_data = get_post_meta( $checkout_id, 'step_data', true );
+
+		return is_array( $step_data ) && isset( $step_data['type']['key'] ) && 'checkout' === $step_data['type']['key'];
 	}
 
 	/**
@@ -1431,11 +1527,25 @@ class Helper {
 			wp_send_json_error( esc_html__( 'Empty Upsell ID.', 'sellkit' ) );
 		}
 
+		// The offer must be a published upsell/downsell step of the funnel this published checkout belongs to.
+		$checkout_id = self::is_valid_checkout_step( $checkout_id ) ? absint( $checkout_id ) : 0;
+		$upsell_id   = absint( $upsell_id );
+
+		if (
+			0 === $checkout_id ||
+			'publish' !== get_post_status( $upsell_id ) ||
+			! in_array( $upsell_id, array_map( 'absint', self::upsell_downsell_ids_of_funnel( $checkout_id ) ), true )
+		) {
+			wp_send_json_error( esc_html__( 'Invalid offer.', 'sellkit' ) );
+		}
+
 		$upsell_data = get_post_meta( $upsell_id, 'step_data', true );
 
 		if ( empty( $upsell_data ) ) {
 			wp_send_json_error( esc_html__( 'Empty Step Data.', 'sellkit' ) );
 		}
+
+		self::add_accepted_upsell( $upsell_id );
 
 		// Add product to cart.
 		$product_id = '';
@@ -2056,6 +2166,15 @@ class Helper {
 			return;
 		}
 
+		// Layout helpers require WP 5.9 / 6.0; on older versions skip layout styles.
+		if (
+			! function_exists( 'wp_get_global_settings' ) ||
+			! function_exists( 'wp_should_skip_block_supports_serialization' ) ||
+			! function_exists( 'wp_get_layout_style' )
+		) {
+			return $style_only ? '' : $block_content;
+		}
+
 		$block_gap             = wp_get_global_settings( [ 'spacing', 'blockGap' ] );
 		$has_block_gap_support = isset( $block_gap ) ? null !== $block_gap : false;
 		$default_block_layout  = _wp_array_get( $block_type->supports, [ '__experimentalLayout', 'default' ], [] );
@@ -2256,6 +2375,13 @@ class Helper {
 	 */
 	public function get_inner_block_attributes( $block_name, $inner_block_name, $post_id ) {
 		if ( empty( $post_id ) ) {
+			return;
+		}
+
+		$post_id = absint( $post_id );
+
+		// The id may come from the request: only read blocks of posts the visitor is allowed to see.
+		if ( ! sellkit_is_post_publicly_accessible( $post_id ) && ! current_user_can( 'read_post', $post_id ) ) {
 			return;
 		}
 

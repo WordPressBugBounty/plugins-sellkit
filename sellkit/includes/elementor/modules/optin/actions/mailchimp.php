@@ -50,7 +50,6 @@ class Sellkit_Elementor_Optin_Action_Mailchimp extends Sellkit_Elementor_Optin_A
 	protected function get_get_request_args() {
 		return [
 			'timeout'   => 100,
-			'sslverify' => false,
 			'headers'   => $this->get_headers(),
 		];
 	}

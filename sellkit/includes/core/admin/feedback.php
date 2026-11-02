@@ -42,6 +42,10 @@ class Feedback {
 			wp_send_json_error( __( 'Nonce is wrong.', 'sellkit' ) );
 		}
 
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to do this action.', 'sellkit' ), 403 );
+		}
+
 		$remote = wp_remote_post(
 			'https://my.getsellkit.com/wp-json/sellkit/v1/customer/feedback',
 			[

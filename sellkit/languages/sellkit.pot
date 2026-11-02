@@ -1,14 +1,14 @@
 # Copyright (c) 2026 SellKit.
 msgid ""
 msgstr ""
-"Project-Id-Version: SellKit - Funnel builder and checkout optimizer for WooCommerce to sell more, faster 2.8.0\n"
+"Project-Id-Version: SellKit - Funnel builder and checkout optimizer for WooCommerce to sell more, faster 2.8.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sellkit\n"
 "Last-Translator: Artbees Team <info@artbees.net>\n"
 "Language-Team: Artbees Team <info@artbees.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-06T02:51:34+00:00\n"
+"POT-Creation-Date: 2026-10-29T09:57:31+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: sellkit\n"
@@ -55,19 +55,37 @@ msgstr ""
 
 #: includes/admin/class-custom-tables.php:249
 #: includes/admin/class-custom-tables.php:336
-#: includes/admin/class-custom-tables.php:362
-#: includes/admin/funnel/importer/ajax-handler.php:64
-#: includes/admin/funnel/importer/ajax-handler.php:153
-#: includes/admin/funnel/importer/ajax-handler.php:215
-#: includes/core/admin/feedback.php:58
+#: includes/admin/class-custom-tables.php:383
+#: includes/admin/funnel/importer/ajax-handler.php:70
+#: includes/admin/funnel/importer/ajax-handler.php:159
+#: includes/admin/funnel/importer/ajax-handler.php:221
+#: includes/core/admin/feedback.php:62
 msgid "Something went wrong."
 msgstr ""
 
-#: includes/admin/class-custom-tables.php:422
+#: includes/admin/class-custom-tables.php:456
+#: includes/admin/class-notices.php:35
+#: includes/admin/class-notices.php:111
+#: includes/admin/class-posts.php:124
+#: includes/admin/class-posts.php:148
+#: includes/admin/class-posts.php:344
+#: includes/admin/class-posts.php:352
+#: includes/admin/components/class-list-table.php:68
+#: includes/admin/components/class-list-table.php:268
+#: includes/admin/components/class-list-table.php:276
+#: includes/admin/funnel/importer/ajax-handler.php:64
+#: includes/admin/notices/woocommerce-not-installed.php:122
+#: includes/core/admin/feedback.php:46
+#: includes/functions.php:438
+msgid "You are not allowed to do this action."
+msgstr ""
+
+#: includes/admin/class-custom-tables.php:469
 msgid "The details have been updated."
 msgstr ""
 
 #: includes/admin/class-global-checkout.php:55
+#: includes/global-checkout/class.php:341
 msgid "Invalid request."
 msgstr ""
 
@@ -83,42 +101,37 @@ msgstr ""
 msgid "Could not update status."
 msgstr ""
 
-#: includes/admin/class-notices.php:35
+#: includes/admin/class-notices.php:39
 msgid "The operation was successful."
 msgstr ""
 
-#: includes/admin/class-personalised-coupons.php:39
-#: includes/admin/class-posts.php:77
-#: includes/admin/class-posts.php:293
-#: includes/admin/funnel/importer/ajax-handler.php:179
+#: includes/admin/class-posts.php:130
+#: includes/admin/class-posts.php:366
+#: includes/admin/funnel/importer/ajax-handler.php:185
 msgid "something went wrong"
 msgstr ""
 
-#: includes/admin/class-personalised-coupons.php:45
-msgid "The new coupon was added"
-msgstr ""
-
-#: includes/admin/class-posts.php:80
+#: includes/admin/class-posts.php:133
 msgid "The process has been completed."
 msgstr ""
 
-#: includes/admin/class-posts.php:230
-#: includes/admin/class-posts.php:231
-#: includes/admin/class-posts.php:236
-#: includes/admin/class-posts.php:240
+#: includes/admin/class-posts.php:287
+#: includes/admin/class-posts.php:288
+#: includes/admin/class-posts.php:293
+#: includes/admin/class-posts.php:297
 msgid "Decision"
 msgstr ""
 
-#: includes/admin/class-posts.php:299
-#: includes/admin/settings/class-settings.php:78
+#: includes/admin/class-posts.php:372
+#: includes/admin/settings/class-settings.php:94
 msgid "The update process has been completed."
 msgstr ""
 
-#: includes/admin/class-posts.php:305
+#: includes/admin/class-posts.php:378
 msgid "The creation process has been completed."
 msgstr ""
 
-#: includes/admin/class-posts.php:429
+#: includes/admin/class-posts.php:509
 msgid "Post title should not be empty."
 msgstr ""
 
@@ -251,67 +264,82 @@ msgstr ""
 msgid "Opt-in"
 msgstr ""
 
-#: includes/admin/class-steps.php:174
-#: includes/admin/class-steps.php:225
+#: includes/admin/class-steps.php:179
+#: includes/admin/class-steps.php:230
 #: includes/admin/funnel/class.php:50
 msgid "Please install and activate WooCommerce."
 msgstr ""
 
-#: includes/admin/class-steps.php:229
+#: includes/admin/class-steps.php:234
 msgid "Please send some product ids"
 msgstr ""
 
-#: includes/admin/class-steps.php:420
+#: includes/admin/class-steps.php:425
 msgctxt "flow step general name"
 msgid "Steps"
 msgstr ""
 
-#: includes/admin/class-steps.php:421
+#: includes/admin/class-steps.php:426
 msgctxt "flow step singular name"
 msgid "Step"
 msgstr ""
 
-#: includes/admin/class-steps.php:422
+#: includes/admin/class-steps.php:427
 msgid "Search Steps"
 msgstr ""
 
-#: includes/admin/class-steps.php:423
+#: includes/admin/class-steps.php:428
 msgid "All Steps"
 msgstr ""
 
-#: includes/admin/class-steps.php:424
+#: includes/admin/class-steps.php:429
 msgid "Edit Step"
 msgstr ""
 
-#: includes/admin/class-steps.php:425
+#: includes/admin/class-steps.php:430
 #: assets/dist/admin/sellkit.js:280
 msgid "View Step"
 msgstr ""
 
-#: includes/admin/class-steps.php:426
-#: includes/admin/class-steps.php:428
+#: includes/admin/class-steps.php:431
+#: includes/admin/class-steps.php:433
 #: assets/dist/admin/sellkit.js:266
 msgid "Add New"
 msgstr ""
 
-#: includes/admin/class-steps.php:427
+#: includes/admin/class-steps.php:432
 msgid "Update Step"
 msgstr ""
 
-#: includes/admin/class-steps.php:429
+#: includes/admin/class-steps.php:434
 msgid "New Step Name"
 msgstr ""
 
+#: includes/admin/components/class-analytics.php:74
+#: includes/admin/components/class-analytics.php:91
+#: includes/admin/components/class-analytics.php:111
 #: includes/admin/components/class-analytics.php:121
+msgid "Invalid chart."
+msgstr ""
+
+#: includes/admin/components/class-analytics.php:148
 msgid "Forbidden."
 msgstr ""
 
-#: includes/admin/components/class-list-table.php:287
-#: includes/admin/components/class-list-table.php:335
+#: includes/admin/components/class-filters.php:57
+msgid "Invalid filter."
+msgstr ""
+
+#: includes/admin/components/class-list-table.php:263
+msgid "Invalid action."
+msgstr ""
+
+#: includes/admin/components/class-list-table.php:323
+#: includes/admin/components/class-list-table.php:371
 msgid "Clone"
 msgstr ""
 
-#: includes/admin/components/class-list-table.php:554
+#: includes/admin/components/class-list-table.php:590
 msgid "You can not import multiple funnels to the global checkout."
 msgstr ""
 
@@ -320,24 +348,25 @@ msgid "Product does not exist"
 msgstr ""
 
 #: includes/admin/funnel/importer/ajax-handler.php:58
-#: includes/admin/funnel/importer/ajax-handler.php:89
-#: includes/admin/funnel/importer/ajax-handler.php:116
-#: includes/admin/funnel/importer/ajax-handler.php:144
-#: includes/admin/funnel/importer/ajax-handler.php:169
+#: includes/admin/funnel/importer/ajax-handler.php:95
+#: includes/admin/funnel/importer/ajax-handler.php:122
+#: includes/admin/funnel/importer/ajax-handler.php:150
+#: includes/admin/funnel/importer/ajax-handler.php:175
 msgid "Invalid nonce."
 msgstr ""
 
-#: includes/admin/funnel/importer/ajax-handler.php:74
+#: includes/admin/funnel/importer/ajax-handler.php:80
 msgid "The data has been imported successfully."
 msgstr ""
 
-#: includes/admin/funnel/importer/ajax-handler.php:102
-#: includes/admin/funnel/importer/ajax-handler.php:129
-#: includes/funnel/steps/upsell.php:140
+#: includes/admin/funnel/importer/ajax-handler.php:108
+#: includes/admin/funnel/importer/ajax-handler.php:135
+#: includes/funnel/steps/upsell.php:117
+#: includes/funnel/steps/upsell.php:198
 msgid "Something went wrong"
 msgstr ""
 
-#: includes/admin/funnel/importer/ajax-handler.php:173
+#: includes/admin/funnel/importer/ajax-handler.php:179
 msgid "In order to iport a new global checkout,Please remove previous one."
 msgstr ""
 
@@ -494,9 +523,9 @@ msgstr ""
 msgid "Select a state…"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:304
-#: includes/block-editor/blocks/checkout/helper.php:1566
-#: includes/elementor/modules/checkout/classes/global-hooks.php:311
+#: includes/block-editor/blocks/checkout/helper.php:319
+#: includes/block-editor/blocks/checkout/helper.php:1676
+#: includes/elementor/modules/checkout/classes/global-hooks.php:387
 #: includes/elementor/modules/checkout/classes/helper.php:272
 #: includes/elementor/modules/checkout/classes/multi-step.php:283
 #: includes/elementor/modules/checkout/classes/multi-step.php:317
@@ -507,32 +536,42 @@ msgstr ""
 msgid "Shipping"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:460
-#: includes/elementor/modules/checkout/classes/global-hooks.php:509
+#: includes/block-editor/blocks/checkout/helper.php:476
+#: includes/elementor/modules/checkout/classes/global-hooks.php:586
 msgid "Email or password field is not valid."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:784
-#: includes/elementor/modules/checkout/classes/global-hooks.php:895
+#: includes/block-editor/blocks/checkout/helper.php:490
+#: includes/elementor/modules/checkout/classes/global-hooks.php:600
+msgid "The email or password you entered is incorrect."
+msgstr ""
+
+#: includes/block-editor/blocks/checkout/helper.php:806
+#: includes/elementor/modules/checkout/classes/global-hooks.php:988
 msgid "Oh do not be tricky."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1431
-#: includes/block-editor/blocks/checkout/helper.php:1522
-#: includes/elementor/modules/checkout/classes/global-hooks.php:1465
-#: includes/elementor/modules/checkout/classes/global-hooks.php:1556
+#: includes/block-editor/blocks/checkout/helper.php:1527
+#: includes/block-editor/blocks/checkout/helper.php:1632
+#: includes/elementor/modules/checkout/classes/global-hooks.php:1632
+#: includes/elementor/modules/checkout/classes/global-hooks.php:1737
 msgid "Empty Upsell ID."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1437
-#: includes/elementor/modules/checkout/classes/global-hooks.php:1471
+#: includes/block-editor/blocks/checkout/helper.php:1539
+#: includes/elementor/modules/checkout/classes/global-hooks.php:1644
+msgid "Invalid offer."
+msgstr ""
+
+#: includes/block-editor/blocks/checkout/helper.php:1545
+#: includes/elementor/modules/checkout/classes/global-hooks.php:1650
 msgid "Empty Step Data."
 msgstr ""
 
 #. translators: %s field_name.
-#: includes/block-editor/blocks/checkout/helper.php:1579
-#: includes/block-editor/blocks/checkout/helper.php:1598
-#: includes/block-editor/blocks/checkout/helper.php:1610
+#: includes/block-editor/blocks/checkout/helper.php:1689
+#: includes/block-editor/blocks/checkout/helper.php:1708
+#: includes/block-editor/blocks/checkout/helper.php:1720
 #: includes/elementor/modules/checkout/classes/helper.php:282
 #: includes/elementor/modules/checkout/classes/helper.php:317
 #: includes/elementor/modules/checkout/classes/helper.php:333
@@ -540,14 +579,14 @@ msgstr ""
 msgid "%s is a required field."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1585
+#: includes/block-editor/blocks/checkout/helper.php:1695
 #: includes/elementor/modules/checkout/classes/helper.php:307
 msgid "Billing"
 msgstr ""
 
 #. translators: %s field_name.
-#: includes/block-editor/blocks/checkout/helper.php:1610
-#: includes/block-editor/blocks/checkout/helper.php:1616
+#: includes/block-editor/blocks/checkout/helper.php:1720
+#: includes/block-editor/blocks/checkout/helper.php:1726
 #: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:53
 #: includes/block-editor/blocks/checkout/inner-blocks/contact-information/class.php:87
 #: includes/block-editor/blocks/checkout/templates/form-login.php:38
@@ -560,25 +599,25 @@ msgid "Email address"
 msgstr ""
 
 #. translators: %s field_name.
-#: includes/block-editor/blocks/checkout/helper.php:1616
+#: includes/block-editor/blocks/checkout/helper.php:1726
 #: includes/elementor/modules/checkout/classes/helper.php:339
 #, php-format
 msgid "%s is not a valid email."
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:1640
+#: includes/block-editor/blocks/checkout/helper.php:1750
 #: includes/elementor/modules/checkout/classes/local-hooks.php:1289
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: includes/block-editor/blocks/checkout/inner-blocks/payment/payment.js:98
 msgid "Add a note to your order"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2153
+#: includes/block-editor/blocks/checkout/helper.php:2272
 #: includes/elementor/modules/checkout/classes/local-hooks.php:852
 msgid "Your Products"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2157
+#: includes/block-editor/blocks/checkout/helper.php:2276
 #: includes/block-editor/blocks/checkout/inner-blocks/review-order/class.php:82
 #: includes/block-editor/blocks/checkout/templates/review-order.php:52
 #: includes/elementor/modules/checkout/classes/local-hooks.php:856
@@ -588,19 +627,19 @@ msgstr ""
 msgid "Product"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2158
+#: includes/block-editor/blocks/checkout/helper.php:2277
 #: includes/elementor/modules/checkout/classes/local-hooks.php:857
 #: assets/dist/admin/sellkit.js:280
 msgid "Quantity"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2159
+#: includes/block-editor/blocks/checkout/helper.php:2278
 #: includes/elementor/modules/checkout/classes/local-hooks.php:858
 #: assets/dist/admin/sellkit.js:280
 msgid "Price"
 msgstr ""
 
-#: includes/block-editor/blocks/checkout/helper.php:2318
+#: includes/block-editor/blocks/checkout/helper.php:2444
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: includes/block-editor/blocks/checkout/inner-blocks/billing-details/billing-details.js:272
 #: includes/block-editor/blocks/checkout/inner-blocks/form-shipping/form-shipping.js:268
@@ -609,7 +648,7 @@ msgid "(optional)"
 msgstr ""
 
 #. Translators: %d is the shipping package number.
-#: includes/block-editor/blocks/checkout/helper.php:2411
+#: includes/block-editor/blocks/checkout/helper.php:2537
 #: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:77
 #, php-format
 msgctxt "shipping packages"
@@ -617,7 +656,7 @@ msgid "Shipping %d"
 msgstr ""
 
 #. Translators: %d is the shipping package number.
-#: includes/block-editor/blocks/checkout/helper.php:2412
+#: includes/block-editor/blocks/checkout/helper.php:2538
 #: includes/block-editor/blocks/checkout/inner-blocks/cart-shipping/class.php:77
 msgctxt "shipping packages"
 msgid "Shipping"
@@ -911,7 +950,7 @@ msgstr ""
 #: includes/block-editor/blocks/optin/crm/getresponse.php:68
 #: includes/block-editor/blocks/optin/crm/mailchimp.php:84
 #: includes/block-editor/blocks/optin/crm/mailerlite.php:65
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:244
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:247
 #, php-format
 msgid "%1$s: Request error-%2$s -- %3$s"
 msgstr ""
@@ -923,7 +962,7 @@ msgstr ""
 #: includes/block-editor/blocks/optin/crm/getresponse.php:72
 #: includes/block-editor/blocks/optin/crm/mailchimp.php:88
 #: includes/block-editor/blocks/optin/crm/mailerlite.php:69
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:230
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:232
 msgid " (issued by endpoint)"
 msgstr ""
 
@@ -945,13 +984,13 @@ msgstr ""
 msgid "GetResponse error: Missing configuration."
 msgstr ""
 
-#: includes/block-editor/blocks/optin/crm/getresponse.php:101
-#: includes/elementor/modules/optin/actions/getresponse.php:232
+#: includes/block-editor/blocks/optin/crm/getresponse.php:100
+#: includes/elementor/modules/optin/actions/getresponse.php:230
 msgid "GetResponse: Contact already exists, but cannot retrieve its ID."
 msgstr ""
 
 #. translators: %s Error code
-#: includes/block-editor/blocks/optin/crm/getresponse.php:134
+#: includes/block-editor/blocks/optin/crm/getresponse.php:133
 #, php-format
 msgid "GetResponse: Error in request, code: %s"
 msgstr ""
@@ -981,12 +1020,12 @@ msgid "Webhook error: Missing configuration."
 msgstr ""
 
 #: includes/block-editor/blocks/optin/crm/webhook.php:53
-#: includes/elementor/modules/optin/actions/webhook.php:67
+#: includes/elementor/modules/optin/actions/webhook.php:68
 msgid "Webhook Action: Webhook Error."
 msgstr ""
 
 #: includes/block-editor/blocks/optin/crm/webhook.php:79
-#: includes/elementor/modules/optin/actions/webhook.php:88
+#: includes/elementor/modules/optin/actions/webhook.php:89
 msgid "No Label"
 msgstr ""
 
@@ -997,7 +1036,7 @@ msgstr ""
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:813
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:827
 #: includes/elementor/modules/checkout/widgets/style-controls.php:1138
-#: includes/elementor/modules/optin/actions/webhook.php:84
+#: includes/elementor/modules/optin/actions/webhook.php:85
 #: includes/elementor/modules/product-images/widgets/product-images.php:336
 msgid "No"
 msgstr ""
@@ -1009,38 +1048,38 @@ msgstr ""
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:812
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:826
 #: includes/elementor/modules/checkout/widgets/style-controls.php:1137
-#: includes/elementor/modules/optin/actions/webhook.php:84
+#: includes/elementor/modules/optin/actions/webhook.php:85
 #: includes/elementor/modules/product-images/widgets/product-images.php:335
 msgid "Yes"
 msgstr ""
 
-#: includes/block-editor/blocks/optin/helper.php:111
+#: includes/block-editor/blocks/optin/helper.php:119
 #: includes/elementor/modules/optin/actions/utils/ajax-handler.php:73
 msgid "Error: Nonce mismatch or expired. Please reload the page and retry."
 msgstr ""
 
-#: includes/block-editor/blocks/optin/helper.php:124
-#: includes/elementor/modules/optin/actions/utils/ajax-handler.php:92
+#: includes/block-editor/blocks/optin/helper.php:132
+#: includes/elementor/modules/optin/actions/utils/ajax-handler.php:102
 msgid "Opt-in widget should not be used in the sales page step."
 msgstr ""
 
-#: includes/block-editor/blocks/optin/helper.php:134
+#: includes/block-editor/blocks/optin/helper.php:142
 msgid "There is no field available to submit the opt-in form."
 msgstr ""
 
-#: includes/block-editor/blocks/optin/helper.php:168
+#: includes/block-editor/blocks/optin/helper.php:176
 #: includes/block-editor/blocks/optin/index.php:71
 #: includes/elementor/modules/optin/module.php:171
 msgid "The form was sent successfully!"
 msgstr ""
 
-#: includes/block-editor/blocks/optin/helper.php:169
+#: includes/block-editor/blocks/optin/helper.php:177
 #: includes/block-editor/blocks/optin/index.php:72
 #: includes/elementor/modules/optin/module.php:172
 msgid "Please check the errors."
 msgstr ""
 
-#: includes/block-editor/blocks/optin/helper.php:170
+#: includes/block-editor/blocks/optin/helper.php:178
 #: includes/block-editor/blocks/optin/index.php:73
 #: includes/elementor/modules/optin/fields/field-base.php:352
 #: includes/elementor/modules/optin/module.php:173
@@ -1052,59 +1091,59 @@ msgstr ""
 msgid "Required"
 msgstr ""
 
-#: includes/block-editor/blocks/optin/helper.php:231
-#: includes/elementor/modules/optin/actions/utils/ajax-handler.php:225
+#: includes/block-editor/blocks/optin/helper.php:239
+#: includes/elementor/modules/optin/actions/utils/ajax-handler.php:257
 msgid "There's something wrong. The form is not valid."
 msgstr ""
 
-#: includes/block-editor/blocks/optin/helper.php:248
+#: includes/block-editor/blocks/optin/helper.php:260
 msgid "Missing configuration."
 msgstr ""
 
-#: includes/block-editor/blocks/optin/helper.php:311
-#: includes/elementor/modules/optin/actions/download-redirect.php:73
+#: includes/block-editor/blocks/optin/helper.php:325
+#: includes/elementor/modules/optin/actions/download-redirect.php:75
 msgid "Download error: The file doesn't exist anymore."
 msgstr ""
 
-#: includes/block-editor/blocks/optin/helper.php:340
-#: includes/elementor/modules/optin/actions/download-redirect.php:93
+#: includes/block-editor/blocks/optin/helper.php:347
+#: includes/elementor/modules/optin/actions/download-redirect.php:88
 msgid "Download error: Invalid file URL."
 msgstr ""
 
-#: includes/block-editor/blocks/optin/helper.php:401
-#: includes/elementor/modules/optin/actions/download-redirect.php:145
+#: includes/block-editor/blocks/optin/helper.php:408
+#: includes/elementor/modules/optin/actions/download-redirect.php:140
 msgid "Internal server error: failed to find next funnel step."
 msgstr ""
 
-#: includes/block-editor/blocks/optin/helper.php:428
-#: includes/elementor/modules/optin/actions/download-redirect.php:170
+#: includes/block-editor/blocks/optin/helper.php:435
+#: includes/elementor/modules/optin/actions/download-redirect.php:165
 msgid "Redirect error: Invalid URL."
 msgstr ""
 
-#: includes/block-editor/blocks/optin/helper.php:595
+#: includes/block-editor/blocks/optin/helper.php:524
 msgid "Missing API URL."
 msgstr ""
 
-#: includes/block-editor/blocks/optin/helper.php:600
-#: includes/elementor/modules/optin/actions/activecampaign.php:93
-#: includes/elementor/modules/optin/actions/convertkit.php:70
-#: includes/elementor/modules/optin/actions/drip.php:75
-#: includes/elementor/modules/optin/actions/getresponse.php:94
-#: includes/elementor/modules/optin/actions/growmatik.php:91
-#: includes/elementor/modules/optin/actions/mailchimp.php:149
-#: includes/elementor/modules/optin/actions/mailerlite.php:90
+#: includes/block-editor/blocks/optin/helper.php:529
+#: includes/elementor/modules/optin/actions/activecampaign.php:92
+#: includes/elementor/modules/optin/actions/convertkit.php:69
+#: includes/elementor/modules/optin/actions/drip.php:74
+#: includes/elementor/modules/optin/actions/getresponse.php:93
+#: includes/elementor/modules/optin/actions/growmatik.php:90
+#: includes/elementor/modules/optin/actions/mailchimp.php:148
+#: includes/elementor/modules/optin/actions/mailerlite.php:89
 msgid "Missing API credentials."
 msgstr ""
 
 #. translators: 1: Action name 2: Field name
-#: includes/block-editor/blocks/optin/helper.php:617
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:476
+#: includes/block-editor/blocks/optin/helper.php:546
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:463
 #, php-format
 msgid "%1$s: %2$s is required by api endpoint, but the corresponding field is not made required in your form."
 msgstr ""
 
 #. translators: 1: Action name 2: Field name
-#: includes/block-editor/blocks/optin/helper.php:636
+#: includes/block-editor/blocks/optin/helper.php:565
 #, php-format
 msgid "%1$s: %2$s field is missing, please check the created form fields."
 msgstr ""
@@ -1288,19 +1327,19 @@ msgid "Number"
 msgstr ""
 
 #: includes/block-editor/class.php:653
-#: includes/block-editor/helper.php:129
-#: includes/block-editor/helper.php:163
-#: includes/block-editor/helper.php:246
-#: includes/block-editor/helper.php:304
-#: includes/block-editor/helper.php:413
-#: includes/block-editor/helper.php:471
-#: includes/elementor/modules/optin/actions/activecampaign.php:169
-#: includes/elementor/modules/optin/actions/convertkit.php:145
-#: includes/elementor/modules/optin/actions/drip.php:148
-#: includes/elementor/modules/optin/actions/getresponse.php:168
-#: includes/elementor/modules/optin/actions/growmatik.php:169
-#: includes/elementor/modules/optin/actions/mailchimp.php:246
-#: includes/elementor/modules/optin/actions/mailerlite.php:148
+#: includes/block-editor/helper.php:128
+#: includes/block-editor/helper.php:162
+#: includes/block-editor/helper.php:245
+#: includes/block-editor/helper.php:303
+#: includes/block-editor/helper.php:412
+#: includes/block-editor/helper.php:470
+#: includes/elementor/modules/optin/actions/activecampaign.php:168
+#: includes/elementor/modules/optin/actions/convertkit.php:144
+#: includes/elementor/modules/optin/actions/drip.php:147
+#: includes/elementor/modules/optin/actions/getresponse.php:167
+#: includes/elementor/modules/optin/actions/growmatik.php:168
+#: includes/elementor/modules/optin/actions/mailchimp.php:245
+#: includes/elementor/modules/optin/actions/mailerlite.php:147
 #: includes/elementor/modules/optin/controls/tab-content.php:61
 #: includes/elementor/modules/optin/module.php:66
 #: assets/dist/admin/sellkit.js:280
@@ -1373,166 +1412,166 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: includes/block-editor/helper.php:73
+#: includes/block-editor/helper.php:72
 msgid "HTTP request failed"
 msgstr ""
 
-#: includes/block-editor/helper.php:87
+#: includes/block-editor/helper.php:86
 msgid "Error parsing JSON response"
 msgstr ""
 
-#: includes/block-editor/helper.php:109
+#: includes/block-editor/helper.php:108
 msgid "API key or URL is missing"
 msgstr ""
 
-#: includes/block-editor/helper.php:125
+#: includes/block-editor/helper.php:124
 msgid "Failed to fetch data from ActiveCampaign API"
 msgstr ""
 
-#: includes/block-editor/helper.php:130
-#: includes/block-editor/helper.php:164
-#: includes/block-editor/helper.php:247
+#: includes/block-editor/helper.php:129
+#: includes/block-editor/helper.php:163
+#: includes/block-editor/helper.php:246
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:566
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:876
-#: includes/elementor/modules/optin/actions/activecampaign.php:172
-#: includes/elementor/modules/optin/actions/convertkit.php:148
-#: includes/elementor/modules/optin/actions/drip.php:151
-#: includes/elementor/modules/optin/actions/growmatik.php:172
+#: includes/elementor/modules/optin/actions/activecampaign.php:171
+#: includes/elementor/modules/optin/actions/convertkit.php:147
+#: includes/elementor/modules/optin/actions/drip.php:150
+#: includes/elementor/modules/optin/actions/growmatik.php:171
 #: assets/dist/admin/sellkit.js:280
 msgid "First Name"
 msgstr ""
 
-#: includes/block-editor/helper.php:131
-#: includes/block-editor/helper.php:248
+#: includes/block-editor/helper.php:130
+#: includes/block-editor/helper.php:247
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:573
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:883
-#: includes/elementor/modules/optin/actions/activecampaign.php:173
-#: includes/elementor/modules/optin/actions/drip.php:152
-#: includes/elementor/modules/optin/actions/growmatik.php:173
+#: includes/elementor/modules/optin/actions/activecampaign.php:172
+#: includes/elementor/modules/optin/actions/drip.php:151
+#: includes/elementor/modules/optin/actions/growmatik.php:172
 #: assets/dist/admin/sellkit.js:280
 msgid "Last Name"
 msgstr ""
 
-#: includes/block-editor/helper.php:132
-#: includes/block-editor/helper.php:255
-#: includes/elementor/modules/optin/actions/activecampaign.php:174
-#: includes/elementor/modules/optin/actions/drip.php:159
-#: includes/elementor/modules/optin/actions/growmatik.php:177
+#: includes/block-editor/helper.php:131
+#: includes/block-editor/helper.php:254
+#: includes/elementor/modules/optin/actions/activecampaign.php:173
+#: includes/elementor/modules/optin/actions/drip.php:158
+#: includes/elementor/modules/optin/actions/growmatik.php:176
 msgid "Phone"
 msgstr ""
 
-#: includes/block-editor/helper.php:148
-#: includes/block-editor/helper.php:186
-#: includes/block-editor/helper.php:224
-#: includes/block-editor/helper.php:283
-#: includes/block-editor/helper.php:329
-#: includes/block-editor/helper.php:453
+#: includes/block-editor/helper.php:147
+#: includes/block-editor/helper.php:185
+#: includes/block-editor/helper.php:223
+#: includes/block-editor/helper.php:282
+#: includes/block-editor/helper.php:328
+#: includes/block-editor/helper.php:452
 msgid "API key is missing"
 msgstr ""
 
-#: includes/block-editor/helper.php:159
+#: includes/block-editor/helper.php:158
 msgid "Failed to fetch data from ConvertKit API"
 msgstr ""
 
-#: includes/block-editor/helper.php:228
+#: includes/block-editor/helper.php:227
 msgid "Account ID is missing"
 msgstr ""
 
-#: includes/block-editor/helper.php:242
+#: includes/block-editor/helper.php:241
 msgid "Failed to fetch data from Drip API"
+msgstr ""
+
+#: includes/block-editor/helper.php:248
+#: includes/elementor/modules/optin/actions/drip.php:152
+#: includes/elementor/modules/optin/actions/growmatik.php:175
+msgid "Address 1"
 msgstr ""
 
 #: includes/block-editor/helper.php:249
 #: includes/elementor/modules/optin/actions/drip.php:153
-#: includes/elementor/modules/optin/actions/growmatik.php:176
-msgid "Address 1"
-msgstr ""
-
-#: includes/block-editor/helper.php:250
-#: includes/elementor/modules/optin/actions/drip.php:154
 msgid "Address 2"
 msgstr ""
 
-#: includes/block-editor/helper.php:251
+#: includes/block-editor/helper.php:250
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:615
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:925
-#: includes/elementor/modules/optin/actions/drip.php:155
-#: includes/elementor/modules/optin/actions/growmatik.php:180
+#: includes/elementor/modules/optin/actions/drip.php:154
+#: includes/elementor/modules/optin/actions/growmatik.php:179
 msgid "City"
 msgstr ""
 
-#: includes/block-editor/helper.php:252
+#: includes/block-editor/helper.php:251
 #: includes/elementor/modules/checkout/fields/select.php:228
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:601
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:911
-#: includes/elementor/modules/optin/actions/drip.php:156
+#: includes/elementor/modules/optin/actions/drip.php:155
 #: assets/dist/blocks/checkout-external.js:1
 #: assets/dist/js/elementor-init.js:819
 #: assets/dist/js/elementor-init.js:887
 msgid "State"
 msgstr ""
 
-#: includes/block-editor/helper.php:253
+#: includes/block-editor/helper.php:252
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:594
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:904
-#: includes/elementor/modules/optin/actions/drip.php:157
-#: includes/elementor/modules/optin/actions/growmatik.php:178
+#: includes/elementor/modules/optin/actions/drip.php:156
+#: includes/elementor/modules/optin/actions/growmatik.php:177
 #: assets/dist/admin/sellkit.js:280
 msgid "Country"
 msgstr ""
 
-#: includes/block-editor/helper.php:254
-#: includes/elementor/modules/optin/actions/drip.php:158
+#: includes/block-editor/helper.php:253
+#: includes/elementor/modules/optin/actions/drip.php:157
 msgid "Zip"
+msgstr ""
+
+#: includes/block-editor/helper.php:255
+#: includes/elementor/modules/optin/actions/drip.php:159
+msgid "SMS Number"
 msgstr ""
 
 #: includes/block-editor/helper.php:256
 #: includes/elementor/modules/optin/actions/drip.php:160
-msgid "SMS Number"
+msgid "SMS Consent"
 msgstr ""
 
 #: includes/block-editor/helper.php:257
 #: includes/elementor/modules/optin/actions/drip.php:161
-msgid "SMS Consent"
-msgstr ""
-
-#: includes/block-editor/helper.php:258
-#: includes/elementor/modules/optin/actions/drip.php:162
 msgid "Timezone"
 msgstr ""
 
-#: includes/block-editor/helper.php:300
+#: includes/block-editor/helper.php:299
 msgid "Failed to fetch data from GetResponse API"
 msgstr ""
 
-#: includes/block-editor/helper.php:305
-#: includes/block-editor/helper.php:472
-#: includes/elementor/modules/optin/actions/getresponse.php:171
-#: includes/elementor/modules/optin/actions/mailerlite.php:151
+#: includes/block-editor/helper.php:304
+#: includes/block-editor/helper.php:471
+#: includes/elementor/modules/optin/actions/getresponse.php:170
+#: includes/elementor/modules/optin/actions/mailerlite.php:150
 #: includes/elementor/modules/optin/controls/tab-content.php:56
 #: assets/dist/admin/sellkit.js:280
 msgid "Name"
 msgstr ""
 
-#: includes/block-editor/helper.php:335
-#: includes/block-editor/helper.php:389
+#: includes/block-editor/helper.php:334
+#: includes/block-editor/helper.php:388
 msgid "Invalid API key format"
 msgstr ""
 
-#: includes/block-editor/helper.php:383
+#: includes/block-editor/helper.php:382
 msgid "API key or Audience ID is missing"
 msgstr ""
 
-#: includes/block-editor/helper.php:409
+#: includes/block-editor/helper.php:408
 msgid "Failed to fetch data from Mailchimp API"
 msgstr ""
 
-#: includes/block-editor/helper.php:414
-#: includes/elementor/modules/optin/actions/mailchimp.php:249
+#: includes/block-editor/helper.php:413
+#: includes/elementor/modules/optin/actions/mailchimp.php:248
 msgid "Full Name"
 msgstr ""
 
-#: includes/block-editor/helper.php:467
+#: includes/block-editor/helper.php:466
 msgid "Failed to fetch data from MailerLite API"
 msgstr ""
 
@@ -1800,7 +1839,7 @@ msgstr ""
 msgid "Visitor's Local Language"
 msgstr ""
 
-#: includes/contact-segmentation/contact-data.php:165
+#: includes/contact-segmentation/contact-data.php:191
 #: includes/contact-segmentation/rfm/class.php:82
 #: includes/contact-segmentation/rfm/updater.php:66
 msgid "Somethings went wrong"
@@ -1890,61 +1929,61 @@ msgstr ""
 msgid "Nonce is wrong."
 msgstr ""
 
-#: includes/core/admin/feedback.php:61
+#: includes/core/admin/feedback.php:65
 msgid "Deactivation feedback is sent."
 msgstr ""
 
-#: includes/core/admin/feedback.php:115
+#: includes/core/admin/feedback.php:119
 msgid "It is a temporary deactivation, I am just debugging an issue"
 msgstr ""
 
-#: includes/core/admin/feedback.php:118
+#: includes/core/admin/feedback.php:122
 msgid "I need more feature"
 msgstr ""
 
-#: includes/core/admin/feedback.php:121
+#: includes/core/admin/feedback.php:125
 msgid "I no longer need it"
 msgstr ""
 
-#: includes/core/admin/feedback.php:124
+#: includes/core/admin/feedback.php:128
 msgid "Customer service was less than expected"
 msgstr ""
 
-#: includes/core/admin/feedback.php:127
+#: includes/core/admin/feedback.php:131
 msgid "Ease of use was less than expected"
 msgstr ""
 
-#: includes/core/admin/feedback.php:130
+#: includes/core/admin/feedback.php:134
 msgid "Quality was less than expected"
 msgstr ""
 
-#: includes/core/admin/feedback.php:133
+#: includes/core/admin/feedback.php:137
 msgid "Lack of integration with my tools"
 msgstr ""
 
-#: includes/core/admin/feedback.php:136
+#: includes/core/admin/feedback.php:140
 msgid "Other reason"
 msgstr ""
 
-#: includes/core/admin/feedback.php:137
+#: includes/core/admin/feedback.php:141
 msgid "Please share the reason"
 msgstr ""
 
-#: includes/core/admin/feedback.php:145
+#: includes/core/admin/feedback.php:149
 msgid "Sellkit Feedback"
 msgstr ""
 
-#: includes/core/admin/feedback.php:153
+#: includes/core/admin/feedback.php:157
 msgid "May we have a little info about why you are deactivating?"
 msgstr ""
 
-#: includes/core/admin/feedback.php:169
+#: includes/core/admin/feedback.php:173
 #: assets/dist/admin/sellkit.js:266
 #: assets/dist/admin/sellkit.js:280
 msgid "Discard"
 msgstr ""
 
-#: includes/core/admin/feedback.php:172
+#: includes/core/admin/feedback.php:176
 msgid "Submit & Deactivate"
 msgstr ""
 
@@ -1996,7 +2035,7 @@ msgstr ""
 msgid "Coupon Expiry Date"
 msgstr ""
 
-#: includes/dynamic-keywords/keywords/coupon-value.php:19
+#: includes/dynamic-keywords/keywords/coupon-value.php:27
 msgid "Coupon Value"
 msgstr ""
 
@@ -2083,26 +2122,38 @@ msgstr ""
 
 #: includes/elementor/class.php:79
 #: includes/funnel/homepage.php:141
-#: sellkit.php:435
-#: sellkit.php:487
+#: sellkit.php:440
+#: sellkit.php:492
 msgid "Sellkit"
 msgstr ""
 
-#: includes/elementor/controls/file-uploader.php:106
+#: includes/elementor/controls/file-uploader.php:105
 msgid "Upload File"
 msgstr ""
 
-#: includes/elementor/controls/file-uploader.php:109
+#: includes/elementor/controls/file-uploader.php:108
 msgid "Uploading..."
 msgstr ""
 
-#: includes/elementor/controls/file-uploader.php:126
+#: includes/elementor/controls/file-uploader.php:125
 msgid "Maximum allowed file size is"
 msgstr ""
 
 #. translators: here "MB" means megabytes
-#: includes/elementor/controls/file-uploader.php:130
+#: includes/elementor/controls/file-uploader.php:129
 msgid "MB"
+msgstr ""
+
+#: includes/elementor/controls/file-uploader.php:148
+msgid "You are not allowed to upload files."
+msgstr ""
+
+#: includes/elementor/controls/file-uploader.php:152
+msgid "No file was uploaded."
+msgstr ""
+
+#: includes/elementor/controls/file-uploader.php:177
+msgid "Upload failed."
 msgstr ""
 
 #: includes/elementor/modules/accept-reject-button/widgets/accept-reject-button.php:20
@@ -2432,11 +2483,11 @@ msgstr ""
 msgid "Padding"
 msgstr ""
 
-#: includes/elementor/modules/checkout/classes/global-hooks.php:823
+#: includes/elementor/modules/checkout/classes/global-hooks.php:906
 msgid "Not valid inputs"
 msgstr ""
 
-#: includes/elementor/modules/checkout/classes/global-hooks.php:829
+#: includes/elementor/modules/checkout/classes/global-hooks.php:912
 msgid "Server error."
 msgstr ""
 
@@ -2908,7 +2959,7 @@ msgstr ""
 
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:386
 #: includes/elementor/modules/checkout/widgets/settings-controls.php:696
-#: includes/elementor/modules/optin/actions/activecampaign.php:60
+#: includes/elementor/modules/optin/actions/activecampaign.php:59
 #: assets/dist/blocks/optin.js:14
 #: includes/block-editor/blocks/optin/settings/crm/activeCampaign.js:77
 msgid "List"
@@ -3138,7 +3189,7 @@ msgid "Create a {{website}} account"
 msgstr ""
 
 #: includes/elementor/modules/checkout/widgets/style-controls.php:26
-#: includes/elementor/modules/optin/actions/convertkit.php:53
+#: includes/elementor/modules/optin/actions/convertkit.php:52
 #: assets/dist/blocks/optin.js:14
 #: includes/block-editor/blocks/optin/settings/crm/convertKit.js:77
 msgid "Form"
@@ -3324,7 +3375,7 @@ msgid "Return Link"
 msgstr ""
 
 #: includes/elementor/modules/checkout/widgets/style-controls.php:925
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:379
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:366
 #: includes/elementor/modules/optin/controls/tab-style.php:117
 msgid "Field"
 msgstr ""
@@ -3423,12 +3474,12 @@ msgstr ""
 msgid "ActiveCampaign"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/activecampaign.php:68
+#: includes/elementor/modules/optin/actions/activecampaign.php:67
 msgid "Custom API URL"
 msgstr ""
 
 #. translators: Action name
-#: includes/elementor/modules/optin/actions/activecampaign.php:73
+#: includes/elementor/modules/optin/actions/activecampaign.php:72
 #, php-format
 msgid "Enter your %s API URL for only this form."
 msgstr ""
@@ -3449,7 +3500,7 @@ msgstr ""
 msgid "Drip"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/drip.php:58
+#: includes/elementor/modules/optin/actions/drip.php:57
 msgid "Account"
 msgstr ""
 
@@ -3461,11 +3512,11 @@ msgstr ""
 msgid "GetResponse"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/getresponse.php:58
+#: includes/elementor/modules/optin/actions/getresponse.php:57
 msgid "Campaign"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/getresponse.php:64
+#: includes/elementor/modules/optin/actions/getresponse.php:63
 #: assets/dist/blocks/optin.js:14
 #: includes/block-editor/blocks/optin/settings/crm/getResponse.js:107
 msgid "Day Of Cycle"
@@ -3477,37 +3528,37 @@ msgstr ""
 msgid "ConvesioConvert"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/growmatik.php:60
+#: includes/elementor/modules/optin/actions/growmatik.php:59
 msgid "Site"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/growmatik.php:68
+#: includes/elementor/modules/optin/actions/growmatik.php:67
 msgid "Custom API Secret"
 msgstr ""
 
 #. translators: Action name
-#: includes/elementor/modules/optin/actions/growmatik.php:71
+#: includes/elementor/modules/optin/actions/growmatik.php:70
 #, php-format
 msgid "Enter your %s API Secret for only this form."
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/growmatik.php:174
+#: includes/elementor/modules/optin/actions/growmatik.php:173
 msgid "User Name"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/growmatik.php:175
+#: includes/elementor/modules/optin/actions/growmatik.php:174
 msgid "Gender"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/growmatik.php:179
+#: includes/elementor/modules/optin/actions/growmatik.php:178
 msgid "Region"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/growmatik.php:181
+#: includes/elementor/modules/optin/actions/growmatik.php:180
 msgid "EU Consent"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/growmatik.php:182
+#: includes/elementor/modules/optin/actions/growmatik.php:181
 msgid "Marketing Email Consent"
 msgstr ""
 
@@ -3519,28 +3570,28 @@ msgstr ""
 msgid "MailChimp"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/mailchimp.php:94
+#: includes/elementor/modules/optin/actions/mailchimp.php:93
 #: assets/dist/blocks/optin.js:14
 #: includes/block-editor/blocks/optin/settings/crm/mailChimp.js:114
 msgid "Audience"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/mailchimp.php:99
+#: includes/elementor/modules/optin/actions/mailchimp.php:98
 #: assets/dist/blocks/optin.js:14
 #: includes/block-editor/blocks/optin/settings/crm/mailChimp.js:142
 msgid "Groups"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/mailchimp.php:119
-#: includes/elementor/modules/optin/actions/mailerlite.php:62
+#: includes/elementor/modules/optin/actions/mailchimp.php:118
+#: includes/elementor/modules/optin/actions/mailerlite.php:61
 #: assets/dist/blocks/optin.js:14
 #: includes/block-editor/blocks/optin/settings/crm/mailChimp.js:178
 #: includes/block-editor/blocks/optin/settings/crm/mailerLite.js:114
 msgid "Double Opt-In"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/mailchimp.php:121
-#: includes/elementor/modules/optin/actions/mailerlite.php:64
+#: includes/elementor/modules/optin/actions/mailchimp.php:120
+#: includes/elementor/modules/optin/actions/mailerlite.php:63
 #: assets/dist/blocks/optin.js:14
 #: includes/block-editor/blocks/optin/settings/crm/mailChimp.js:179
 #: includes/block-editor/blocks/optin/settings/crm/mailerLite.js:115
@@ -3555,47 +3606,47 @@ msgstr ""
 msgid "MailerLite"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/mailerlite.php:57
+#: includes/elementor/modules/optin/actions/mailerlite.php:56
 #: assets/dist/blocks/optin.js:14
 #: includes/block-editor/blocks/optin/settings/crm/mailerLite.js:74
 msgid "Group"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:302
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:289
 msgid "API key"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:307
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:294
 #: includes/elementor/modules/order-details/widgets/order-details.php:87
-#: includes/global-checkout/class.php:367
+#: includes/global-checkout/class.php:374
 msgid "Default"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:308
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:295
 msgid "Custom"
 msgstr ""
 
 #. translators: 1: html tag, 2: Action name, 3: html tags, 4: html tags
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:315
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:302
 #, php-format
 msgid "%1$sSet your %2$s API key in %3$s Sellkit Settings %4$s."
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:332
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:319
 msgid "Custom API Key"
 msgstr ""
 
 #. translators: Action name
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:336
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:323
 #, php-format
 msgid "Enter your %s API key for only this form."
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:392
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:379
 msgid "Form Field"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:408
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:395
 #: assets/dist/blocks/optin.js:14
 #: includes/block-editor/blocks/optin/settings/crm/activeCampaign.js:107
 #: includes/block-editor/blocks/optin/settings/crm/convertKit.js:105
@@ -3606,7 +3657,7 @@ msgstr ""
 msgid "Field Mapping"
 msgstr ""
 
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:437
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:424
 #: assets/dist/blocks/optin.js:14
 #: includes/block-editor/blocks/optin/settings/crm/activeCampaign.js:95
 #: includes/block-editor/blocks/optin/settings/crm/convertKit.js:94
@@ -3617,19 +3668,19 @@ msgid "Tags"
 msgstr ""
 
 #. translators: %s: html tag
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:441
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:428
 #, php-format
 msgid "Tags %s"
 msgstr ""
 
 #. translators: 1: Action name 2: Field name
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:494
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:481
 #, php-format
 msgid "%1$s: %2$s is required by api endpoint, but it is not mapped to any field in your form."
 msgstr ""
 
 #. translators: 1: Action name 2: List name
-#: includes/elementor/modules/optin/actions/utils/crm-trait.php:512
+#: includes/elementor/modules/optin/actions/utils/crm-trait.php:499
 #, php-format
 msgid "%1$s: Invalid %2$s is selected."
 msgstr ""
@@ -3690,8 +3741,8 @@ msgstr ""
 #: includes/elementor/modules/optin/controls/tab-content.php:137
 #: includes/elementor/modules/order-cart-details/widgets/order-cart-details.php:320
 #: includes/elementor/modules/order-details/widgets/order-details.php:126
-#: sellkit.php:487
-#: sellkit.php:488
+#: sellkit.php:492
+#: sellkit.php:493
 #: assets/dist/admin/sellkit.js:280
 #: assets/dist/blocks/checkout/inner-blocks.js:14
 #: assets/dist/blocks/optin.js:14
@@ -4252,20 +4303,20 @@ msgstr ""
 msgid "HTML Tag"
 msgstr ""
 
-#: includes/funnel/class.php:394
+#: includes/funnel/class.php:443
 msgid "Sellkit Upsell"
 msgstr ""
 
-#: includes/funnel/class.php:413
+#: includes/funnel/class.php:462
 msgid "SellKit Parent Order"
 msgstr ""
 
-#: includes/funnel/class.php:423
+#: includes/funnel/class.php:472
 msgid "SellKit Upsell Order"
 msgstr ""
 
 #: includes/funnel/steps.php:71
-#: includes/funnel/steps.php:84
+#: includes/funnel/steps.php:91
 msgid "There is nothing to view here."
 msgstr ""
 
@@ -4273,26 +4324,47 @@ msgstr ""
 msgid "Each upsell needs a main order."
 msgstr ""
 
-#: includes/global-checkout/class.php:407
-#: includes/global-checkout/class.php:430
-#: includes/global-checkout/class.php:434
+#: includes/funnel/steps/upsell.php:57
+#: includes/funnel/steps/upsell.php:91
+msgid "Invalid order."
+msgstr ""
+
+#: includes/funnel/steps/upsell.php:70
+msgid "Invalid funnel step."
+msgstr ""
+
+#: includes/funnel/steps/upsell.php:103
+msgid "This offer has already been accepted."
+msgstr ""
+
+#: includes/funnel/steps/upsell.php:111
+msgid "Payment method is not available."
+msgstr ""
+
+#: includes/global-checkout/class.php:328
+msgid "You do not have access to this section."
+msgstr ""
+
+#: includes/global-checkout/class.php:414
+#: includes/global-checkout/class.php:437
+#: includes/global-checkout/class.php:441
 #: assets/dist/admin/sellkit.js:280
 msgid "Search..."
 msgstr ""
 
-#: sellkit.php:438
+#: sellkit.php:443
 #: assets/dist/admin/sellkit.js:266
 #: assets/dist/admin/sellkit.js:280
 msgid "Dashboard"
 msgstr ""
 
-#: sellkit.php:439
+#: sellkit.php:444
 #: assets/dist/admin/sellkit.js:266
 #: assets/dist/admin/sellkit.js:280
 msgid "Funnels"
 msgstr ""
 
-#: sellkit.php:440
+#: sellkit.php:445
 #: assets/dist/admin/sellkit.js:280
 msgid "Global Checkout"
 msgstr ""

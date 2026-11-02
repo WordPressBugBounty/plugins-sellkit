@@ -80,7 +80,7 @@ class Sellkit_Admin_Steps {
 		}
 
 		foreach ( $nodes[0] as $node ) {
-			if ( isset( $node['page_id'] ) ) {
+			if ( isset( $node['page_id'] ) && self::SELLKIT_STEP_POST_TYPE === get_post_type( $node['page_id'] ) ) {
 				wp_delete_post( $node['page_id'] );
 			}
 		}
@@ -116,6 +116,11 @@ class Sellkit_Admin_Steps {
 			$step['funnel_id'] = $funnel_id;
 			$step['number']    = $step_number;
 
+			// Only SellKit step posts can hold step data.
+			if ( array_key_exists( 'page_id', $step ) && self::SELLKIT_STEP_POST_TYPE !== get_post_type( $step['page_id'] ) ) {
+				continue;
+			}
+
 			if ( array_key_exists( 'page_id', $step ) ) {
 				$translated_step = apply_filters( 'wpml_object_id', $step['page_id'], 'sellkit_step', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML API.
 
@@ -134,7 +139,7 @@ class Sellkit_Admin_Steps {
 	 * @since 1.1.0
 	 */
 	public static function get_coupons() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$input_value = sellkit_htmlspecialchars( INPUT_GET, 'input_value' );
 
@@ -166,7 +171,7 @@ class Sellkit_Admin_Steps {
 	 * @since 1.1.0
 	 */
 	public static function get_products() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$input_value = sellkit_htmlspecialchars( INPUT_GET, 'input_value' );
 
@@ -216,7 +221,7 @@ class Sellkit_Admin_Steps {
 	 * @since 1.1.0
 	 */
 	public static function get_products_data() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$filtered_products = [];
 		$products_id       = filter_input( INPUT_GET, 'products_id', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
@@ -459,12 +464,12 @@ class Sellkit_Admin_Steps {
 	 */
 	public function edit_step_name_and_slug( $funnel_id ) {
 		$sub_action_data = sellkit_post( 'sub_action_data' );
-		$title           = ! empty( $sub_action_data['title'] ) ? $sub_action_data['title'] : '';
-		$slug            = ! empty( $sub_action_data['slug'] ) ? $sub_action_data['slug'] : sanitize_title( $title );
-		$page_id         = ! empty( $sub_action_data['page_id'] ) ? $sub_action_data['page_id'] : '';
-		$selected_step   = $sub_action_data['selected_step'];
+		$title           = ! empty( $sub_action_data['title'] ) ? sanitize_text_field( $sub_action_data['title'] ) : '';
+		$slug            = ! empty( $sub_action_data['slug'] ) ? sanitize_title( $sub_action_data['slug'] ) : sanitize_title( $title );
+		$page_id         = ! empty( $sub_action_data['page_id'] ) ? absint( $sub_action_data['page_id'] ) : 0;
+		$selected_step   = isset( $sub_action_data['selected_step'] ) ? sanitize_text_field( $sub_action_data['selected_step'] ) : '';
 
-		if ( empty( $page_id ) ) {
+		if ( empty( $page_id ) || ! self::is_funnel_step( $page_id, $funnel_id, 'edit_post' ) ) {
 			return;
 		}
 
@@ -488,15 +493,52 @@ class Sellkit_Admin_Steps {
 	 * Delete step page id.
 	 *
 	 * @since 1.1.0
+	 * @param int $funnel_id Funnel ID.
 	 */
-	public function delete_related_page() {
+	public function delete_related_page( $funnel_id = 0 ) {
 		$sub_action_data = sellkit_post( 'sub_action_data' );
 
 		if ( empty( $sub_action_data['page_id'] ) ) {
 			return;
 		}
 
-		wp_delete_post( $sub_action_data['page_id'], true );
+		$page_id = absint( $sub_action_data['page_id'] );
+
+		if ( ! self::is_funnel_step( $page_id, $funnel_id, 'delete_post' ) ) {
+			return;
+		}
+
+		wp_delete_post( $page_id, true );
+	}
+
+	/**
+	 * Checks the post is a SellKit step of the given funnel and the current user has the capability on it.
+	 *
+	 * @since 2.8.1
+	 * @param int    $page_id    Step post ID.
+	 * @param int    $funnel_id  Funnel ID.
+	 * @param string $capability Meta capability, e.g. edit_post or delete_post.
+	 * @return bool
+	 */
+	private static function is_funnel_step( $page_id, $funnel_id, $capability ) {
+		$page_id = absint( $page_id );
+
+		if (
+			empty( $page_id ) ||
+			self::SELLKIT_STEP_POST_TYPE !== get_post_type( $page_id ) ||
+			! current_user_can( $capability, $page_id )
+		) {
+			return false;
+		}
+
+		$step_data = get_post_meta( $page_id, 'step_data', true );
+
+		// The step must belong to the funnel being saved. Legacy steps without a funnel ID are allowed.
+		if ( is_array( $step_data ) && ! empty( $step_data['funnel_id'] ) && absint( $step_data['funnel_id'] ) !== absint( $funnel_id ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

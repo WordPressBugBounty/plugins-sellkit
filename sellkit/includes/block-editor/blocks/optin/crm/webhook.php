@@ -45,7 +45,7 @@ class Webhook {
 		$body = self::get_form_data();
 		$args = [ 'body' => wp_json_encode( $body ) ];
 
-		$response = wp_remote_post( $webhook_url, $args );
+		$response = wp_safe_remote_post( $webhook_url, $args );
 
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 

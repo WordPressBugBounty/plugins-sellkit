@@ -186,7 +186,8 @@ trait Sellkit_Elementor_Optin_CRM {
 	 */
 	protected function send_get( $endpoint, $additional_args = [] ) {
 		$args     = array_merge( $this->get_get_request_args(), $additional_args );
-		$response = wp_remote_get( $this->get_base_url() . $endpoint, $args );
+		// Some base URLs (e.g. ActiveCampaign) can be set per form, so block requests to internal hosts.
+		$response = wp_safe_remote_get( $this->get_base_url() . $endpoint, $args );
 
 		return [
 			'code' => (int) wp_remote_retrieve_response_code( $response ),
@@ -206,7 +207,8 @@ trait Sellkit_Elementor_Optin_CRM {
 	 * @since 1.5.0
 	 */
 	protected function send_post( $endpoint, $request_args = [], $admin_error_key = '' ) {
-		$response = wp_remote_post( $this->get_base_url() . $endpoint, $request_args );
+		// Some base URLs (e.g. ActiveCampaign) can be set per form, so block requests to internal hosts.
+		$response = wp_safe_remote_post( $this->get_base_url() . $endpoint, $request_args );
 
 		$this->handle_errors( $response, $admin_error_key );
 
@@ -230,7 +232,8 @@ trait Sellkit_Elementor_Optin_CRM {
 		$message_desc = esc_html__( ' (issued by endpoint)', 'sellkit' );
 
 		if ( is_wp_error( $response ) ) {
-			$error = implode( "</li><li>{$this->get_title()}: ", $response->get_error_messages() );
+			$messages = array_map( 'esc_html', $response->get_error_messages() );
+			$error    = implode( '</li><li>' . esc_html( $this->get_title() ) . ': ', $messages );
 
 			$this->ajax_handler->add_response( 'admin_errors', $error . $message_desc, $admin_error_key );
 			return;
@@ -242,9 +245,9 @@ trait Sellkit_Elementor_Optin_CRM {
 			$error = sprintf(
 				/* translators: 1: Action name, 2: response code, 3: error message (an unknown English string) */
 				esc_html__( '%1$s: Request error-%2$s -- %3$s', 'sellkit' ),
-				$this->get_title(),
+				esc_html( $this->get_title() ),
 				$code,
-				wp_remote_retrieve_response_message( $response )
+				esc_html( wp_remote_retrieve_response_message( $response ) )
 			);
 		}
 
@@ -263,26 +266,10 @@ trait Sellkit_Elementor_Optin_CRM {
 	 * @static
 	 */
 	public static function get_client_ip() {
-		$ip_address     = '';
-		$server_headers = [
-			'HTTP_CLIENT_IP',
-			'HTTP_X_FORWARDED_FOR',
-			'HTTP_X_FORWARDED',
-			'HTTP_FORWARDED_FOR',
-			'HTTP_FORWARDED',
-			'REMOTE_ADDR',
-		];
+		// Proxy headers are client controlled and can be spoofed, so only REMOTE_ADDR is trusted.
+		$ip_address = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 
-		// phpcs:disable WordPress.Security.ValidatedSanitizedInput
-		foreach ( $server_headers as $header ) {
-			if ( isset( $_SERVER[ $header ] ) ) {
-				$ip_address = $_SERVER[ $header ];
-				break;
-			}
-		}
-		// phpcs:enable
-
-		return $ip_address;
+		return filter_var( $ip_address, FILTER_VALIDATE_IP ) ? $ip_address : '';
 	}
 
 	/**

@@ -63,16 +63,20 @@ class Analytics {
 	 * @since 1.1.0
 	 */
 	public function get_chart_data() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$feature    = sellkit_htmlspecialchars( INPUT_GET, 'feature' );
 		$class      = sellkit_htmlspecialchars( INPUT_GET, 'type' );
 		$date_range = sellkit_htmlspecialchars( INPUT_GET, 'date_range' );
 		$target_id  = sellkit_htmlspecialchars( INPUT_GET, 'target_id' );
 
+		if ( ! $this->is_valid_feature( $feature ) || ! is_string( $class ) || ! preg_match( '/^[A-Za-z_]+$/', $class ) ) {
+			wp_send_json_error( esc_html__( 'Invalid chart.', 'sellkit' ), 400 );
+		}
+
 		self::$date_range = $this->resolve_date_range( $date_range );
 
-		$file_name = str_replace( '_', '-', $class );
+		$file_name = strtolower( str_replace( '_', '-', $class ) );
 
 		sellkit()->load_files( [
 			'admin/components/analytics/class',
@@ -82,6 +86,10 @@ class Analytics {
 
 		$feature = ucfirst( $feature );
 		$class   = __NAMESPACE__ . "\Analytics\\$feature\\" . $class;
+
+		if ( ! class_exists( $class ) ) {
+			wp_send_json_error( esc_html__( 'Invalid chart.', 'sellkit' ), 400 );
+		}
 
 		$analytics = new $class( $target_id );
 
@@ -94,10 +102,14 @@ class Analytics {
 	 * @since 1.1.0
 	 */
 	public function get_summary() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$feature    = sellkit_htmlspecialchars( INPUT_GET, 'feature' );
 		$date_range = sellkit_htmlspecialchars( INPUT_GET, 'date_range' );
+
+		if ( ! $this->is_valid_feature( $feature ) ) {
+			wp_send_json_error( esc_html__( 'Invalid chart.', 'sellkit' ), 400 );
+		}
 
 		self::$date_range = $this->resolve_date_range( $date_range );
 
@@ -105,7 +117,22 @@ class Analytics {
 
 		$class = __NAMESPACE__ . "\Analytics\\$feature\\summary";
 
+		if ( ! class_exists( $class ) ) {
+			wp_send_json_error( esc_html__( 'Invalid chart.', 'sellkit' ), 400 );
+		}
+
 		wp_send_json_success( $class::get_instance()->data );
+	}
+
+	/**
+	 * Checks the analytics feature is one of the known features.
+	 *
+	 * @since 2.8.1
+	 * @param string $feature Feature name.
+	 * @return bool
+	 */
+	private function is_valid_feature( $feature ) {
+		return in_array( $feature, [ 'funnel', 'coupon', 'discount', 'alert' ], true );
 	}
 
 	/**
@@ -115,7 +142,7 @@ class Analytics {
 	 * @return void
 	 */
 	public function get_dashboard_stats() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		if ( ! current_user_can( 'edit_theme_options' ) ) {
 			wp_send_json_error( [ 'message' => esc_html__( 'Forbidden.', 'sellkit' ) ], 403 );

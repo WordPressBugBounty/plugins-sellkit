@@ -23,8 +23,8 @@ class Sellkit_Elementor_Optin_Action_Download_Redirect extends Sellkit_Elementor
 
 	public function __construct() {
 		// Register download hooks.
-		add_action( 'admin_post_sellkit_download_file', [ self::class, 'handle_file_download' ] );
-		add_action( 'admsellkitin_post_nopriv_sellkit_download_file', [ self::class, 'handle_file_download' ] );
+		add_action( 'admin_post_sellkit_download_file', 'sellkit_handle_optin_file_download' );
+		add_action( 'admin_post_nopriv_sellkit_download_file', 'sellkit_handle_optin_file_download' );
 	}
 
 	public function get_name() {
@@ -69,19 +69,14 @@ class Sellkit_Elementor_Optin_Action_Download_Redirect extends Sellkit_Elementor
 
 		$file = $file['files'][0];
 
-		if ( ! file_exists( $file['path'] ) ) {
+		$file_path = ! empty( $file['path'] ) ? sellkit_get_optin_download_real_path( $file['path'] ) : false;
+
+		if ( false === $file_path ) {
 			$admin_error = esc_html__( 'Download error: The file doesn\'t exist anymore.', 'sellkit' );
 			return $ajax_handler->add_response( 'admin_errors', $admin_error );
 		}
 
-		$args = [
-			'action'   => 'sellkit_download_file',
-			'file'     => base64_encode( $file['path'] ),
-			'_wpnonce' => wp_create_nonce(),
-		];
-
-		$url = add_query_arg( $args, admin_url( 'admin-post.php' ) );
-		return $ajax_handler->add_response( 'downloadURL', $url );
+		return $ajax_handler->add_response( 'downloadURL', sellkit_get_optin_download_url( $file_path ) );
 	}
 
 	private function download_url( AjaxHandler $ajax_handler, $url ) {
@@ -89,7 +84,7 @@ class Sellkit_Elementor_Optin_Action_Download_Redirect extends Sellkit_Elementor
 			return;
 		}
 
-		if ( ! filter_var( $url['url'], FILTER_VALIDATE_URL ) ) {
+		if ( ! sellkit_is_http_url( $url['url'] ) ) {
 			$admin_error = esc_html__( 'Download error: Invalid file URL.', 'sellkit' );
 			return $ajax_handler->add_response( 'admin_errors', $admin_error );
 		}
@@ -166,70 +161,11 @@ class Sellkit_Elementor_Optin_Action_Download_Redirect extends Sellkit_Elementor
 			return;
 		}
 
-		if ( ! filter_var( $url['url'], FILTER_VALIDATE_URL ) ) {
+		if ( ! sellkit_is_http_url( $url['url'] ) ) {
 			$admin_error = esc_html__( 'Redirect error: Invalid URL.', 'sellkit' );
 			return $ajax_handler->add_response( 'admin_errors', $admin_error );
 		}
 
 		return $ajax_handler->add_response( 'redirectURL', $url['url'] );
-	}
-
-	/**
-	 * Called by hook and handles file download.
-	 *
-	 * @since 1.5.0
-	 * @access public
-	 * @static
-	 */
-	public static function handle_file_download() {
-		$file  = filter_input( INPUT_GET, 'file' );
-		$nonce = filter_input( INPUT_GET, '_wpnonce' );
-
-		// Validate nonce.
-		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce ) ) {
-			wp_die( '<script>window.close();</script>' );
-		}
-
-		$file       = base64_decode( $file ); // phpcs:ignore
-		$upload_dir = wp_get_upload_dir();
-
-		// Make sure file exists.
-		if ( empty( $file ) || ! file_exists( $file ) ) {
-			wp_die( '<script>window.close();</script>' );
-		}
-
-		$file_name = pathinfo( $file, PATHINFO_BASENAME );
-		$file_info = wp_check_filetype_and_ext( $file, $file_name );
-
-		// Validate file.
-		if ( empty( $file_info['ext'] ) || strpos( $file, wp_normalize_path( WP_CONTENT_DIR . '/uploads/' ) ) !== 0 ) {
-			wp_die( '<script>window.close();</script>' );
-		}
-
-		$file_path = realpath( $file );
-
-		// Restrict the download to WP upload directory.
-		if ( ! $file_path || ! file_exists( $file_path ) || strpos( $file_path, realpath( $upload_dir['basedir'] ) ) !== 0 ) {
-			wp_die( '<script>window.close();</script>' );
-		}
-
-		$file_name = pathinfo( $file, PATHINFO_BASENAME );
-		$file_ext  = pathinfo( $file, PATHINFO_EXTENSION );
-
-		// Strip hash.
-		$file_name  = str_replace( $file_ext, '', $file_name );
-		$file_parts = explode( '__', $file_name );
-		$file_name  = array_shift( $file_parts );
-		$file_name .= '.' . $file_ext;
-
-		header( 'Content-Description: File Transfer' );
-		header( 'Content-Type: application/octet-stream' );
-		header( 'Content-Disposition: attachment; filename="' . $file_name . '"' );
-		header( 'Expires: 0' );
-		header( 'Cache-Control: must-revalidate' );
-		header( 'Pragma: public' );
-		header( 'Content-Length: ' . filesize( $file ) );
-		// phpcs:ignore WordPress.WP.AlternativeFunctions
-		readfile( $file );
 	}
 }

@@ -99,20 +99,24 @@ function sellkit_filter_array( $array, $string ) {
 /**
  * Gets Ip.
  *
+ * Uses REMOTE_ADDR only; client-supplied headers (Client-IP, X-Forwarded-For) can be spoofed.
+ * Sites behind a trusted proxy/CDN can provide the real client IP via the `sellkit_client_ip` filter.
+ *
  * @since 1.1.0
  * @return string
- * phpcs:disable WordPress.Security.ValidatedSanitizedInput
  */
 function sellkit_get_ip() {
-	if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
-		return $_SERVER['HTTP_CLIENT_IP'];
-	}
+	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 
-	if ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-		return $_SERVER['HTTP_X_FORWARDED_FOR'];
-	}
+	/**
+	 * Filters the visitor IP used by SellKit (e.g. to read a trusted proxy header).
+	 *
+	 * @since 2.8.1
+	 * @param string $ip Visitor IP from REMOTE_ADDR.
+	 */
+	$ip = (string) apply_filters( 'sellkit_client_ip', $ip );
 
-	return $_SERVER['REMOTE_ADDR'];
+	return filter_var( $ip, FILTER_VALIDATE_IP ) ? $ip : '';
 }
 
 /**
@@ -129,8 +133,12 @@ function sellkit_get_funnel_contact_value_by_column( $column ) {
 	] );
 
 	foreach ( $contacts as $contact ) {
-		if ( ! empty( $contact[ $column ] ) ) {
-			$results[] = unserialize( $contact[ $column ] )[0]; // phpcs:ignore
+		if ( ! empty( $contact[ $column ] ) && is_serialized( $contact[ $column ] ) ) {
+			$value = unserialize( $contact[ $column ], [ 'allowed_classes' => false ] ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize -- No objects allowed.
+
+			if ( is_array( $value ) && isset( $value[0] ) ) {
+				$results[] = $value[0];
+			}
 		}
 	}
 

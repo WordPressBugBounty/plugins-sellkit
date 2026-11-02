@@ -90,13 +90,18 @@ class Google extends Settings_Integration {
 			return;
 		}
 
-		$first_index = array_key_first( $post_meta );
+		reset( $post_meta );
+		$first_index = key( $post_meta );
 
 		$sellkit_page_meta    = $post_meta[ $first_index ]['type']['key'];
 		$google_events_script = '';
 
 		foreach ( $google_events as $event ) {
 			$function_name = "google_analytics_{$event}";
+
+			if ( ! method_exists( $this, $function_name ) ) {
+				continue;
+			}
 
 			$google_events_script .= $this->$function_name( $sellkit_page_meta, $tracking_id );
 		}

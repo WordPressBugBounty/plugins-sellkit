@@ -163,11 +163,28 @@ class Sellkit_Funnel {
 	 * @param string $page_id Page id.
 	 */
 	public function set_funnel_data( $page_id ) {
-		$this->current_step_data = get_post_meta( $page_id, 'step_data', true );
+		$page_id = absint( $page_id );
 
-		if ( empty( $this->current_step_data['funnel_id'] ) ) {
+		// Only real SellKit step posts can carry funnel data.
+		if ( empty( $page_id ) || 'sellkit_step' !== get_post_type( $page_id ) ) {
 			return;
 		}
+
+		$step_data = get_post_meta( $page_id, 'step_data', true );
+
+		if ( ! is_array( $step_data ) || empty( $step_data['funnel_id'] ) ) {
+			return;
+		}
+
+		// The funnel must exist and must not be trashed. Draft funnels are still loaded so
+		// administrators can preview them; public access is enforced by is_accessible().
+		$funnel_status = get_post_status( $step_data['funnel_id'] );
+
+		if ( empty( $funnel_status ) || 'trash' === $funnel_status ) {
+			return;
+		}
+
+		$this->current_step_data = $step_data;
 
 		$is_nofollow = sellkit_get_option( 'disallow_funnels_from_search_engine' );
 
@@ -208,6 +225,32 @@ class Sellkit_Funnel {
 		if ( ! empty( $end_node_id ) ) {
 			$this->end_node_step_data = $funnel_data[ $end_node_id ];
 		}
+	}
+
+	/**
+	 * Whether the current step may be used by the current visitor.
+	 *
+	 * The funnel must be published and the step not disabled. Users with manage_options can
+	 * preview draft funnels and disabled steps. Must be called after `init`.
+	 *
+	 * @since 2.8.1
+	 * @return bool
+	 */
+	public function is_accessible() {
+		if ( empty( $this->funnel_id ) || empty( $this->current_step_data ) ) {
+			return false;
+		}
+
+		if ( current_user_can( 'manage_options' ) ) {
+			return true;
+		}
+
+		if ( 'publish' !== get_post_status( $this->funnel_id ) ) {
+			return false;
+		}
+
+		// Steps disabled in the funnel builder are stored with the 'draft' status.
+		return empty( $this->current_step_data['status'] ) || 'draft' !== $this->current_step_data['status'];
 	}
 
 	/**
@@ -259,9 +302,15 @@ class Sellkit_Funnel {
 			}
 		}
 
+		// Only expose what the frontend scripts need (funnel-frontend.js, steps/*.js), not the full step configuration.
 		return [
-			'currentStep' => $this->current_step_data,
-			'nextStep' => $this->next_step_data,
+			'currentStep' => [
+				'page_id' => ! empty( $this->current_step_data['page_id'] ) ? absint( $this->current_step_data['page_id'] ) : 0,
+				'type'    => [
+					'key' => ! empty( $this->current_step_data['type']['key'] ) ? sanitize_key( $this->current_step_data['type']['key'] ) : '',
+				],
+			],
+			'nextStep' => ! empty( $this->next_step_data['page_id'] ) ? [ 'page_id' => absint( $this->next_step_data['page_id'] ) ] : false,
 			'nextStepLink' => ! empty( $next_step_link ) ? $next_step_link : '',
 			'siteUrl' => site_url(),
 		];

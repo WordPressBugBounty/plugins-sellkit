@@ -43,7 +43,7 @@ class Ajax_Handler {
 	 * @since 1.1.0
 	 */
 	public function import_steps_data() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$nonce        = sellkit_htmlspecialchars( INPUT_GET, 'nonce' );
 		$step_id      = sellkit_htmlspecialchars( INPUT_GET, 'step_id' );
@@ -56,6 +56,12 @@ class Ajax_Handler {
 
 		if ( ! wp_verify_nonce( $nonce, 'sellkit' ) ) {
 			wp_send_json_error( __( 'Invalid nonce.', 'sellkit' ) );
+		}
+
+		$funnel_id = absint( $funnel_id );
+
+		if ( ! \Sellkit_Admin_Posts::current_user_can_manage_post( $funnel_id, 'edit_post' ) || 'sellkit-funnels' !== get_post_type( $funnel_id ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to do this action.', 'sellkit' ), 403 );
 		}
 
 		$data = $this->step_importer->import_from_api( $step_id );
@@ -80,7 +86,7 @@ class Ajax_Handler {
 	 * @since 1.1.0
 	 */
 	public function get_steps() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$nonce = sellkit_htmlspecialchars( INPUT_GET, 'nonce' );
 		$type  = sellkit_htmlspecialchars( INPUT_GET, 'type' );
@@ -89,7 +95,7 @@ class Ajax_Handler {
 			wp_send_json_error( __( 'Invalid nonce.', 'sellkit' ) );
 		}
 
-		$response = wp_remote_get( "https://templates.getsellkit.com/wp-json/sellkit/v1/steps/type={$type}", [
+		$response = wp_remote_get( "https://templates.getsellkit.com/wp-json/sellkit/v1/steps/type=" . rawurlencode( $type ), [
 			'timeout' => 10,
 		] );
 
@@ -108,7 +114,7 @@ class Ajax_Handler {
 	 * @since 1.1.0
 	 */
 	public function get_funnels() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$nonce = sellkit_htmlspecialchars( INPUT_GET, 'nonce' );
 
@@ -135,7 +141,7 @@ class Ajax_Handler {
 	 * @since 1.1.0
 	 */
 	public function get_funnel_data() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$nonce     = sellkit_htmlspecialchars( INPUT_GET, 'nonce' );
 		$funnel_id = sellkit_htmlspecialchars( INPUT_GET, 'funnel_id' );
@@ -159,7 +165,7 @@ class Ajax_Handler {
 	 * @since 1.1.0
 	 */
 	public function import_funnel() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$nonce     = sellkit_htmlspecialchars( INPUT_GET, 'nonce' );
 		$funnel_id = sellkit_htmlspecialchars( INPUT_GET, 'funnel_id' );
@@ -251,8 +257,8 @@ class Ajax_Handler {
 	 */
 	public function create_new_funnel( $funnel_data ) {
 		$new_funnel_id = wp_insert_post( [
-			'post_type' => $funnel_data->post_type,
-			'post_title' => $funnel_data->title,
+			'post_type' => 'sellkit-funnels',
+			'post_title' => sanitize_text_field( $funnel_data->title ),
 			'post_name' => sanitize_title( $funnel_data->title ),
 			'post_status' => 'draft',
 		] );
@@ -267,7 +273,7 @@ class Ajax_Handler {
 	 * @param int $funnel_id Funnel Id.
 	 */
 	public function import_funnel_data_from_api( $funnel_id ) {
-		$response = wp_remote_get( "https://templates.getsellkit.com/wp-json/sellkit/v1/funnel/{$funnel_id}", [
+		$response = wp_remote_get( "https://templates.getsellkit.com/wp-json/sellkit/v1/funnel/" . absint( $funnel_id ), [
 			'timeout' => 10,
 		] );
 

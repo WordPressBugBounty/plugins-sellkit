@@ -220,7 +220,6 @@ class Mailchimp {
 		$args    = [
 			'method'    => 'GET',
 			'timeout'   => 100,
-			'sslverify' => false,
 			'headers'   => self::get_headers(),
 		];
 

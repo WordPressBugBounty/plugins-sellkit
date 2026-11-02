@@ -73,7 +73,7 @@ class Step_Importer {
 			return new \WP_Error( 'sellkit_step_importer_has_no_step_id', esc_html__( 'Does not have any step id for importing', 'sellkit' ) );
 		}
 
-		$response = wp_remote_get( "https://templates.getsellkit.com/wp-json/sellkit/v1/step/{$step_id}" );
+		$response = wp_remote_get( "https://templates.getsellkit.com/wp-json/sellkit/v1/step/" . absint( $step_id ) );
 
 		$response_code = wp_remote_retrieve_response_code( $response );
 
@@ -114,11 +114,11 @@ class Step_Importer {
 		$funnel_nodes     = get_post_meta( $funnel_id, 'nodes', true );
 
 		if ( empty( $meta_data['nodes'] ) && array_key_exists( 'step_data', $meta_data ) ) {
-			$step_data = unserialize( $meta_data['step_data'] ); //phpcs:ignore
+			$step_data = unserialize( $meta_data['step_data'], [ 'allowed_classes' => [ 'stdClass' ] ] ); //phpcs:ignore
 		}
 
 		if ( ! empty( $meta_data['nodes'] ) ) {
-			$step_data = unserialize( $meta_data['nodes'] ); //phpcs:ignore
+			$step_data = unserialize( $meta_data['nodes'], [ 'allowed_classes' => [ 'stdClass' ] ] ); //phpcs:ignore
 		}
 
 		if ( ! empty( $funnel_nodes ) ) {
@@ -267,7 +267,7 @@ class Step_Importer {
 			}
 
 			if ( is_serialized( $meta_value, true ) ) {
-				$meta_value = maybe_unserialize( stripslashes( $meta_value ) );
+				$meta_value = unserialize( stripslashes( $meta_value ), [ 'allowed_classes' => [ 'stdClass' ] ] ); //phpcs:ignore
 			}
 
 			if ( 'step_data' === $meta_key ) {

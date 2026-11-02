@@ -55,18 +55,23 @@ class Viewed_Categories extends Contact_Segmentation_Base {
 
 		$categories = self::$contact_segmentation['viewed_category'];
 
-		if ( empty( $categories ) ) {
+		if ( empty( $categories ) || ! is_array( $categories ) ) {
 			return $this->shortcode_content( $atts );
 		}
 
 		$result = [];
 
 		foreach ( $categories as $category ) {
-			$value = get_term_by( 'id', $category, 'product_cat' );
+			$category = absint( $category );
+			$value    = ! empty( $category ) ? get_term_by( 'id', $category, 'product_cat' ) : false;
 
 			if ( ! empty( $value ) ) {
 				$result[] = $value->name;
 			}
+		}
+
+		if ( empty( $result ) ) {
+			return $this->shortcode_content( $atts );
 		}
 
 		$result = $this->get_result( $result );

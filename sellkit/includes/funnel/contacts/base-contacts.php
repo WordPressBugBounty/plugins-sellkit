@@ -98,8 +98,9 @@ class Base_Contacts {
 		// Getting old data.
 		$result = $database->get( 'funnel_contact', [ 'id' => $contact_id ] );
 
-		if ( ! empty( $result[0][ $type ] ) ) {
-			$old_values = unserialize( $result[ 0 ][ $type ] ); // phpcs:ignore
+		if ( ! empty( $result[0][ $type ] ) && is_serialized( $result[0][ $type ] ) ) {
+			$old_values = unserialize( $result[0][ $type ], [ 'allowed_classes' => false ] ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize -- No objects allowed.
+			$old_values = is_array( $old_values ) ? $old_values : [];
 		}
 
 		$new_values = array_merge( $old_values, [ $funnel->current_step_data['page_id'] ] );
@@ -134,8 +135,9 @@ class Base_Contacts {
 
 		$old_values = [];
 
-		if ( ! empty( $result[0][ $upsell_downsell_data['key'] ] ) ) {
-			$old_values = unserialize( $result[ 0 ][ $upsell_downsell_data['key'] ] ); // phpcs:ignore
+		if ( ! empty( $result[0][ $upsell_downsell_data['key'] ] ) && is_serialized( $result[0][ $upsell_downsell_data['key'] ] ) ) {
+			$old_values = unserialize( $result[0][ $upsell_downsell_data['key'] ], [ 'allowed_classes' => false ] ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize -- No objects allowed.
+			$old_values = is_array( $old_values ) ? $old_values : [];
 		}
 
 		$new_values = array_merge( $old_values, [ $upsell_downsell_data['page_id'] ] );

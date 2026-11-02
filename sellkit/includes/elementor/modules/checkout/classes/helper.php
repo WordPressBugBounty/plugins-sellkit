@@ -561,10 +561,28 @@ class Helper {
 	 * @since 1.1.0
 	 */
 	public function retrieve_checkout_widget_settings( $post_id, $form_id ) {
-		$form_meta = Elementor::$instance->documents->get( $post_id )->get_elements_data();
-		$form      = self::find_element_recursive( $form_meta, $form_id );
+		$post_id = absint( $post_id );
 
-		if ( ! is_array( $form ) || ! array_key_exists( 'settings', $form ) ) {
+		// Ids come from the request, so only read checkout widgets of posts the visitor may see.
+		if ( empty( $post_id ) || ( ! sellkit_is_post_publicly_accessible( $post_id ) && ! current_user_can( 'edit_post', $post_id ) ) ) {
+			return [];
+		}
+
+		$document = Elementor::$instance->documents->get( $post_id );
+
+		if ( ! $document ) {
+			return [];
+		}
+
+		$form_meta = $document->get_elements_data();
+		$form      = is_array( $form_meta ) ? self::find_element_recursive( $form_meta, (string) $form_id ) : false;
+
+		if (
+			! is_array( $form ) ||
+			! array_key_exists( 'settings', $form ) ||
+			! isset( $form['widgetType'] ) ||
+			'sellkit-checkout' !== $form['widgetType']
+		) {
 			return [];
 		}
 

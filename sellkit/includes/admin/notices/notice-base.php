@@ -73,7 +73,7 @@ abstract class Notice_Base {
 			<div class="sellkit-notice-aside"><span class="sellkit-notice-aside-icon"><span></span></span></div>
 			<div class="sellkit-notice-content">
 				<div class="sellkit-notice-content-body">
-					<?php echo esc_sql( $this->content ); ?>
+					<?php echo wp_kses_post( $this->content ); ?>
 				</div>
 				<div class="sellkit-notice-content-footer">
 					<?php

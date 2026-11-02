@@ -13,6 +13,14 @@ use Sellkit\Funnel\Contacts\Base_Contacts;
  */
 class Helper {
 	/**
+	 * CRM/after-submit actions that can be run by the form.
+	 *
+	 * @since 2.8.1
+	 * @var array
+	 */
+	const ALLOWED_ACTIONS = [ 'activeCampaign', 'convertKit', 'drip', 'getResponse', 'mailChimp', 'mailerLite', 'webHook' ];
+
+	/**
 	 * Current post id.
 	 *
 	 * @since 2.3.0
@@ -97,8 +105,8 @@ class Helper {
 		add_action( 'wp_ajax_submit_optin_block_form', [ $this, 'handle_frontend' ] );
 		add_action( 'wp_ajax_nopriv_submit_optin_block_form', [ $this, 'handle_frontend' ] );
 
-		add_action( 'admin_post_sellkit_download_file', [ $this, 'handle_file_download' ] );
-		add_action( 'admsellkitin_post_nopriv_sellkit_download_file', [ $this, 'handle_file_download' ] );
+		add_action( 'admin_post_sellkit_download_file', 'sellkit_handle_optin_file_download' );
+		add_action( 'admin_post_nopriv_sellkit_download_file', 'sellkit_handle_optin_file_download' );
 	}
 
 	/**
@@ -185,9 +193,9 @@ class Helper {
 		$required = isset( $this->attributes['requiredCustomMessage'] ) ? $this->attributes['requiredCustomMessage'] : $this->messages['required'];
 
 		$this->messages = [
-			'success'  => $success,
-			'error'    => $errors,
-			'required' => $required,
+			'success'  => wp_kses_post( $success ),
+			'error'    => wp_kses_post( $errors ),
+			'required' => wp_kses_post( $required ),
 		];
 
 		return $this;
@@ -201,7 +209,7 @@ class Helper {
 	 * @return void
 	 */
 	private function get_optin_block_data() {
-		if ( empty( $this->post_id ) || ! has_block( 'sellkit-blocks/optin', $this->post_id ) ) {
+		if ( empty( $this->post_id ) || ! sellkit_is_post_publicly_accessible( $this->post_id ) || ! has_block( 'sellkit-blocks/optin', $this->post_id ) ) {
 			return;
 		}
 
@@ -242,8 +250,12 @@ class Helper {
 	public function run_actions() {
 		$selected_crm = isset( $this->attributes['selectedCRM'] ) ? $this->attributes['selectedCRM'] : [];
 
-		if ( ! empty( $selected_crm ) ) {
+		if ( ! empty( $selected_crm ) && is_array( $selected_crm ) ) {
 			foreach ( $selected_crm as $crm ) {
+				if ( ! in_array( $crm, self::ALLOWED_ACTIONS, true ) ) {
+					continue;
+				}
+
 				if ( ! isset( $this->attributes[ $crm ] ) && 'webHook' !== $crm ) {
 					return $this->add_response( 'admin_errors', "{$crm}: " . esc_html__( 'Missing configuration.', 'sellkit' ) );
 				}
@@ -307,19 +319,14 @@ class Helper {
 			return;
 		}
 
-		if ( ! file_exists( $file['path'] ) ) {
+		$file_path = ! empty( $file['path'] ) ? sellkit_get_optin_download_real_path( $file['path'] ) : false;
+
+		if ( false === $file_path ) {
 			$admin_error = esc_html__( 'Download error: The file doesn\'t exist anymore.', 'sellkit' );
 			return $this->add_response( 'admin_errors', $admin_error );
 		}
 
-		$args = [
-			'action'   => 'sellkit_download_file',
-			'file'     => base64_encode( $file['path'] ),
-			'_wpnonce' => wp_create_nonce(),
-		];
-
-		$url = add_query_arg( $args, admin_url( 'admin-post.php' ) );
-		return $this->add_response( 'downloadURL', $url );
+		return $this->add_response( 'downloadURL', sellkit_get_optin_download_url( $file_path ) );
 	}
 
 	/**
@@ -336,7 +343,7 @@ class Helper {
 			return;
 		}
 
-		if ( ! filter_var( $url, FILTER_VALIDATE_URL ) ) {
+		if ( ! sellkit_is_http_url( $url ) ) {
 			$admin_error = esc_html__( 'Download error: Invalid file URL.', 'sellkit' );
 			return $this->add_response( 'admin_errors', $admin_error );
 		}
@@ -424,7 +431,7 @@ class Helper {
 			return;
 		}
 
-		if ( ! filter_var( $url, FILTER_VALIDATE_URL ) ) {
+		if ( ! sellkit_is_http_url( $url ) ) {
 			$admin_error = esc_html__( 'Redirect error: Invalid URL.', 'sellkit' );
 			return $this->add_response( 'admin_errors', $admin_error );
 		}
@@ -472,11 +479,11 @@ class Helper {
 	 * @access public
 	 */
 	public function send_response() {
-		if ( ! current_user_can( 'administrator' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			unset( $this->response['admin_errors'] );
 		} else {
-			// Flatten admin_errors.
-			$this->response['admin_errors'] = array_values( $this->response['admin_errors'] );
+			// Flatten admin_errors. Escape them since some come from remote CRM responses and are rendered as HTML.
+			$this->response['admin_errors'] = array_map( 'esc_html', array_values( $this->response['admin_errors'] ) );
 		}
 
 		if ( $this->is_success ) {
@@ -494,84 +501,6 @@ class Helper {
 		}
 
 		wp_send_json_error( $this->response );
-	}
-
-	/**
-	 * Called by hook and handles file download.
-	 *
-	 * @since 2.3.0
-	 * @access public
-	 * @SuppressWarnings(PHPMD.NPathComplexity)
-	 */
-	public function handle_file_download() {
-		$file  = filter_input( INPUT_GET, 'file' );
-		$nonce = filter_input( INPUT_GET, '_wpnonce' );
-
-		// Validate nonce.
-		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce ) ) {
-			wp_die( '<script>window.close();</script>' );
-		}
-
-		$file       = base64_decode( $file ); // phpcs:ignore
-		$upload_dir = wp_get_upload_dir();
-
-		// Make sure file exists.
-		if ( empty( $file ) || ! file_exists( $file ) ) {
-			wp_die( '<script>window.close();</script>' );
-		}
-
-		$file_name = pathinfo( $file, PATHINFO_BASENAME );
-		$file_info = wp_check_filetype_and_ext( $file, $file_name );
-
-		$real_file_path = realpath( $file );
-
-		// Make sure the file exists and is inside the allowed directory.
-		if (
-			false === $real_file_path ||
-			! file_exists( $real_file_path ) ||
-			0 !== strpos( wp_normalize_path( $file ), wp_normalize_path( $upload_dir['basedir'] ) )
-		) {
-			wp_die( '<script>window.close();</script>' );
-		}
-
-		// Validate file extension and MIME type.
-		if ( empty( $file_info['ext'] ) || empty( $file_info['type'] ) ) {
-			wp_die( '<script>window.close();</script>' );
-		}
-
-		// Validate file path.
-		if (
-			strpos( $file, wp_normalize_path( WP_CONTENT_DIR . '/uploads/' ) ) === false ||
-			strpos( $file, wp_normalize_path( WP_CONTENT_DIR . '/uploads/' ) ) !== 0
-		) {
-			wp_die( '<script>window.close();</script>' );
-		}
-
-		// Restrict the download to WP upload directory.
-		if (
-			strpos( $file, $upload_dir['basedir'] ) === false ||
-			strpos( $file, $upload_dir['basedir'] ) !== 0
-		) {
-			wp_die( '<script>window.close();</script>' );
-		}
-
-		$file_ext = pathinfo( $file, PATHINFO_EXTENSION );
-
-		// Strip hash.
-		$file_name  = str_replace( $file_ext, '', $file_name );
-		$file_parts = explode( '__', $file_name );
-		$file_name  = array_shift( $file_parts );
-		$file_name .= '.' . $file_ext;
-
-		header( 'Content-Description: File Transfer' );
-		header( 'Content-Type: application/octet-stream' );
-		header( 'Content-Disposition: attachment; filename="' . $file_name . '"' );
-		header( 'Expires: 0' );
-		header( 'Cache-Control: must-revalidate' );
-		header( 'Pragma: public' );
-		header( 'Content-Length: ' . filesize( $file ) );
-		// phpcs:ignore WordPress.WP.AlternativeFunctions
-		readfile( $file );
 	}
 
 	/**
@@ -667,26 +596,9 @@ class Helper {
 	 * @static
 	 */
 	public static function get_client_ip() {
-		$ip_address     = '';
-		$server_headers = [
-			'HTTP_CLIENT_IP',
-			'HTTP_X_FORWARDED_FOR',
-			'HTTP_X_FORWARDED',
-			'HTTP_FORWARDED_FOR',
-			'HTTP_FORWARDED',
-			'REMOTE_ADDR',
-		];
+		$ip_address = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 
-		// phpcs:disable WordPress.Security.ValidatedSanitizedInput
-		foreach ( $server_headers as $header ) {
-			if ( isset( $_SERVER[ $header ] ) ) {
-				$ip_address = $_SERVER[ $header ];
-				break;
-			}
-		}
-		// phpcs:enable
-
-		return $ip_address;
+		return filter_var( $ip_address, FILTER_VALIDATE_IP ) ? $ip_address : '';
 	}
 
 	/**

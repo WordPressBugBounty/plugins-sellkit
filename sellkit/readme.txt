@@ -3,8 +3,8 @@ Contributors: artbees
 Donate link: https://getsellkit.com/
 Tags: checkout optimizer, optimized checkout, sales funnel, smart coupon, checkout alert
 Requires at least: 5.6
-Tested up to: 6.9
-Stable tag: 2.8.0
+Tested up to: 7.1
+Stable tag: 2.8.1
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -275,14 +275,17 @@ Main functionalities are only compatible with Elementor and Gutenberg at the mom
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
+= 2.8.1 - 2026-10-29 =
+* Security: Fixed an arbitrary file read in the opt-in file download handler.
+* Security: Hardened capability, nonce and input validation checks across AJAX handlers.
+* Security: Escaped dynamic keyword, opt-in and checkout output.
+
 = 2.8.0 - 2026-10-05 =
 * Bug Fix: Fixed Security issue.
 
-== Changelog ==
 = 2.7.0 - 2026-09-14 =
 * Bug Fix: Fixed total spent value on Funnel contact history tab when coupon applied to order.
 
-== Changelog ==
 = 2.6.0 - 2026-08-17 =
 * Bug Fix: Fixed a save-settings issue on the Sellkit Settings page.
 * Bug Fix: Fixed shipping method display issues in the Block Editor global checkout.
@@ -290,7 +293,6 @@ Main functionalities are only compatible with Elementor and Gutenberg at the mom
 * Bug Fix: Fixed an issue where a PHP session could start without being properly closed.
 * Improvement: Updated the Shipping Method fragment in the Block Editor checkout after applying an Order Bump.
 
-== Changelog ==
 = 2.5.0 - 2026-04-29 =
 * Feature: Refreshed admin UI for a better user experience.
 * Feature: Added zoom and expand controls for funnels and improved funnel builder performance.
@@ -305,7 +307,6 @@ Main functionalities are only compatible with Elementor and Gutenberg at the mom
 
 
 
-== Changelog ==
 = 2.4.0 - 2025-11-27 =
 * Feature: Added a global admin promotion banner system for highlighting time-limited campaigns in the WordPress dashboard.
 * Bug Fix: Fixed PHP warning that occurred when a billing field role was empty in checkout forms.

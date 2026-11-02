@@ -48,10 +48,14 @@ class Sellkit_Admin_Filters {
 	 * @since 1.1.0
 	 */
 	public function get_options() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$filter_type = sellkit_htmlspecialchars( INPUT_GET, 'filter_type' );
 		$input_value = sellkit_htmlspecialchars( INPUT_GET, 'input_value' );
+
+		if ( ! is_string( $filter_type ) || ! preg_match( '/^[a-z_]+$/', $filter_type ) || ! method_exists( $this, "get_filtered_{$filter_type}" ) ) {
+			wp_send_json_error( esc_html__( 'Invalid filter.', 'sellkit' ), 400 );
+		}
 
 		$options = call_user_func( [ $this, "get_filtered_{$filter_type}" ], $input_value );
 

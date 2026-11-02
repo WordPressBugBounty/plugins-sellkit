@@ -370,7 +370,7 @@ class Sellkit_Elementor_Product_Images_Widget extends Sellkit_Elementor_Upsell_B
 		global $product; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WooCommerce template pattern.
 
 		$settings     = $this->get_settings_for_display();
-		$product      = $this->get_product_object();
+		$product      = $this->get_product_object(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WooCommerce templates read the global $product.
 		$slider_class = 'yes' === $settings['slider_switch'] ? 'product-images-is-slider' : '';
 
 		if ( empty( $product ) ) {

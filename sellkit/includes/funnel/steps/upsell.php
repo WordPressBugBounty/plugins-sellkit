@@ -50,8 +50,25 @@ class Upsell {
 			wp_send_json_error( __( 'Each upsell needs a main order.', 'sellkit' ) );
 		}
 
-		$order_id   = wc_get_order_id_by_order_key( $order_key );
-		$main_order = new \WC_Order( $order_id );
+		$order_key  = sanitize_text_field( $order_key );
+		$main_order = wc_get_order( wc_get_order_id_by_order_key( $order_key ) );
+
+		if ( ! $main_order instanceof \WC_Order || ! hash_equals( $main_order->get_order_key(), $order_key ) ) {
+			wp_send_json_error( __( 'Invalid order.', 'sellkit' ) );
+		}
+
+		$current_step_id   = ! empty( $this->funnel->current_step_data['page_id'] ) ? absint( $this->funnel->current_step_data['page_id'] ) : 0;
+		$current_step_type = ! empty( $this->funnel->current_step_data['type']['key'] ) ? $this->funnel->current_step_data['type']['key'] : '';
+
+		// The step must be a published upsell/downsell step of the same funnel as the order.
+		if (
+			empty( $current_step_id ) ||
+			! in_array( $current_step_type, [ 'upsell', 'downsell' ], true ) ||
+			! $this->funnel->is_accessible() ||
+			absint( $main_order->get_meta( 'sellkit_funnel_id' ) ) !== absint( $this->funnel->funnel_id )
+		) {
+			wp_send_json_error( __( 'Invalid funnel step.', 'sellkit' ) );
+		}
 
 		if (
 			empty( $this->funnel->next_no_step_data['page_id'] ) &&
@@ -69,11 +86,41 @@ class Upsell {
 			wp_send_json_success( $next_step_link );
 		}
 
+		// Only the visitor who placed the order can accept an offer on it. Rejecting only redirects, so it's not checked above.
+		if ( ! self::is_order_owned_by_visitor( $main_order ) ) {
+			wp_send_json_error( __( 'Invalid order.', 'sellkit' ) );
+		}
+
+		// Prevent replaying the same offer: one upsell order per main order and step,
+		// unless the previous attempt was not paid (pending, failed or cancelled).
+		$accepted_steps = $main_order->get_meta( 'sellkit_upsell_accepted_steps' );
+		$accepted_steps = is_array( $accepted_steps ) ? $accepted_steps : [];
+
+		if ( ! empty( $accepted_steps[ $current_step_id ] ) ) {
+			$previous_order = wc_get_order( $accepted_steps[ $current_step_id ] );
+
+			if ( $previous_order && ! $previous_order->has_status( [ 'pending', 'failed', 'cancelled' ] ) ) {
+				wp_send_json_error( __( 'This offer has already been accepted.', 'sellkit' ) );
+			}
+		}
+
+		$gateways       = WC()->payment_gateways->payment_gateways();
+		$payment_method = $main_order->get_payment_method();
+
+		if ( 'ppcp-gateway' !== $payment_method && empty( $gateways[ $payment_method ] ) ) {
+			wp_send_json_error( __( 'Payment method is not available.', 'sellkit' ) );
+		}
+
+		$products = ! empty( $this->funnel->current_step_data['data']['products']['list'] ) ? $this->funnel->current_step_data['data']['products']['list'] : [];
+
+		if ( empty( $products ) || ! is_array( $products ) ) {
+			wp_send_json_error( __( 'Something went wrong', 'sellkit' ) );
+		}
+
 		Base_Contacts::step_is_passed();
 
 		$billing_address  = $main_order->get_address();
 		$shipping_address = $main_order->get_address( 'shipping' );
-		$products         = $this->funnel->current_step_data['data']['products']['list'];
 
 		$order = wc_create_order();
 
@@ -81,6 +128,11 @@ class Upsell {
 
 		foreach ( $products as $product_id => $product ) {
 			$product_object = wc_get_product( $product_id );
+
+			if ( ! $product_object ) {
+				continue;
+			}
+
 			$regular_price  = $product_object->get_regular_price();
 			$quantity       = ! empty( $product['quantity'] ) ? $product['quantity'] : 1;
 			$discount       = ! empty( $product['discount'] ) ? $product['discount'] : 0;
@@ -120,24 +172,73 @@ class Upsell {
 		$analytics_updater->set_funnel_id( $this->funnel->funnel_id );
 		$analytics_updater->add_new_order_log( $order, 'upsell' );
 
+		$accepted_steps[ $current_step_id ] = $order->get_id();
+
 		$main_order->update_meta_data( 'sellkit_upsell_order_id', $order->get_id() );
+		$main_order->update_meta_data( 'sellkit_upsell_accepted_steps', $accepted_steps );
 		$main_order->save();
 
-		$gateways = WC()->payment_gateways->payment_gateways();
+		// The upsell order's key is used by the next funnel steps.
+		self::remember_order( $order->get_id() );
 
-		if ( 'ppcp-gateway' !== $main_order->get_payment_method() ) {
-			$payment_process = $gateways[ $main_order->get_payment_method() ]->process_payment( $order->get_id() );
+		$payment_process = false;
+
+		if ( 'ppcp-gateway' !== $payment_method ) {
+			$payment_process = $gateways[ $payment_method ]->process_payment( $order->get_id() );
 		}
 
-		if ( 'ppcp-gateway' === $main_order->get_payment_method() ) {
+		if ( 'ppcp-gateway' === $payment_method ) {
 			$payment_process = self::ppcp_process_payment( $order->get_id() );
 		}
 
-		if ( 'success' === $payment_process['result'] && ! empty( $payment_process['redirect'] ) ) {
+		if ( ! empty( $payment_process['result'] ) && 'success' === $payment_process['result'] && ! empty( $payment_process['redirect'] ) ) {
 			wp_send_json_success( $payment_process['redirect'] );
 		}
 
 		wp_send_json_error( __( 'Something went wrong', 'sellkit' ) );
+	}
+
+	/**
+	 * Remembers an order id in the visitor's WC session.
+	 *
+	 * @since 2.8.1
+	 * @param int $order_id Order id.
+	 */
+	public static function remember_order( $order_id ) {
+		if ( ! function_exists( 'WC' ) || ! is_object( WC()->session ) ) {
+			return;
+		}
+
+		$order_ids = (array) WC()->session->get( 'sellkit_funnel_order_ids', [] );
+		$order_ids = array_slice( array_unique( array_merge( array_map( 'absint', $order_ids ), [ absint( $order_id ) ] ) ), -20 );
+
+		WC()->session->set( 'sellkit_funnel_order_ids', $order_ids );
+	}
+
+	/**
+	 * Checks the order belongs to the current visitor.
+	 *
+	 * Customer orders must belong to the logged-in user; guest orders must have been
+	 * placed in the visitor's current WC session.
+	 *
+	 * @since 2.8.1
+	 * @param \WC_Order $order Order.
+	 * @return bool
+	 */
+	public static function is_order_owned_by_visitor( $order ) {
+		$customer_id = absint( $order->get_customer_id() );
+
+		if ( $customer_id > 0 ) {
+			return get_current_user_id() === $customer_id;
+		}
+
+		if ( ! function_exists( 'WC' ) || ! is_object( WC()->session ) ) {
+			return false;
+		}
+
+		$order_ids = array_map( 'absint', (array) WC()->session->get( 'sellkit_funnel_order_ids', [] ) );
+
+		return in_array( absint( $order->get_id() ), $order_ids, true );
 	}
 
 	/**
@@ -173,8 +274,8 @@ class Upsell {
 
 		$args = [];
 
-		if ( ! empty( $_GET['order-key'] ) ) { // phpcs:ignore
-			$args['order-key'] = $_GET['order-key']; // phpcs:ignore
+		if ( ! empty( $_GET['order-key'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public funnel navigation.
+			$args['order-key'] = rawurlencode( sanitize_text_field( wp_unslash( $_GET['order-key'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public funnel navigation.
 		}
 
 		if ( ! $is_valid && ! empty( $this->funnel->next_step_data['page_id'] ) ) {

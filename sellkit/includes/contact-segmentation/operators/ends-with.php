@@ -63,7 +63,7 @@ class Ends_With extends Operator_Base {
 	public function is_valid( $value, $condition_value ) {
 		$value           = strtolower( $value );
 		$condition_value = strtolower( $condition_value );
-		if ( str_ends_with( $value, $condition_value ) ) {
+		if ( ( '' === $condition_value || substr( $value, -strlen( $condition_value ) ) === $condition_value ) ) {
 			return true;
 		}
 

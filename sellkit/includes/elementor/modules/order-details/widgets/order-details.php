@@ -395,8 +395,19 @@ class Sellkit_Elementor_Order_Details_Widget extends Sellkit_Elementor_Base_Widg
 		] );
 
 		// phpcs:disable
-		$order = isset( $_GET['order'] ) ? sanitize_text_field( $_GET['order'] ) : false;
-		$order = wc_get_order( $order );
+		$order = isset( $_GET['order'] ) ? absint( $_GET['order'] ) : false;
+		$order = $order ? wc_get_order( $order ) : false;
+
+		// The order (and its pay link) is only shown to visitors who know the order key.
+		$order_key = filter_input( INPUT_GET, 'order-key', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+		if ( empty( $order_key ) ) {
+			$order_key = filter_input( INPUT_GET, 'key', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		}
+
+		if ( ! ( $order instanceof \WC_Order ) || empty( $order_key ) || ! hash_equals( $order->get_order_key(), (string) $order_key ) ) {
+			$order = false;
+		}
 
 		require sellkit()->plugin_dir() . 'includes/elementor/modules/order-details/templates/thankyou.php';
 	}

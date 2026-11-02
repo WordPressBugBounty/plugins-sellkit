@@ -85,7 +85,6 @@ class GetResponse {
 		$args     = [
 			'method'    => 'POST',
 			'timeout'   => 100,
-			'sslverify' => false,
 			'headers'   => self::get_headers(),
 			'body'      => wp_json_encode( $subscriber_data ),
 		];
@@ -153,7 +152,6 @@ class GetResponse {
 		$args    = [
 			'method'    => 'GET',
 			'timeout'   => 100,
-			'sslverify' => false,
 			'headers'   => self::get_headers(),
 		];
 

@@ -47,7 +47,6 @@ class Sellkit_Elementor_Optin_Action_Getresponse extends Sellkit_Elementor_Optin
 	protected function get_get_request_args() {
 		return [
 			'timeout'    => 100,
-			'sslverify'  => false,
 			'headers'    => $this->get_headers(),
 		];
 	}
@@ -216,7 +215,6 @@ class Sellkit_Elementor_Optin_Action_Getresponse extends Sellkit_Elementor_Optin
 		$args     = [
 			'method'    => 'POST',
 			'timeout'   => 100,
-			'sslverify' => false,
 			'headers'   => $this->get_headers(),
 			'body'      => wp_json_encode( $subscriber_data ),
 		];
@@ -226,7 +224,7 @@ class Sellkit_Elementor_Optin_Action_Getresponse extends Sellkit_Elementor_Optin
 		if ( 409 === $result['code'] ) {
 			unset( $this->ajax_handler->response['admin_errors']['temp_getresponse'] );
 
-			$_result = $this->send_get( "contacts?query[email]={$subscriber_data['email']}" );
+			$_result = $this->send_get( 'contacts?query[email]=' . rawurlencode( $subscriber_data['email'] ) );
 
 			if ( $_result['code'] < 200 || $_result['code'] >= 300 ) {
 				return $this->ajax_handler->add_response( 'admin_errors', esc_html__( 'GetResponse: Contact already exists, but cannot retrieve its ID.', 'sellkit' ) );

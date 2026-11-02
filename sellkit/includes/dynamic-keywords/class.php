@@ -110,8 +110,32 @@ class Sellkit_Dynamic_Keywords {
 
 			$this->get_keywords( $keyword->get_id(), $keyword->get_title(), $keyword->get_keywords_type() );
 
-			add_shortcode( "sellkit-{$file_name}", [ $keyword, 'render_content' ] );
+			add_shortcode( "sellkit-{$file_name}", function ( $atts ) use ( $keyword ) {
+				return self::escape_content( $keyword->render_content( $atts ), $keyword );
+			} );
 		}
+	}
+
+	/**
+	 * Escapes a keyword's output. Keyword values come from orders, cookies, query strings
+	 * and shortcode attributes, so they are treated as plain text unless the keyword
+	 * declares that it returns markup (e.g. a formatted price).
+	 *
+	 * @since 2.8.1
+	 * @param mixed  $content Keyword content.
+	 * @param object $keyword Keyword instance.
+	 * @return string
+	 */
+	public static function escape_content( $content, $keyword ) {
+		if ( ! is_scalar( $content ) ) {
+			return '';
+		}
+
+		if ( ! empty( $keyword->allows_html ) ) {
+			return wp_kses_post( (string) $content );
+		}
+
+		return esc_html( (string) $content );
 	}
 }
 

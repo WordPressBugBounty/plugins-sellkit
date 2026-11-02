@@ -54,7 +54,7 @@ if ( $is_editor ) {
 					echo '<hr class="sellkit-checkout-widget-divider">';
 				}
 			} else {
-				echo '<li class="woocommerce-notice woocommerce-notice--info woocommerce-info">' . apply_filters( 'woocommerce_no_available_payment_methods_message', WC()->customer->get_billing_country() ? esc_html__( 'Sorry, it seems that there are no available payment methods for your state. Please contact us if you require assistance or wish to make alternate arrangements.', 'sellkit' ) : esc_html__( 'Please fill in your details above to see available payment methods.', 'sellkit' ) ) . '</li>'; // @codingStandardsIgnoreLine
+				echo '<li class="woocommerce-notice woocommerce-notice--info woocommerce-info">' . wp_kses_post( apply_filters( 'woocommerce_no_available_payment_methods_message', WC()->customer->get_billing_country() ? esc_html__( 'Sorry, it seems that there are no available payment methods for your state. Please contact us if you require assistance or wish to make alternate arrangements.', 'sellkit' ) : esc_html__( 'Please fill in your details above to see available payment methods.', 'sellkit' ) ) ) . '</li>'; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce core hook.
 			}
 			?>
 		</ul>

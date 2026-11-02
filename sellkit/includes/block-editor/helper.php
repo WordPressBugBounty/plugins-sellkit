@@ -49,7 +49,7 @@ class Sellkit_Blocks_Endpoint {
 	 * @return bool
 	 */
 	public function admin_permission_callback() {
-		return current_user_can( 'administrator' );
+		return current_user_can( 'manage_options' );
 	}
 
 	/**
@@ -63,7 +63,6 @@ class Sellkit_Blocks_Endpoint {
 	private function fetch_api_data( $url, $headers = [] ) {
 		$response = wp_remote_get( $url, [
 			'timeout' => 100,
-			'sslverify' => false,
 			'headers' => $headers,
 		] );
 

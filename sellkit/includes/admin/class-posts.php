@@ -36,6 +36,31 @@ class Sellkit_Admin_Posts {
 	public $page;
 
 	/**
+	 * Post types that can be managed through the SellKit post AJAX handlers.
+	 *
+	 * @since 2.8.1
+	 * @var array
+	 */
+	const ALLOWED_POST_TYPES = [
+		'sellkit-funnels',
+		'sellkit-discount',
+		'sellkit-coupon',
+		'sellkit-alert',
+	];
+
+	/**
+	 * Sub actions that can be triggered after saving a post.
+	 *
+	 * @since 2.8.1
+	 * @var array
+	 */
+	const ALLOWED_SUB_ACTIONS = [
+		'create_new_step',
+		'edit_step_name_slug',
+		'delete_step_post',
+	];
+
+	/**
 	 * Get a class instance.
 	 *
 	 * @since 1.1.0
@@ -62,14 +87,42 @@ class Sellkit_Admin_Posts {
 	}
 
 	/**
+	 * Checks if the given post is a SellKit post which the current user can manage.
+	 *
+	 * @since 2.8.1
+	 * @param int    $post_id    Post ID.
+	 * @param string $capability Meta capability to check, e.g. edit_post or delete_post.
+	 * @return bool
+	 */
+	public static function current_user_can_manage_post( $post_id, $capability = 'edit_post' ) {
+		$post_id = absint( $post_id );
+
+		if ( empty( $post_id ) ) {
+			return false;
+		}
+
+		$post_type = get_post_type( $post_id );
+
+		if ( ! in_array( $post_type, self::ALLOWED_POST_TYPES, true ) ) {
+			return false;
+		}
+
+		return current_user_can( $capability, $post_id );
+	}
+
+	/**
 	 * Remove post.
 	 *
 	 * @since 1.1.0
 	 */
 	public function remove_post() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
-		$post_id = sellkit_htmlspecialchars( INPUT_POST, 'post_id' );
+		$post_id = absint( sellkit_htmlspecialchars( INPUT_POST, 'post_id' ) );
+
+		if ( ! self::current_user_can_manage_post( $post_id, 'delete_post' ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to do this action.', 'sellkit' ), 403 );
+		}
 
 		$result = wp_delete_post( $post_id );
 
@@ -86,10 +139,14 @@ class Sellkit_Admin_Posts {
 	 * @since 1.1.0
 	 */
 	public function get_post() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
-		$post_id = sellkit_htmlspecialchars( INPUT_GET, 'post_id' );
+		$post_id = absint( sellkit_htmlspecialchars( INPUT_GET, 'post_id' ) );
 		$page    = sellkit_htmlspecialchars( INPUT_GET, 'page' );
+
+		if ( ! self::current_user_can_manage_post( $post_id, 'edit_post' ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to do this action.', 'sellkit' ), 403 );
+		}
 
 		$post_data = get_post_meta( $post_id );
 
@@ -99,22 +156,22 @@ class Sellkit_Admin_Posts {
 		}, $post_data );
 
 		if ( ! empty( $post_data['conditions'] ) ) {
-			$post_data['conditions'] = unserialize( $post_data['conditions'] ); // phpcs:ignore WordPress.PHP
+			$post_data['conditions'] = get_post_meta( $post_id, 'conditions', true );
 		}
 
 		if ( ! empty( $post_data['filters'] ) ) {
-			$post_data['filters'] = unserialize( $post_data['filters'] ); // phpcs:ignore WordPress.PHP
+			$post_data['filters'] = get_post_meta( $post_id, 'filters', true );
 		}
 
 		if ( ! empty( $post_data['sellkit_steps'] ) ) {
-			$post_data['sellkit_steps'] = unserialize( $post_data['sellkit_steps'] ); // phpcs:ignore WordPress.PHP
+			$post_data['sellkit_steps'] = get_post_meta( $post_id, 'sellkit_steps', true );
 		}
 
 		if ( ! empty( $post_data['nodes'] ) ) {
 			delete_post_meta( $post_id, 'sellkit_steps' );
 			unset( $post_data['sellkit_steps'] );
 
-			$new_node = $this->check_product_status( $post_data['nodes'] );
+			$new_node = $this->check_product_status( get_post_meta( $post_id, 'nodes', true ) );
 
 			$post_data['nodes'] = $new_node;
 		}
@@ -275,13 +332,29 @@ class Sellkit_Admin_Posts {
 	 * @since 1.1.0
 	 */
 	public function save_post() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$fields           = sellkit_post( 'fields' );
-		$post_id          = sellkit_htmlspecialchars( INPUT_POST, 'post_id' );
+		$post_id          = absint( sellkit_htmlspecialchars( INPUT_POST, 'post_id' ) );
 		$post_type        = sellkit_htmlspecialchars( INPUT_POST, 'post_type' );
 		$this->sub_action = sellkit_htmlspecialchars( INPUT_POST, 'sub_action' );
 		$this->page       = sellkit_htmlspecialchars( INPUT_POST, 'page' );
+
+		if ( ! in_array( $post_type, self::ALLOWED_POST_TYPES, true ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to do this action.', 'sellkit' ), 403 );
+		}
+
+		if ( ! in_array( $this->sub_action, self::ALLOWED_SUB_ACTIONS, true ) ) {
+			$this->sub_action = '';
+		}
+
+		if ( $post_id && ( get_post_type( $post_id ) !== $post_type || ! current_user_can( 'edit_post', $post_id ) ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to do this action.', 'sellkit' ), 403 );
+		}
+
+		if ( ! is_array( $fields ) ) {
+			$fields = [];
+		}
 
 		$sanitized_fields = $this->sanitize_fields( $fields );
 
@@ -353,6 +426,11 @@ class Sellkit_Admin_Posts {
 				continue;
 			}
 
+			// Never let the client write protected (underscore-prefixed) meta keys.
+			if ( ! is_string( $name ) || is_protected_meta( $name, 'post' ) ) {
+				continue;
+			}
+
 			update_post_meta( $new_post_id, $name, $value );
 
 			if ( 'sellkit_steps' === $name || 'nodes' === $name ) {
@@ -364,7 +442,9 @@ class Sellkit_Admin_Posts {
 			delete_post_meta( $new_post_id, 'conditions' );
 		}
 
-		do_action( "sellkit_funnels_after_$this->sub_action", $post_id );
+		if ( ! empty( $this->sub_action ) ) {
+			do_action( "sellkit_funnels_after_$this->sub_action", $post_id );
+		}
 
 		if ( empty( $data['sellkit_steps'] ) ) {
 			delete_post_meta( $new_post_id, 'sellkit_steps' );
@@ -374,7 +454,7 @@ class Sellkit_Admin_Posts {
 			delete_post_meta( $new_post_id, 'nodes' );
 		}
 
-		if ( 'checkout' === $this->page ) {
+		if ( 'checkout' === $this->page && 'sellkit-funnels' === $post_type ) {
 			update_option( 'sellkit_global_checkout_id', $new_post_id );
 		}
 
@@ -444,7 +524,7 @@ class Sellkit_Admin_Posts {
 	 * @return array
 	 */
 	public function check_product_status( $nodes ) {
-		$nodes    = (object) unserialize( $nodes ); // phpcs:ignore WordPress.PHP
+		$nodes    = (object) ( is_serialized( $nodes ) ? unserialize( $nodes, [ 'allowed_classes' => [ 'stdClass' ] ] ) : $nodes ); // phpcs:ignore WordPress.PHP
 		$new_node = [];
 
 		if ( ! class_exists( 'WooCommerce' ) ) {

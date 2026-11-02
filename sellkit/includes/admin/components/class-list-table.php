@@ -54,7 +54,7 @@ class Sellkit_Admin_List_Table {
 	 * @since 1.1.0
 	 */
 	public function get_posts() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		// Sanitize.
 		$post_type      = sellkit_htmlspecialchars( INPUT_POST, 'post_type' );
@@ -62,7 +62,12 @@ class Sellkit_Admin_List_Table {
 		$posts_per_page = filter_input( INPUT_POST, 'posts_per_page', FILTER_SANITIZE_NUMBER_INT );
 		$search_args    = filter_input( INPUT_POST, 'args', FILTER_DEFAULT, FILTER_FORCE_ARRAY );
 		$page           = filter_input( INPUT_POST, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		$list_status    = isset( $_POST['list_status'] ) ? sanitize_text_field( wp_unslash( $_POST['list_status'] ) ) : 'all';
+		$list_status    = isset( $_POST['list_status'] ) ? sanitize_text_field( wp_unslash( $_POST['list_status'] ) ) : 'all'; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in sellkit_admin_ajax_guard().
+
+		if ( ! in_array( $post_type, Sellkit_Admin_Posts::ALLOWED_POST_TYPES, true ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to do this action.', 'sellkit' ), 403 );
+		}
+
 		if ( ! in_array( $list_status, [ 'all', 'publish', 'draft' ], true ) ) {
 			$list_status = 'all';
 		}
@@ -84,7 +89,12 @@ class Sellkit_Admin_List_Table {
 
 		if ( is_array( $search_args ) && ! empty( $search_args ) ) {
 			foreach ( $search_args as $search_arg ) {
-				$args[ $search_arg['param'] ] = $search_arg['value'];
+				// Only the author filter is used by the list table UI.
+				if ( ! is_array( $search_arg ) || ! isset( $search_arg['param'], $search_arg['value'] ) || 'author__in' !== $search_arg['param'] ) {
+					continue;
+				}
+
+				$args['author__in'] = array_map( 'absint', (array) $search_arg['value'] );
 			}
 		}
 
@@ -233,14 +243,40 @@ class Sellkit_Admin_List_Table {
 	 * @since 1.1.0
 	 */
 	public function handle_post() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		// Sanitize.
 		$post       = filter_input( INPUT_POST, 'post', FILTER_DEFAULT, FILTER_FORCE_ARRAY );
 		$sub_action = sellkit_htmlspecialchars( INPUT_POST, 'sub_action' );
 
-		if ( is_array( $post ) && count( $post ) < 3 ) {
-			$post = (array) get_post( $post['ID'] );
+		$capabilities = [
+			'toggle_status'           => 'edit_post',
+			'duplicate_post'          => 'edit_post',
+			'remove'                  => 'delete_post',
+			'duplicate_single_funnel' => 'edit_post',
+			'export_single_funnel'    => 'edit_post',
+			'export_all_funnel'       => '',
+			'import_funnel'           => '',
+		];
+
+		if ( ! array_key_exists( $sub_action, $capabilities ) ) {
+			wp_send_json_error( esc_html__( 'Invalid action.', 'sellkit' ), 400 );
+		}
+
+		// Import writes arbitrary post content and meta (e.g. Elementor data) from a user supplied file.
+		if ( 'import_funnel' === $sub_action && ( ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to do this action.', 'sellkit' ), 403 );
+		}
+
+		// Never trust the client post array, always reload the post from the database.
+		if ( ! empty( $capabilities[ $sub_action ] ) ) {
+			$post_id = is_array( $post ) && ! empty( $post['ID'] ) ? absint( $post['ID'] ) : 0;
+
+			if ( ! Sellkit_Admin_Posts::current_user_can_manage_post( $post_id, $capabilities[ $sub_action ] ) ) {
+				wp_send_json_error( esc_html__( 'You are not allowed to do this action.', 'sellkit' ), 403 );
+			}
+
+			$post = get_post( $post_id, ARRAY_A );
 		}
 
 		call_user_func( [ $this, "handle_post_{$sub_action}" ], $post );

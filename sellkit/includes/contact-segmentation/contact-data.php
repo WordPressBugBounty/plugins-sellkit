@@ -15,6 +15,20 @@ defined( 'ABSPATH' ) || die();
 class Contact_Data {
 
 	/**
+	 * Guest segmentation data cookie name.
+	 *
+	 * @since 2.8.1
+	 */
+	const COOKIE_NAME = 'sellkit_contact_segmentation';
+
+	/**
+	 * Cookie that holds the signature of the guest segmentation data cookie.
+	 *
+	 * @since 2.8.1
+	 */
+	const COOKIE_SIGNATURE_NAME = 'sellkit_contact_segmentation_sig';
+
+	/**
 	 * Class instance.
 	 *
 	 * @since 1.1.0
@@ -147,8 +161,20 @@ class Contact_Data {
 	 * @since 1.1.0
 	 */
 	public function get_contact_data() {
-		if ( ! is_user_logged_in() && ! empty( $_COOKIE['sellkit_contact_segmentation'] ) ) {
-			self::$historical_data = (array) json_decode( wp_unslash( $_COOKIE['sellkit_contact_segmentation'] ) ); // phpcs:ignore
+		if ( ! is_user_logged_in() ) {
+			$cookie_json = self::get_verified_cookie_json();
+
+			// Unsigned or tampered data is ignored; it gets rebuilt and signed on this request.
+			if ( empty( $cookie_json ) ) {
+				return;
+			}
+
+			$cookie_data = json_decode( $cookie_json, true );
+
+			// The cookie is visitor-controlled: sanitize every value before use.
+			self::$historical_data = is_array( $cookie_data ) ? map_deep( $cookie_data, function ( $value ) {
+				return is_string( $value ) ? sanitize_text_field( $value ) : $value;
+			} ) : [];
 
 			return;
 		}
@@ -176,6 +202,42 @@ class Contact_Data {
 		}
 
 		self::$historical_data = $output;
+	}
+
+	/**
+	 * Gets the guest segmentation cookie JSON, only if its signature is valid.
+	 *
+	 * Guest data (purchase history, RFM, country, ...) is stored in a cookie, so it is signed
+	 * to stop visitors from editing it to match conditions.
+	 *
+	 * @since 2.8.1
+	 * @return string Empty string when the cookie is missing or its signature doesn't match.
+	 */
+	public static function get_verified_cookie_json() {
+		if ( empty( $_COOKIE[ self::COOKIE_NAME ] ) || empty( $_COOKIE[ self::COOKIE_SIGNATURE_NAME ] ) ) {
+			return '';
+		}
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Verified against its signature below and sanitized after decoding.
+		$cookie_json = wp_unslash( $_COOKIE[ self::COOKIE_NAME ] );
+		$signature   = sanitize_text_field( wp_unslash( $_COOKIE[ self::COOKIE_SIGNATURE_NAME ] ) );
+
+		if ( ! is_string( $cookie_json ) || ! hash_equals( self::sign_cookie_json( $cookie_json ), $signature ) ) {
+			return '';
+		}
+
+		return $cookie_json;
+	}
+
+	/**
+	 * Signs the guest segmentation cookie JSON.
+	 *
+	 * @since 2.8.1
+	 * @param string $cookie_json Cookie JSON.
+	 * @return string
+	 */
+	public static function sign_cookie_json( $cookie_json ) {
+		return hash_hmac( 'sha256', $cookie_json, wp_salt( 'auth' ) );
 	}
 
 	/**

@@ -44,7 +44,8 @@ class Sellkit_Admin {
 			'sellkit-admin',
 			'sellkitAdmin',
 			[
-				'nonce' => wp_create_nonce( 'sellkit_admin' ),
+				// Only admins can use the actions protected by this nonce (notices, WooCommerce installer).
+				'nonce' => current_user_can( 'manage_options' ) ? wp_create_nonce( 'sellkit_admin' ) : '',
 			]
 		);
 	}

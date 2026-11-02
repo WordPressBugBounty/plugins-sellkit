@@ -95,6 +95,9 @@ class Global_Hooks {
 		// Modify discounted products.
 		add_action( 'woocommerce_before_calculate_totals', [ $this, 'before_cart_calculate' ], 999 );
 
+		// Accepted upsell offers are only valid for the order they were accepted for.
+		add_action( 'woocommerce_cart_emptied', [ $this, 'clear_accepted_upsells' ] );
+
 		// Allow viewing of Checkout page in the Editor with an empty cart.
 		$action            = isset( $_REQUEST['action'] ) ? filter_var( $_REQUEST['action'], FILTER_SANITIZE_FULL_SPECIAL_CHARS ) : ''; // phpcs:ignore
 		$elementor_preview = isset( $_REQUEST['elementor-preview'] ) ? filter_var( $_REQUEST['elementor-preview'], FILTER_SANITIZE_FULL_SPECIAL_CHARS ) : ''; // phpcs:ignore
@@ -119,7 +122,24 @@ class Global_Hooks {
 
 		$sub_action = filter_input( INPUT_POST, 'sub_action', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
-		if ( method_exists( $this, $sub_action ) ) {
+		// Only these methods may be invoked through the public ajax endpoint.
+		$allowed_sub_actions = [
+			'apply_coupon',
+			'change_cart_item_qty',
+			'auth_user',
+			'search_for_email',
+			'search_for_username',
+			'validate_postcode',
+			'validate_phone_number',
+			'set_customer_details_ajax',
+			'sellkit_state_lookup_by_postcode',
+			'sellkit_checkout_modify_cart_by_bundle_products',
+			'call_funnel_popups',
+			'perform_upsell_accept_button',
+			'perform_upsell_reject_button',
+		];
+
+		if ( in_array( $sub_action, $allowed_sub_actions, true ) && method_exists( $this, $sub_action ) ) {
 			call_user_func( [ $this, $sub_action ] );
 			return;
 		}
@@ -207,7 +227,8 @@ class Global_Hooks {
 	 * @since 1.1.0
 	 */
 	public function change_cart_item_qty() {
-		$qty       = filter_input( INPUT_POST, 'qty', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		// Nonce is verified in ajax_handler(). wc_stock_amount() casts to a whole stock amount, so fractional quantities can't lower the price.
+		$qty       = isset( $_POST['qty'] ) ? wc_stock_amount( sanitize_text_field( wp_unslash( $_POST['qty'] ) ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$id        = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$action    = filter_input( INPUT_POST, 'mode', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$funnel_id = filter_input( INPUT_POST, 'related_checkout', FILTER_SANITIZE_NUMBER_INT );
@@ -215,12 +236,23 @@ class Global_Hooks {
 		self::make_changes_after_cart_item_edit( $funnel_id );
 
 		if ( 'add' === $action ) {
-			WC()->cart->add_to_cart( $id, $qty );
+			$product_id = absint( $id );
+
+			// Run the same validation WooCommerce runs for add to cart requests; add_to_cart() itself checks purchasability, sold individually and stock.
+			if (
+				$product_id > 0 &&
+				$qty > 0 &&
+				apply_filters( 'woocommerce_add_to_cart_validation', true, $product_id, $qty ) // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce core hook.
+			) {
+				WC()->cart->add_to_cart( $product_id, $qty );
+			}
+
 			self::make_changes_after_cart_item_edit( $funnel_id );
 			wp_send_json_success();
 		}
 
 		if ( 'remove' === $action ) {
+			$id        = absint( $id );
 			$post_type = get_post_type( $id );
 
 			if ( 'product_variation' === $post_type ) {
@@ -248,11 +280,50 @@ class Global_Hooks {
 			wp_send_json_success();
 		}
 
-		( $qty > 0 ) ? WC()->cart->set_quantity( $id, $qty ) : WC()->cart->remove_cart_item( $id );
+		// Edit mode: $id is a cart item key.
+		$cart_item_key = (string) $id;
+
+		if ( empty( WC()->cart->get_cart_item( $cart_item_key ) ) ) {
+			wp_send_json_error();
+		}
+
+		if ( $qty <= 0 ) {
+			WC()->cart->remove_cart_item( $cart_item_key );
+		} elseif ( self::is_valid_cart_item_quantity( $cart_item_key, $qty ) ) {
+			WC()->cart->set_quantity( $cart_item_key, $qty );
+		}
 
 		self::make_changes_after_cart_item_edit( $funnel_id );
 
 		wp_send_json_success();
+	}
+
+	/**
+	 * Validate a new quantity of an existing cart item the same way WooCommerce validates cart updates.
+	 *
+	 * @since 2.8.1
+	 * @param string $cart_item_key cart item key.
+	 * @param int    $qty new quantity.
+	 * @return bool
+	 */
+	private static function is_valid_cart_item_quantity( $cart_item_key, $qty ) {
+		$cart_item = WC()->cart->get_cart_item( $cart_item_key );
+
+		if ( empty( $cart_item ) || empty( $cart_item['data'] ) || $qty <= 0 ) {
+			return false;
+		}
+
+		$product = $cart_item['data'];
+
+		if ( $product->is_sold_individually() && $qty > 1 ) {
+			return false;
+		}
+
+		if ( ! $product->has_enough_stock( $qty ) ) {
+			return false;
+		}
+
+		return (bool) apply_filters( 'woocommerce_update_cart_validation', true, $cart_item_key, $cart_item, $qty ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce core hook.
 	}
 
 	/**
@@ -263,6 +334,11 @@ class Global_Hooks {
 	 */
 	public static function make_changes_after_cart_item_edit( $funnel_id ) {
 		if ( empty( $funnel_id ) ) {
+			return;
+		}
+
+		// During ajax the id comes from the request, so only a published checkout step is accepted.
+		if ( wp_doing_ajax() && ! self::is_valid_checkout_step( $funnel_id ) ) {
 			return;
 		}
 
@@ -502,24 +578,31 @@ class Global_Hooks {
 	 */
 	public function auth_user() {
 		$email  = filter_input( INPUT_POST, 'email', FILTER_SANITIZE_EMAIL );
-		$pass   = filter_input( INPUT_POST, 'pass', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		// Passwords must be used verbatim; sanitizing would alter valid characters. Nonce is verified in ajax_handler().
+		$pass   = isset( $_POST['pass'] ) ? wp_unslash( $_POST['pass'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing
 		$verify = filter_var( $email, FILTER_VALIDATE_EMAIL );
 
-		if ( ! $verify || empty( $email ) || empty( $pass ) ) {
-			wp_send_json_error( __( 'Email or password field is not valid.', 'sellkit' ) );
+		if ( ! $verify || empty( $email ) || ! is_string( $pass ) || '' === $pass ) {
+			wp_send_json_error( esc_html__( 'Email or password field is not valid.', 'sellkit' ) );
 		}
 
-		$result = wp_authenticate( $email, $pass );
+		// wp_signon() fires the standard login hooks (wp_login, 2FA / security plugins).
+		$result = wp_signon(
+			[
+				'user_login'    => $email,
+				'user_password' => $pass,
+				'remember'      => true,
+			],
+			is_ssl()
+		);
 
 		if ( is_wp_error( $result ) ) {
-			wp_send_json_error( $result->get_error_message() );
+			wp_send_json_error( esc_html__( 'The email or password you entered is incorrect.', 'sellkit' ) );
 		}
 
-		wp_clear_auth_cookie();
 		wp_set_current_user( $result->ID );
-		wp_set_auth_cookie( $result->ID );
 
-		wp_send_json_success( $result );
+		wp_send_json_success();
 	}
 
 	/**
@@ -725,7 +808,7 @@ class Global_Hooks {
 	public function validate_postcode() {
 		$country  = filter_input( INPUT_POST, 'country_code', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$postcode = filter_input( INPUT_POST, 'post_code', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		$parent   = filter_input( INPUT_POST, 'parent', FILTER_DEFAULT );
+		$parent   = sanitize_html_class( (string) filter_input( INPUT_POST, 'parent', FILTER_DEFAULT ) );
 
 		$postcode = wc_format_postcode( $postcode, $country );
 		$valid    = \WC_Validation::is_postcode( $postcode, $country );
@@ -745,7 +828,7 @@ class Global_Hooks {
 	 */
 	public function validate_phone_number() {
 		$phone  = filter_input( INPUT_POST, 'phone_number', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		$parent = filter_input( INPUT_POST, 'parent', FILTER_DEFAULT );
+		$parent = sanitize_html_class( (string) filter_input( INPUT_POST, 'parent', FILTER_DEFAULT ) );
 
 		$valid = \WC_Validation::is_phone( $phone );
 
@@ -817,7 +900,7 @@ class Global_Hooks {
 	public function sellkit_state_lookup_by_postcode() {
 		$country  = filter_input( INPUT_POST, 'country_value', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$postcode = filter_input( INPUT_POST, 'postcode_value', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		$api      = 'https://api.zippopotam.us/' . $country . '/' . $postcode;
+		$api      = 'https://api.zippopotam.us/' . rawurlencode( (string) $country ) . '/' . rawurlencode( (string) $postcode );
 
 		if ( empty( $country ) || empty( $postcode ) ) {
 			wp_send_json_error( esc_html__( 'Not valid inputs', 'sellkit' ) );
@@ -847,8 +930,8 @@ class Global_Hooks {
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
 	 */
 	public function sellkit_checkout_modify_cart_by_bundle_products() {
-		$qty         = filter_input( INPUT_POST, 'qty', FILTER_SANITIZE_NUMBER_INT );
-		$id          = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
+		$qty         = wc_stock_amount( filter_input( INPUT_POST, 'qty', FILTER_SANITIZE_NUMBER_INT ) );
+		$id          = absint( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) );
 		$type        = filter_input( INPUT_POST, 'type', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$checkout_id = filter_input( INPUT_POST, 'checkout_id', FILTER_SANITIZE_NUMBER_INT );
 		$modify      = filter_input( INPUT_POST, 'modify', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
@@ -857,12 +940,22 @@ class Global_Hooks {
 		if ( ! empty( $key ) ) {
 			foreach ( WC()->cart->get_cart() as $item_key => $item ) {
 				if ( $item_key === $key ) {
-					WC()->cart->set_quantity( $item_key, $qty, true );
+					if ( $qty <= 0 ) {
+						WC()->cart->remove_cart_item( $item_key );
+					} elseif ( self::is_valid_cart_item_quantity( $item_key, $qty ) ) {
+						WC()->cart->set_quantity( $item_key, $qty, true );
+					}
+
 					break; // stop the loop.
 				}
 			}
 
 			wp_send_json_success();
+		}
+
+		// Bundle products are read from the checkout step, so it must be a published checkout step.
+		if ( ! self::is_valid_checkout_step( $checkout_id ) ) {
+			wp_send_json_error();
 		}
 
 		if ( 'radio' === $type ) {
@@ -951,7 +1044,8 @@ class Global_Hooks {
 		$checkout_id = get_queried_object_id();
 
 		if ( wp_doing_ajax() ) {
-			$checkout_id = $checkout_id_ajax;
+			// The id comes from the request, so only a published checkout step is accepted.
+			$checkout_id = self::is_valid_checkout_step( $checkout_id_ajax ) ? absint( $checkout_id_ajax ) : 0;
 		}
 
 		if ( empty( $checkout_id ) ) {
@@ -1183,13 +1277,15 @@ class Global_Hooks {
 		}
 
 		if ( ! empty( $sellkit_upsell_ids ) ) {
-			$upsell_ids = explode( ',', $sellkit_upsell_ids );
-			$list       = self::upsell_downsell_ids_of_funnel( $checkout_id );
+			$upsell_ids = array_map( 'absint', explode( ',', $sellkit_upsell_ids ) );
+			$list       = array_map( 'absint', self::upsell_downsell_ids_of_funnel( $checkout_id ) );
+			$accepted   = self::get_accepted_upsells();
 
 			if ( ! empty( $list ) ) {
 				foreach ( $upsell_ids as $id ) {
 
-					if ( in_array( $id, $list, true ) ) {
+					// Only apply offers of this funnel that the visitor actually accepted in this session.
+					if ( in_array( $id, $list, true ) && in_array( $id, $accepted, true ) ) {
 						self::applay_upsell_downsell_discount( $id );
 					}
 				}
@@ -1232,17 +1328,22 @@ class Global_Hooks {
 	 */
 	private static function upsell_downsell_ids_of_funnel( $checkout_id ) {
 		$step_data = get_post_meta( $checkout_id, 'step_data', true );
-		$funnel_id = $step_data['funnel_id'];
+		$funnel_id = is_array( $step_data ) && isset( $step_data['funnel_id'] ) ? $step_data['funnel_id'] : 0;
 		$nodes     = get_post_meta( $funnel_id, 'nodes', true );
 		$ids       = [];
+
+		if ( ! is_array( $nodes ) ) {
+			return $ids;
+		}
 
 		foreach ( $nodes as $node ) {
 			if ( isset( $node['type'] ) && in_array( $node['type']['key'], [ 'upsell', 'downsell' ], true ) ) {
 				$ids[] = $node['page_id'];
+				$ids[] = apply_filters( 'wpml_object_id', $node['page_id'], 'sellkit_step', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML's own filter.
 			}
 		}
 
-		return $ids;
+		return array_values( array_unique( array_map( 'absint', $ids ) ) );
 	}
 
 	/**
@@ -1303,15 +1404,8 @@ class Global_Hooks {
 		}
 
 		$checkout_id = absint( $checkout_id );
-		$step_data   = get_post_meta( $checkout_id, 'step_data', true );
 
-		if (
-			0 === $checkout_id ||
-			'publish' !== get_post_status( $checkout_id ) ||
-			! is_array( $step_data ) ||
-			! isset( $step_data['type']['key'] ) ||
-			'checkout' !== $step_data['type']['key']
-		) {
+		if ( ! self::is_valid_checkout_step( $checkout_id ) ) {
 			return 0;
 		}
 
@@ -1320,6 +1414,79 @@ class Global_Hooks {
 		}
 
 		return $checkout_id;
+	}
+
+	/**
+	 * Whether the given id is a published SellKit checkout step.
+	 *
+	 * @since 2.8.1
+	 *
+	 * @param int $checkout_id step id.
+	 *
+	 * @return bool
+	 */
+	private static function is_valid_checkout_step( $checkout_id ) {
+		$checkout_id = absint( $checkout_id );
+
+		if (
+			0 === $checkout_id ||
+			'sellkit_step' !== get_post_type( $checkout_id ) ||
+			'publish' !== get_post_status( $checkout_id )
+		) {
+			return false;
+		}
+
+		$step_data = get_post_meta( $checkout_id, 'step_data', true );
+
+		return is_array( $step_data ) && isset( $step_data['type']['key'] ) && 'checkout' === $step_data['type']['key'];
+	}
+
+	/**
+	 * Get upsell/downsell step ids the visitor accepted in the current WooCommerce session.
+	 *
+	 * @since 2.8.1
+	 *
+	 * @return array
+	 */
+	private static function get_accepted_upsells() {
+		if ( ! function_exists( 'WC' ) || ! isset( WC()->session ) ) {
+			return [];
+		}
+
+		$accepted = WC()->session->get( 'sellkit_accepted_upsells', [] );
+
+		return is_array( $accepted ) ? array_map( 'absint', $accepted ) : [];
+	}
+
+	/**
+	 * Record an accepted upsell/downsell step id in the current WooCommerce session.
+	 *
+	 * @since 2.8.1
+	 *
+	 * @param int $upsell_id id of upsell or downsell step.
+	 */
+	private static function add_accepted_upsell( $upsell_id ) {
+		if ( ! function_exists( 'WC' ) || ! isset( WC()->session ) ) {
+			return;
+		}
+
+		$accepted   = self::get_accepted_upsells();
+		$accepted[] = absint( $upsell_id );
+
+		WC()->session->set( 'sellkit_accepted_upsells', array_values( array_unique( $accepted ) ) );
+	}
+
+	/**
+	 * Clear accepted upsells once the cart is emptied after a successful order (keeps them for a retried payment).
+	 *
+	 * @since 2.8.1
+	 */
+	public function clear_accepted_upsells() {
+		if ( ! function_exists( 'WC' ) || ! isset( WC()->session ) ) {
+			return;
+		}
+
+		WC()->session->__unset( 'sellkit_accepted_upsells' );
 	}
 
 	/**
@@ -1465,11 +1632,25 @@ class Global_Hooks {
 			wp_send_json_error( esc_html__( 'Empty Upsell ID.', 'sellkit' ) );
 		}
 
+		// The offer must be a published upsell/downsell step of the funnel this published checkout belongs to.
+		$checkout_id = self::is_valid_checkout_step( $checkout_id ) ? absint( $checkout_id ) : 0;
+		$upsell_id   = absint( $upsell_id );
+
+		if (
+			0 === $checkout_id ||
+			'publish' !== get_post_status( $upsell_id ) ||
+			! in_array( $upsell_id, array_map( 'absint', self::upsell_downsell_ids_of_funnel( $checkout_id ) ), true )
+		) {
+			wp_send_json_error( esc_html__( 'Invalid offer.', 'sellkit' ) );
+		}
+
 		$upsell_data = get_post_meta( $upsell_id, 'step_data', true );
 
 		if ( empty( $upsell_data ) ) {
 			wp_send_json_error( esc_html__( 'Empty Step Data.', 'sellkit' ) );
 		}
+
+		self::add_accepted_upsell( $upsell_id );
 
 		// Add product to cart.
 		$product_id = '';

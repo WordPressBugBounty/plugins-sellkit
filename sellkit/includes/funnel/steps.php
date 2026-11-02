@@ -63,7 +63,7 @@ class Sellkit_Steps {
 		$current_step_type = $this->funnel->current_step_data['type']['key'];
 
 		add_action( 'wp', function () {
-			if ( is_user_logged_in() && current_user_can( 'administrator' ) ) {
+			if ( is_user_logged_in() && current_user_can( 'manage_options' ) ) {
 				return;
 			}
 
@@ -77,7 +77,14 @@ class Sellkit_Steps {
 			}
 
 			if ( ! empty( $this->funnel->next_step_data['page_id'] ) ) {
-				wp_safe_redirect( add_query_arg( [ $_GET ], get_permalink( $this->funnel->next_step_data['page_id'] ) ) ); // phpcs:ignore
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Forwarding public query args (e.g. order-key) to the next step.
+				$query_args = map_deep( wp_unslash( $_GET ), 'sanitize_text_field' );
+
+				// Drop the args that identify the current step so they don't override the next step's link.
+				unset( $query_args['p'], $query_args['page_id'], $query_args['post_type'], $query_args['sellkit_step'] );
+
+				wp_safe_redirect( add_query_arg( urlencode_deep( $query_args ), get_permalink( $this->funnel->next_step_data['page_id'] ) ) );
+				exit;
 			}
 
 			if ( empty( $this->funnel->next_step_data['page_id'] ) ) {

@@ -77,15 +77,25 @@ class Sellkit_Elementor_Optin_Ajaxhandler {
 			return;
 		}
 
-		$post_id        = filter_input( INPUT_POST, 'post_id' );
-		$form_id        = filter_input( INPUT_POST, 'form_id' );
+		$post_id        = absint( filter_input( INPUT_POST, 'post_id', FILTER_SANITIZE_NUMBER_INT ) );
+		$form_id        = (string) filter_input( INPUT_POST, 'form_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$funnel_page_id = filter_input( INPUT_POST, 'sellkit_current_page_id', FILTER_SANITIZE_NUMBER_INT );
 
 		$this->form_data = $_POST; // @codingStandardsIgnoreLine
 
-		$post_elements = Elementor::$instance->documents->get( $post_id )->get_elements_data();
-		$this->form    = self::find_form_recursive( $post_elements, $form_id );
-		$funnel        = Sellkit_Funnel::get_instance( $funnel_page_id );
+		// The form settings are read from the given post, so it must be one the visitor can see and built with Elementor.
+		$document = ( $post_id && ( sellkit_is_post_publicly_accessible( $post_id ) || current_user_can( 'edit_post', $post_id ) ) )
+			? Elementor::$instance->documents->get( $post_id )
+			: null;
+
+		$post_elements = $document ? $document->get_elements_data() : [];
+		$form          = is_array( $post_elements ) ? self::find_form_recursive( $post_elements, $form_id ) : false;
+		$this->form    = ( is_array( $form ) && isset( $form['widgetType'] ) && 'sellkit-optin' === $form['widgetType'] ) ? $form : false;
+
+		// Stop before running any action when the form is not valid.
+		$this->validate_form();
+
+		$funnel = Sellkit_Funnel::get_instance( $funnel_page_id );
 
 		if ( 'sales-page' === $funnel->current_step_data['type']['key'] ) {
 			$this
@@ -111,17 +121,38 @@ class Sellkit_Elementor_Optin_Ajaxhandler {
 	 */
 	public function handle_editor() {
 		$nonce_valid = check_ajax_referer( 'sellkit_optin_editor', 'nonce', false );
-		$action      = filter_input( INPUT_POST, 'service' );
-		$request     = filter_input( INPUT_POST, 'request' );
+		$action      = (string) filter_input( INPUT_POST, 'service', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		$request     = (string) filter_input( INPUT_POST, 'request', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$params      = filter_input( INPUT_POST, 'params', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+		$params      = empty( $params ) ? [] : $params;
 
-		if ( false === $nonce_valid ) {
+		if ( false === $nonce_valid || ! current_user_can( 'edit_posts' ) ) {
 			$this->set_success( false )->send_response();
 			return;
 		}
 
-		$class_name = 'Sellkit_Elementor_Optin_Action_' . ucfirst( $action );
-		$class_name::get_instance()->$request( $this, empty( $params ) ? [] : $params );
+		// Only registered CRM actions and their editor requests can be called. The webhook action has no remote lists.
+		if (
+			'webhook' === $action ||
+			! array_key_exists( $action, Module::$action_types ) ||
+			! in_array( $request, [ 'get_list', 'get_additional_data' ], true )
+		) {
+			$this->set_success( false )->send_response();
+			return;
+		}
+
+		// The default source uses the API keys saved in SellKit settings, so only users who can manage those settings may use them.
+		$key_source = isset( $params[ "{$action}_api_key_source" ] ) ? $params[ "{$action}_api_key_source" ] : 'default';
+
+		if ( 'custom' !== $key_source && ! current_user_can( 'manage_options' ) ) {
+			$this->set_success( false )->send_response();
+			return;
+		}
+
+		$params[ "{$action}_api_key_source" ] = 'custom' === $key_source ? 'custom' : 'default';
+
+		$class_name = Module::$action_types[ $action ];
+		$class_name::get_instance()->$request( $this, $params );
 
 		$this->send_response();
 	}
@@ -201,10 +232,11 @@ class Sellkit_Elementor_Optin_Ajaxhandler {
 			return $this;
 		}
 
+		// Messages are inserted as HTML on the frontend.
 		Module::$messages = [
-			'success'    => $form['settings']['messages_success'],
-			'error'      => $form['settings']['messages_error'],
-			'required'   => $form['settings']['messages_required'],
+			'success'    => wp_kses_post( $form['settings']['messages_success'] ),
+			'error'      => wp_kses_post( $form['settings']['messages_error'] ),
+			'required'   => wp_kses_post( $form['settings']['messages_required'] ),
 		];
 
 		return $this;
@@ -242,6 +274,11 @@ class Sellkit_Elementor_Optin_Ajaxhandler {
 			$actions = is_array( $actions ) ? $actions : [ $actions ];
 
 			foreach ( $actions as $action ) {
+				// Only registered actions can run.
+				if ( ! is_string( $action ) || ! isset( Module::$action_types[ $action ] ) ) {
+					continue;
+				}
+
 				$class_name = Module::$action_types[ $action ];
 				$class_name::get_instance()->run( $this );
 			}
@@ -280,7 +317,7 @@ class Sellkit_Elementor_Optin_Ajaxhandler {
 	 * @access public
 	 */
 	public function send_response() {
-		if ( ! current_user_can( 'administrator' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			unset( $this->response['admin_errors'] );
 		} else {
 			// Flatten admin_errors.

@@ -49,7 +49,6 @@ class Sellkit_Elementor_Optin_Action_Drip extends Sellkit_Elementor_Optin_Action
 			'api_key'    => $this->api_key,
 			'api_output' => 'json',
 			'timeout'    => 100,
-			'sslverify'  => false,
 			'headers'    => $this->get_headers(),
 		];
 	}

@@ -2,6 +2,14 @@
 
 class Coupon_Value extends Tag_Base {
 	/**
+	 * The value is a formatted price (wc_price) markup; it is passed through wp_kses_post.
+	 *
+	 * @since 2.8.1
+	 * @var bool
+	 */
+	public $allows_html = true;
+
+	/**
 	 * Get class id.
 	 *
 	 * @return string

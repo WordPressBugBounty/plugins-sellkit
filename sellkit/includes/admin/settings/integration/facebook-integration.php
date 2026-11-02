@@ -50,7 +50,8 @@ class Facebook extends Settings_Integration {
 	 * @since 1.1.0
 	 */
 	public function analytics() {
-		$fb_tracking_id = esc_attr( sellkit_get_option( 'facebook_pixel_id' ) );
+		// Facebook pixel IDs are numeric only.
+		$fb_tracking_id = preg_replace( '/[^0-9]/', '', (string) sellkit_get_option( 'facebook_pixel_id' ) );
 
 		if ( empty( $fb_tracking_id ) || empty( sellkit_get_option( 'facebook_pixel' ) ) ) {
 			return;
@@ -71,11 +72,11 @@ class Facebook extends Settings_Integration {
 				</script>
 
 				<noscript>
-					<img height='1' width='1' style='display:none' src='https://www.facebook.com/tr?id=" . esc_js( $fb_tracking_id ) . "&ev=PageView&noscript=1'/>
+					<img height='1' width='1' style='display:none' src='" . esc_url( 'https://www.facebook.com/tr?id=' . rawurlencode( $fb_tracking_id ) . '&ev=PageView&noscript=1' ) . "'/>
 				</noscript>
 
 				<script type='text/javascript'>
-					fbq('init', " . esc_js( $fb_tracking_id ) . ");
+					fbq('init', '" . esc_js( $fb_tracking_id ) . "');
 					fbq('track', 'PageView', {'plugin': 'Sellkit'});
 				</script>
 			<!-- Facebook Pixel Script By Sellkit -->
@@ -101,13 +102,18 @@ class Facebook extends Settings_Integration {
 			return;
 		}
 
-		$first_index = array_key_first( $post_meta );
+		reset( $post_meta );
+		$first_index = key( $post_meta );
 
 		$sellkit_page_meta = $post_meta[ $first_index ]['type']['key'];
 		$fb_events_script  = '';
 
 		foreach ( $fb_pixel_events as $event ) {
 			$function_name = "fb_pixel_{$event}";
+
+			if ( ! method_exists( $this, $function_name ) ) {
+				continue;
+			}
 
 			$fb_events_script .= $this->$function_name( $sellkit_page_meta, $tracking_id );
 		}

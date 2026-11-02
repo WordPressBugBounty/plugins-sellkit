@@ -44,8 +44,7 @@ class Sellkit_Elementor_Optin_Action_Convertkit extends Sellkit_Elementor_Optin_
 
 	protected function get_get_request_args() {
 		return [
-			'timeout'   => 100,
-			'sslverify' => false,
+			'timeout' => 100,
 		];
 	}
 

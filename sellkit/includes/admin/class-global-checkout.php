@@ -26,7 +26,7 @@ class Sellkit_Global_Checkout {
 	 * @since 1.7.4
 	 */
 	public function get_global_checkout_funnel_id() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$global_checkout_id = get_option( Checkout::SELLKIT_GLOBAL_CHECKOUT_OPTION, 0 );
 
@@ -46,10 +46,10 @@ class Sellkit_Global_Checkout {
 	 * @since 1.7.4
 	 */
 	public function change_status() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
-		$target_status = isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : '';
-		$post_id       = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
+		$target_status = isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in sellkit_admin_ajax_guard().
+		$post_id       = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in sellkit_admin_ajax_guard().
 
 		if ( ! in_array( $target_status, [ 'publish', 'draft' ], true ) || ! $post_id ) {
 			wp_send_json_error( [ 'message' => __( 'Invalid request.', 'sellkit' ) ] );

@@ -31,6 +31,10 @@ class Sellkit_Notices {
 	public function handle_maybe_later_rating_btn() {
 		check_ajax_referer( 'sellkit_admin', 'nonce' );
 
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to do this action.', 'sellkit' ), 403 );
+		}
+
 		sellkit_update_option( 'sellkit_rating_notice_trigger', time() + 48 * 60 * 60 );
 		wp_send_json_success( esc_html__( 'The operation was successful.', 'sellkit' ) );
 	}
@@ -42,6 +46,11 @@ class Sellkit_Notices {
 	 * @param string $plugin_name Plugin name.
 	 */
 	public function load_notices( $plugin_name = 'sellkit' ) {
+		// Notices can only be dismissed by admins, so don't show them to other users.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		$path = trailingslashit( sellkit()->plugin_dir() . 'includes/admin/notices' );
 
 		if (
@@ -97,6 +106,10 @@ class Sellkit_Notices {
 	 */
 	public function dismiss_notice() {
 		check_ajax_referer( 'sellkit_admin', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to do this action.', 'sellkit' ), 403 );
+		}
 
 		$new_notice_key        = ! empty( $_POST['key'] ) ? sanitize_text_field( wp_unslash( $_POST['key'] ) ) : '';
 		$dismissed_notices     = sellkit_get_option( 'dismissed_notices' );

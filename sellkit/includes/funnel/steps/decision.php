@@ -43,8 +43,8 @@ class Decision {
 
 		$args = [];
 
-		if ( ! empty( $_GET['order-key'] ) ) { // phpcs:ignore
-			$args['order-key'] = $_GET['order-key']; // phpcs:ignore
+		if ( ! empty( $_GET['order-key'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public funnel navigation.
+			$args['order-key'] = rawurlencode( sanitize_text_field( wp_unslash( $_GET['order-key'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public funnel navigation.
 		}
 
 		if ( $is_valid && ! empty( $this->funnel->next_step_data['page_id'] ) ) {

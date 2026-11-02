@@ -35,8 +35,7 @@ class Sellkit_Elementor_Controls_File_Uploader extends Control_Base_Multiple {
 	public function __construct() {
 		parent::__construct();
 
-		// Register AJAX action.
-		add_action( 'wp_ajax_sellkit_control_file_upload', [ $this, 'handle_file_upload' ] );
+		// The AJAX action is registered once in the Opt-in module (Sellkit_Elementor_Optin_Module), since controls aren't loaded during AJAX requests.
 
 		// Define nonce for file upload ajax action.
 		add_action( 'elementor/editor/after_enqueue_scripts', function() {
@@ -145,6 +144,14 @@ class Sellkit_Elementor_Controls_File_Uploader extends Control_Base_Multiple {
 	public static function handle_file_upload() {
 		check_ajax_referer( 'sellkit_fileuploader_editor', 'nonce' );
 
+		if ( ! current_user_can( 'upload_files' ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to upload files.', 'sellkit' ), 403 );
+		}
+
+		if ( empty( $_FILES['file'] ) ) {
+			wp_send_json_error( esc_html__( 'No file was uploaded.', 'sellkit' ) );
+		}
+
 		if ( ! function_exists( 'wp_handle_upload' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
@@ -167,7 +174,7 @@ class Sellkit_Elementor_Controls_File_Uploader extends Control_Base_Multiple {
 			);
 		}
 
-		wp_send_json_error( $movefile['error'] );
+		wp_send_json_error( esc_html( isset( $movefile['error'] ) ? $movefile['error'] : __( 'Upload failed.', 'sellkit' ) ) );
 	}
 
 	/**

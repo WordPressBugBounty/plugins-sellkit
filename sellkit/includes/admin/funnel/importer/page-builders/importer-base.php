@@ -75,7 +75,7 @@ class Importer_Base extends \WP_Background_Process {
 	 */
 	public function import_to_funnel( $data, $funnel_id ) {
 		$meta_data = (array) $data->meta;
-		$step_data = unserialize( $meta_data['step_data'] ); //phpcs:ignore
+		$step_data = unserialize( $meta_data['step_data'], [ 'allowed_classes' => [ 'stdClass' ] ] ); //phpcs:ignore
 
 		unset( $step_data['funnel_id'] );
 		unset( $step_data['number'] );
@@ -101,7 +101,7 @@ class Importer_Base extends \WP_Background_Process {
 			}
 
 			if ( is_serialized( $meta_value, true ) ) {
-				$meta_value = maybe_unserialize( stripslashes( $meta_value ) );
+				$meta_value = unserialize( stripslashes( $meta_value ), [ 'allowed_classes' => [ 'stdClass' ] ] ); //phpcs:ignore
 			}
 
 			update_post_meta( $new_step_data['page_id'], $meta_key, $meta_value );

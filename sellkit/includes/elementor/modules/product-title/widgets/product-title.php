@@ -130,7 +130,7 @@ class Sellkit_Elementor_Product_Title_Widget extends Sellkit_Elementor_Upsell_Ba
 
 	protected function render() {
 		$settings = $this->get_settings_for_display();
-		$html_tag = $settings['html_tag'];
+		$html_tag = \Elementor\Utils::validate_html_tag( $settings['html_tag'] );
 		$product  = $this->get_product_object();
 
 		if ( empty( $product ) ) {

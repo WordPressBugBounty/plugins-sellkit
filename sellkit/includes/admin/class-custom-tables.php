@@ -58,7 +58,7 @@ class Sellkit_Custom_Tables {
 	 * @since 1.1.0
 	 */
 	public function get_applied_discounts() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		// Prefer `paged` — `page` can collide with other WP query usage; accept both GET/POST for ajax.
 		$page = sellkit_htmlspecialchars( INPUT_GET, 'paged' );
@@ -126,7 +126,7 @@ class Sellkit_Custom_Tables {
 	 * @since 1.1.0
 	 */
 	public function get_generated_coupons() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$page = sellkit_htmlspecialchars( INPUT_GET, 'page' );
 		$id   = sellkit_htmlspecialchars( INPUT_GET, 'id' );
@@ -188,7 +188,7 @@ class Sellkit_Custom_Tables {
 	 * @since 1.5.0
 	 */
 	public function get_contacts() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$page      = sellkit_htmlspecialchars( INPUT_GET, 'page' );
 		$funnel_id = sellkit_htmlspecialchars( INPUT_GET, 'funnel_id' );
@@ -238,7 +238,7 @@ class Sellkit_Custom_Tables {
 	 * @since 1.5.0
 	 */
 	public function get_history() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$page       = sellkit_htmlspecialchars( INPUT_GET, 'page' );
 		$funnel_id  = sellkit_htmlspecialchars( INPUT_GET, 'funnel_id' );
@@ -287,7 +287,7 @@ class Sellkit_Custom_Tables {
 	 * @since 1.5.0
 	 */
 	public function delete_contact() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$entry_id = sellkit_htmlspecialchars( INPUT_GET, 'entry_id' );
 
@@ -313,7 +313,7 @@ class Sellkit_Custom_Tables {
 	 * @since 1.5.0
 	 */
 	public function get_contact_details() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$contact_id = sellkit_htmlspecialchars( INPUT_GET, 'contact_id' );
 
@@ -336,11 +336,32 @@ class Sellkit_Custom_Tables {
 			wp_send_json_error( esc_html__( 'Something went wrong.', 'sellkit' ) );
 		}
 
-		$user_id = $contact_details[0]['user_id'];
+		$user_id   = absint( $contact_details[0]['user_id'] );
+		$user_data = get_userdata( $user_id );
+		$user_meta = [];
+
+		// Only expose the user meta the contact screen needs.
+		$allowed_meta_keys = [
+			'first_name',
+			'last_name',
+			'billing_first_name',
+			'billing_last_name',
+			'billing_email',
+			'billing_phone',
+			'billing_country',
+		];
+
+		foreach ( $allowed_meta_keys as $meta_key ) {
+			if ( $user_id && metadata_exists( 'user', $user_id, $meta_key ) ) {
+				$user_meta[ $meta_key ] = [ get_user_meta( $user_id, $meta_key, true ) ];
+			}
+		}
+
+		$user_meta['user_role'] = $user_data ? $user_data->roles : [];
 
 		wp_send_json_success( [
 			'user_details' => $contact_details[0],
-			'user_meta'    => array_merge( get_user_meta( $user_id ), [ 'user_role' => get_userdata( $user_id )->roles ] ),
+			'user_meta'    => $user_meta,
 		] );
 	}
 
@@ -350,7 +371,7 @@ class Sellkit_Custom_Tables {
 	 * @since 1.5.0
 	 */
 	public function get_funnel_orders() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$contact_id = sellkit_htmlspecialchars( INPUT_GET, 'contact_id' );
 		$funnel_id  = sellkit_htmlspecialchars( INPUT_GET, 'funnel_id' );
@@ -397,17 +418,43 @@ class Sellkit_Custom_Tables {
 	}
 
 	/**
+	 * Checks if the user is a funnel contact.
+	 *
+	 * @since 2.8.1
+	 * @param int $user_id User ID.
+	 * @return bool
+	 */
+	private function is_funnel_contact_user( $user_id ) {
+		global $wpdb;
+
+		$sellkit_prefix = Database::DATABASE_PREFIX;
+		$contact_table  = "{$wpdb->prefix}{$sellkit_prefix}funnel_contact";
+
+		// phpcs:disable
+		$contact_id = $wpdb->get_var(
+			$wpdb->prepare( "SELECT id FROM {$contact_table} WHERE user_id = %d LIMIT 1;", $user_id )
+		);
+		// phpcs:enable
+
+		return ! empty( $contact_id );
+	}
+
+	/**
 	 * Saves contact details.
 	 *
 	 * @since 1.5.0
 	 */
 	public function save_contact_details() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$fields     = sellkit_post( 'fields' );
 		$first_name = ! empty( $fields['contacts_detail_first_name'] ) ? sanitize_text_field( $fields['contacts_detail_first_name'] ) : '';
 		$last_name  = ! empty( $fields['contacts_detail_last_name'] ) ? sanitize_text_field( $fields['contacts_detail_last_name'] ) : '';
-		$user_id    = filter_input( INPUT_POST, 'user_id', FILTER_SANITIZE_NUMBER_INT );
+		$user_id    = absint( filter_input( INPUT_POST, 'user_id', FILTER_SANITIZE_NUMBER_INT ) );
+
+		if ( empty( $user_id ) || ! $this->is_funnel_contact_user( $user_id ) || ! current_user_can( 'edit_user', $user_id ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to do this action.', 'sellkit' ), 403 );
+		}
 
 		$result = wp_update_user( [
 			'ID' => $user_id,

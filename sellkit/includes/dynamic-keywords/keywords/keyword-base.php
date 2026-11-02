@@ -55,9 +55,22 @@ abstract class Tag_Base {
 			return;
 		}
 
-		$order_id = wc_get_order_id_by_order_key( $order_key );
+		$order_key = sanitize_text_field( $order_key );
+		$order     = wc_get_order( wc_get_order_id_by_order_key( $order_key ) );
 
-		$this::$order = wc_get_order( $order_id );
+		if ( ! $order instanceof \WC_Order || ! hash_equals( $order->get_order_key(), $order_key ) ) {
+			return;
+		}
+
+		// Orders of registered customers are only shown to that customer. Guest orders are
+		// shown to whoever holds the order key, like WooCommerce's order-received page.
+		$customer_id = absint( $order->get_customer_id() );
+
+		if ( $customer_id > 0 && get_current_user_id() !== $customer_id ) {
+			return;
+		}
+
+		$this::$order = $order;
 
 		return $this::$order;
 	}

@@ -217,10 +217,6 @@ class Checkout
 		$header_footer_templates = get_post_meta(intval($funnel_id), self::SELLKIT_GLOBAL_CHECKOUT_HEADER_FOOTER_TEMPLATE, true);
 
 		if (empty($header_footer_templates) || ! is_array($header_footer_templates)) {
-			$header_footer_templates = maybe_unserialize($header_footer_templates);
-		}
-
-		if (empty($header_footer_templates) || ! is_array($header_footer_templates)) {
 			$header_footer_templates = [];
 		}
 
@@ -329,10 +325,21 @@ class Checkout
 		check_ajax_referer('sellkit', 'nonce');
 
 		if (! current_user_can('manage_options')) {
-			wp_send_json_error('You do not have access to this section.', 'sellkit');
+			wp_send_json_error(esc_html__('You do not have access to this section.', 'sellkit'), 403);
 		}
 
-		$action = filter_var($_REQUEST['sub_action'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); // phpcs:ignore
+		$action = isset($_REQUEST['sub_action']) ? sanitize_key(wp_unslash($_REQUEST['sub_action'])) : ''; // phpcs:ignore
+
+		$allowed_actions = [
+			'get_design_templates',
+			'save_selected_template_id',
+			'get_selected_template_id',
+			'create_new_template',
+		];
+
+		if (! in_array($action, $allowed_actions, true)) {
+			wp_send_json_error(esc_html__('Invalid request.', 'sellkit'), 400);
+		}
 
 		call_user_func([$this, $action]);
 	}
@@ -435,10 +442,6 @@ class Checkout
 					'value' => 0,
 				],
 			];
-		}
-
-		if (! is_array($data)) {
-			$data = maybe_unserialize($data);
 		}
 
 		wp_send_json_success($data);

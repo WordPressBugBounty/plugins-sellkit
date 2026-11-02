@@ -52,7 +52,7 @@ class Sellkit_Admin_Settings {
 	 * @since 1.1.0
 	 */
 	public function save_settings() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard( 'manage_options' );
 
 		$fields = sellkit_post( 'fields' );
 
@@ -61,7 +61,23 @@ class Sellkit_Admin_Settings {
 		}
 
 		foreach ( $fields as $option => $value ) {
-			$safe_value = ! is_array( $value ) ? sanitize_text_field( $value ) : $value;
+			$option = sanitize_key( $option );
+
+			if ( empty( $option ) ) {
+				continue;
+			}
+
+			$safe_value = is_array( $value ) ? map_deep( $value, 'sanitize_text_field' ) : sanitize_text_field( $value );
+
+			// Facebook pixel IDs are numeric only.
+			if ( 'facebook_pixel_id' === $option && ! is_array( $safe_value ) ) {
+				$safe_value = preg_replace( '/[^0-9]/', '', $safe_value );
+			}
+
+			if ( 'funnel_permalink_base' === $option && ! is_array( $safe_value ) ) {
+				$safe_value = sanitize_title( $safe_value );
+			}
+
 			$this->sellkit_update_option( $option, $safe_value );
 
 			if ( 'delete_data' === $option ) {
@@ -84,7 +100,7 @@ class Sellkit_Admin_Settings {
 	 * @since 1.1.0
 	 */
 	public function get_settings() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard( 'manage_options' );
 
 		$options = get_option( 'sellkit', [] );
 
@@ -121,7 +137,7 @@ class Sellkit_Admin_Settings {
 	 * @since 1.1.0
 	 */
 	public function remove_content_box() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$new_content_box_id           = sellkit_htmlspecialchars( INPUT_POST, 'content_box_id' );
 		$removed_content_box_data     = sellkit_get_option( 'removed_content_box_data' );
@@ -150,7 +166,7 @@ class Sellkit_Admin_Settings {
 	 * @return void
 	 */
 	public function get_templates() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$input = filter_input( INPUT_GET, 'input_value', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 

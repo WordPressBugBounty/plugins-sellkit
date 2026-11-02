@@ -42,7 +42,7 @@ class Funnel {
 	 * @since 1.1.0
 	 */
 	public function get_product_data() {
-		check_ajax_referer( 'sellkit', 'nonce' );
+		sellkit_admin_ajax_guard();
 
 		$product_id = filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT );
 

@@ -59,7 +59,8 @@ class Sellkit_Elementor_Optin_Action_Webhook extends Sellkit_Elementor_Optin_Act
 		$body = $this->get_form_data( $ajax_handler, $settings );
 		$args = [ 'body' => wp_json_encode( $body ) ];
 
-		$response = wp_remote_post( $settings['webhook_url'], $args );
+		// The URL is stored in widget settings by editors, so block requests to internal hosts.
+		$response = wp_safe_remote_post( $settings['webhook_url'], $args );
 
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 

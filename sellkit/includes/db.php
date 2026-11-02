@@ -238,21 +238,26 @@ class Database {
 		$query      = "SELECT * FROM {$wpdb->prefix}" . self::DATABASE_PREFIX . "$table_name"; // phpcs:ignore
 
 		if ( ! empty( $args ) ) {
-			$query    .= ' WHERE ';
-			$connector = ' AND ';
+			$conditions = [];
 
 			foreach ( $args as $key => $value ) {
+				$column = preg_replace( '/[^A-Za-z0-9_]/', '', $key );
+
 				if ( ! is_array( $value ) ) {
-					$query .= sprintf( '`%1$s` = \'%2$s\'', esc_sql( $key ), esc_sql( $value ) );
-				} else {
-					$value  = array_map( 'esc_sql', $value );
-					$query .= sprintf( '`%1$s` IN (%2$s)', esc_sql( $key ), implode( ',', $value ) );
+					$conditions[] = $wpdb->prepare( "`{$column}` = %s", $value ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Column name is sanitized above.
+					continue;
 				}
 
-				if ( end( $args ) !== $value ) {
-					$query .= $connector;
+				if ( empty( $value ) ) {
+					$conditions[] = '1 = 0';
+					continue;
 				}
+
+				$placeholders = implode( ',', array_fill( 0, count( $value ), '%s' ) );
+				$conditions[] = $wpdb->prepare( "`{$column}` IN ({$placeholders})", array_values( $value ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders -- Column name is sanitized above.
 			}
+
+			$query .= ' WHERE ' . implode( ' AND ', $conditions );
 		}
 
 		$query .= ' ORDER BY id DESC';
